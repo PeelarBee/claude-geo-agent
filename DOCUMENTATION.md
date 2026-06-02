@@ -1,5 +1,53 @@
 # claude-geo-agent — Full Documentation
 
+## What This Agent Does — Simple Overview
+
+A GEO (Generative Engine Optimization) agent that audits and improves how a business appears in AI-generated answers — ChatGPT, Perplexity, Claude, Gemini, and Bing Copilot.
+
+**Step by step:**
+1. Asks 7 questions about the business (name, domain, industry, services, customers, competitors, objective)
+2. Runs 5 pre-flight checks: detects if the site is invisible to AI crawlers (SPA), checks which AI bots are blocked, verifies llms.txt exists and is accurate, checks schema markup, checks HTTPS
+3. Creates or rewrites the `llms.txt` file using only real copy from the site
+4. Scores content pages for AI citability — identifies which passages AI systems will quote and which they won't
+5. Validates and generates schema markup (JSON-LD) ready to implement
+6. Checks brand presence on Wikipedia, Reddit, YouTube, LinkedIn, and industry directories
+7. Generates 40 monitoring prompts fully instanced for the business — ready to run in any LLM
+8. Delivers an output folder with: pre-flight report, fix guide, GEO audit, llms.txt, schema code, prompt library, and prioritized backlog
+
+**Output folder:**
+
+| File | Contents |
+|---|---|
+| `00-PREFLIGHT.md` | Initial site health check |
+| `01-FIX-GUIDE.md` | Step-by-step fixes in priority order *(most important)* |
+| `02-GEO-AUDIT.md` | Full GEO score and analysis |
+| `03-LLMS-TXT.md` | Ready-to-upload llms.txt file |
+| `04-SCHEMA.md` | Schema markup code ready to implement |
+| `05-LLM-PROMPTS.md` | 40 monitoring prompts for this business |
+| `06-BACKLOG.md` | Prioritized task list |
+
+---
+
+## Prompt Library Index
+
+| Module | Prompts | What they do | Frequency |
+|---|---|---|---|
+| 1 — Discovery | 5 | Generate full query universe, map market language, find competitor-dominant queries | Monthly |
+| 2 — Measurement | 8 | Ready-to-run branded, category, comparison, transactional, local, educational queries | Weekly / Bi-weekly |
+| 3 — Extraction | 6 | Parse LLM responses into structured data (mentions, sentiment, positioning, share of voice) | Every run |
+| 4 — Interpretation | 5 | Explain why brand is missing, why competitors win, citation patterns, messaging gaps | Weekly |
+| 5 — Audit | 9 | Score homepage, service pages, pricing, FAQ coverage, schema, content clusters, trust signals | Monthly |
+| 6 — Action | 4 | Content gap plan, technical fixes plan, optimization backlog, URL-level recommendations | Weekly |
+| 7 — Learning | 2 | Generate new prompts from gaps, detect emerging opportunities | Monthly |
+| 8 — Validation | 1 | Validate JSON output before logging results | Every run |
+| **Total** | **40** | | |
+
+**MVP minimum (8 prompts to start):** Branded visibility + Category visibility + Comparison + Mentions extractor + Gap analysis + Service page audit + Content action plan + Output validator
+
+See [PROMPTS-INDEX.md](PROMPTS-INDEX.md) for the full breakdown of every prompt.
+
+---
+
 ## What This Agent Is
 
 `claude-geo-agent` is a Claude AI agent that audits and improves how a business appears in AI-generated answers. When someone asks ChatGPT, Perplexity, Claude, or Gemini for recommendations in your category, this agent helps ensure your brand shows up — and shows up well.
