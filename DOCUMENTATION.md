@@ -69,26 +69,16 @@ No coding required to use the agent. Technical knowledge of SEO/GEO recommended.
 
 ## How to Run It
 
-### Option A — Claude.ai Web (no installation)
+**Claude Code is required** for the full audit — including SPA detection, AI crawler access checks, and robots.txt sanity checks. These are the most critical GEO signals and cannot be detected from the browser.
 
-1. Go to [claude.ai](https://claude.ai)
-2. Create a new **Project**
-3. In Project Instructions, paste the full content of `agents/geo-agent.md`
-4. Start a conversation and tell Claude: *"Run a GEO audit for [domain]"*
+1. Install Claude Code: [claude.ai/code](https://claude.ai/code)
+2. Clone this repo and run `./install.sh`
+3. Open Claude Code in your terminal
+4. Type: `@geo-agent`
 
-**Best for:** Getting audit reports and fix guides to share with developers. Claude will guide you through everything and generate all output files as text you can copy.
+The agent will ask for the URL, fetch the site automatically, extract the business context, and confirm with you before starting.
 
-**Limitation:** Claude cannot run terminal commands or edit files directly from the web. All fixes need to be implemented manually.
-
-### Option B — Claude Code (full power)
-
-1. Clone the repo and run `./install.sh`
-2. Open Claude Code in your terminal
-3. Type: `@geo-agent`
-
-**Best for:** Full automation. Claude can run technical checks, create files, and implement fixes directly in your project without manual steps.
-
-**Requirement:** Claude Code installed ([claude.ai/code](https://claude.ai/code)), basic terminal comfort.
+> **Note:** A partial version can run in Claude.ai Projects (browser), but technical pre-flight checks — SPA detection, AI crawler access, robots.txt verification — require Claude Code. Without these checks, the most critical GEO issues may go undetected.
 
 ---
 
@@ -155,14 +145,6 @@ Generates `[domain]-geo-audit/` with:
 
 ## API Setup
 
-### Option A — Claude.ai Web
-
-No API setup required. Claude.ai handles everything.
-
-If you want to run the LLM visibility prompts (Module 2) against real AI systems, run them manually in each platform's interface (ChatGPT, Gemini, Claude, Perplexity).
-
-### Option B — Claude Code
-
 Set these in your terminal before running the agent:
 
 ```bash
@@ -189,14 +171,14 @@ export ANTHROPIC_API_KEY=your_key_here   # optional
 
 ---
 
-## Web vs Claude Code — Feature Comparison
+## Feature Overview
 
-| Feature | Claude.ai Web | Claude Code |
-|---|---|---|
-| Business onboarding | ✅ | ✅ |
-| Pre-flight checks | ⚠️ Partial (no curl) | ✅ Full |
-| GEO audit report | ✅ | ✅ |
-| llms.txt creation | ✅ | ✅ |
+| Feature | Claude Code |
+|---|---|
+| Business onboarding | ✅ |
+| Pre-flight checks | ✅ Full |
+| GEO audit report | ✅ |
+| llms.txt creation | ✅ |
 | Schema markup generation | ✅ (code only) | ✅ (implements directly) |
 | LLM visibility prompts | ✅ | ✅ |
 | Fix guide | ✅ (instructions) | ✅ (can implement) |
