@@ -1,0 +1,172 @@
+# claude-geo-agent — Full Documentation
+
+## What This Agent Is
+
+`claude-geo-agent` is a Claude AI agent that audits and improves how a business appears in AI-generated answers. When someone asks ChatGPT, Perplexity, Claude, or Gemini for recommendations in your category, this agent helps ensure your brand shows up — and shows up well.
+
+This is called **GEO: Generative Engine Optimization**. It is to AI search what SEO is to Google.
+
+---
+
+## Who It's For
+
+- Marketers and SEO professionals managing AI visibility for clients or their own business
+- Agencies running AI Visibility audits
+- Founders who want to understand why their brand doesn't appear in AI answers
+- Any team that needs to audit and improve LLM visibility across verticals
+
+No coding required to use the agent. Technical knowledge of SEO/GEO recommended.
+
+---
+
+## How to Run It
+
+### Option A — Claude.ai Web (no installation)
+
+1. Go to [claude.ai](https://claude.ai)
+2. Create a new **Project**
+3. In Project Instructions, paste the full content of `agents/geo-agent.md`
+4. Start a conversation and tell Claude: *"Run a GEO audit for [domain]"*
+
+**Best for:** Getting audit reports and fix guides to share with developers. Claude will guide you through everything and generate all output files as text you can copy.
+
+**Limitation:** Claude cannot run terminal commands or edit files directly from the web. All fixes need to be implemented manually.
+
+### Option B — Claude Code (full power)
+
+1. Clone the repo and run `./install.sh`
+2. Open Claude Code in your terminal
+3. Type: `@geo-agent`
+
+**Best for:** Full automation. Claude can run technical checks, create files, and implement fixes directly in your project without manual steps.
+
+**Requirement:** Claude Code installed ([claude.ai/code](https://claude.ai/code)), basic terminal comfort.
+
+---
+
+## What the Agent Does — Full Capability List
+
+### Pre-Flight Checks (always runs first)
+- **SPA Detection** — identifies if the site is built with React, Vue, or Vite (common in Lovable). SPAs are invisible to AI crawlers.
+- **robots.txt audit** — checks which AI crawlers are blocked (GPTBot, ClaudeBot, PerplexityBot, etc.)
+- **Disallowed routes sanity check** — verifies that blocked routes are actually closed (not returning 200 OK)
+- **llms.txt status** — checks if the file exists and evaluates its quality
+- **Schema markup detection** — identifies existing JSON-LD structured data
+- **HTTPS and security headers** — basic security check
+
+### GEO Audit
+- **Citability scoring** — scores every content block on 5 dimensions: Answer Quality, Self-Containment, Structural Readability, Statistical Density, Uniqueness
+- **AI Crawler Access** — scores access for 10 AI crawlers with specific fix recommendations
+- **Brand Mentions** — checks presence on Wikipedia, Reddit, YouTube, LinkedIn, and industry directories
+- **llms.txt quality** — evaluates and rewrites if needed
+- **Schema validation** — validates existing schemas and generates missing ones
+
+### Content Citability Optimization
+- Identifies passages AI systems are likely to cite
+- Rewrites low-scoring passages using answer-first pattern
+- Recommends structural improvements (tables, lists, definition patterns)
+
+### llms.txt Creation
+- Fetches every key page via WebFetch
+- Uses only real copy from the site (never fabricates)
+- Writes a complete, structured llms.txt ready to upload
+- Handles SPA sites where this file is the only AI-readable content
+
+### Schema Markup
+- Detects existing JSON-LD
+- Generates missing schemas: Organization, Service, Article, FAQPage, BreadcrumbList, Person
+- Output is ready-to-implement code
+
+### Brand Mentions Audit
+- Wikipedia API check (most important AI citation signal)
+- Reddit presence
+- YouTube presence
+- LinkedIn company page
+- Industry directories (G2, Capterra, Trustpilot, niche sites)
+
+### LLM Visibility Prompt Library
+- Generates 40 monitoring prompts fully instanced for the business
+- 8 modules: Discovery, Measurement, Extraction, Interpretation, Audit, Action, Learning, Validation
+- Ready to run in Gemini, Groq, ChatGPT, or any LLM to track visibility over time
+- See [PROMPTS-INDEX.md](PROMPTS-INDEX.md) for the full breakdown
+
+### Output Folder
+Generates `[domain]-geo-audit/` with:
+
+| File | Contents |
+|---|---|
+| `00-PREFLIGHT.md` | Pre-flight check results |
+| `01-FIX-GUIDE.md` | Step-by-step fixes in priority order |
+| `02-GEO-AUDIT.md` | Full GEO score and analysis |
+| `03-LLMS-TXT.md` | Ready-to-upload llms.txt |
+| `04-SCHEMA.md` | JSON-LD schema code ready to implement |
+| `05-LLM-PROMPTS.md` | 40 monitoring prompts for this business |
+| `06-BACKLOG.md` | Prioritized task list |
+
+---
+
+## API Setup
+
+### Option A — Claude.ai Web
+
+No API setup required. Claude.ai handles everything.
+
+If you want to run the LLM visibility prompts (Module 2) against real AI systems, you'll need to do that manually in each platform's interface or use a workflow tool like [Relay App](https://relay.app) (free).
+
+### Option B — Claude Code
+
+Set these in your terminal before running the agent:
+
+```bash
+export SERPER_API_KEY=your_key_here      # recommended
+export GEMINI_API_KEY=your_key_here      # optional
+export GROQ_API_KEY=your_key_here        # optional
+export OPENAI_API_KEY=your_key_here      # optional
+export ANTHROPIC_API_KEY=your_key_here   # optional
+```
+
+| API | Required | What it enables | Cost | Link |
+|---|---|---|---|---|
+| **Serper** | Recommended | Competitor research, find what's ranking | Free trial (2,500 searches) → from $50/mo | [serper.dev](https://serper.dev) |
+| **Gemini API** | Optional | Run LLM visibility prompts in Gemini | ✅ Free with limits (15 req/min) | [ai.google.dev](https://ai.google.dev) |
+| **Groq API** | Optional | Run LLM visibility prompts (fast, free) | ✅ Free with generous limits | [console.groq.com](https://console.groq.com) |
+| **OpenAI API** | Optional | Run LLM visibility prompts in ChatGPT | 💰 Paid (~$0.002/1K tokens) | [platform.openai.com](https://platform.openai.com) |
+| **Anthropic API** | Optional | Run LLM visibility prompts in Claude | 💰 Paid (Haiku is cheapest) | [console.anthropic.com](https://console.anthropic.com) |
+| **PageSpeed API** | Not needed | Core Web Vitals (automatic) | ✅ Free, no key needed | [developers.google.com/speed](https://developers.google.com/speed) |
+
+**Without Serper:** The agent still runs full audits using `curl` and `WebFetch`. You only lose the real-time competitor research feature.
+
+---
+
+## Web vs Claude Code — Feature Comparison
+
+| Feature | Claude.ai Web | Claude Code |
+|---|---|---|
+| Business onboarding | ✅ | ✅ |
+| Pre-flight checks | ⚠️ Partial (no curl) | ✅ Full |
+| GEO audit report | ✅ | ✅ |
+| llms.txt creation | ✅ | ✅ |
+| Schema markup generation | ✅ (code only) | ✅ (implements directly) |
+| LLM visibility prompts | ✅ | ✅ |
+| Fix guide | ✅ (instructions) | ✅ (can implement) |
+| SPA detection | ❌ | ✅ |
+| robots.txt curl checks | ❌ | ✅ |
+| Disallowed routes check | ❌ | ✅ |
+| Direct file editing | ❌ | ✅ |
+| Serper integration | ❌ | ✅ |
+| API key integrations | ❌ | ✅ |
+
+---
+
+## Objectives Quick Reference
+
+| Command | What it runs |
+|---|---|
+| `full-audit` | Everything — pre-flight + full GEO audit + all output files |
+| `llms-txt` | Create or improve llms.txt only |
+| `citability` | Score content for AI citation readiness |
+| `schema` | Schema markup audit and implementation |
+| `crawlers` | AI crawler access check and fix |
+| `brand-mentions` | Brand presence across AI-cited platforms |
+| `llm-prompts` | Generate LLM visibility monitoring prompt library |
+| `quick-check` | Fast pre-flight status only |
