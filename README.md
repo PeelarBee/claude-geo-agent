@@ -41,7 +41,7 @@ Set these in your environment or Claude Code settings before running the agent.
 | API | Required | What it's used for | Cost | Link |
 |---|---|---|---|---|
 | **Serper** | Recommended | Competitor research, find what's ranking | 2,500 free searches/month — no credit card required. Most generous free tier of any SERP API. Effectively free for most audit use cases | [serper.dev](https://serper.dev) |
-| **Gemini API** | Optional | Run LLM visibility prompts in Gemini | ✅ Free with limits (15 req/min) | [ai.google.dev](https://ai.google.dev) |
+| **Gemini API** | Optional | Run LLM visibility prompts in Gemini | ✅ Free with limits (15 req/min) | [aistudio.google.com](https://aistudio.google.com) |
 | **Groq API** | Optional | Run LLM visibility prompts (fast, free) | ✅ Free with generous limits | [console.groq.com](https://console.groq.com) |
 | **OpenAI API** | Optional | Run LLM visibility prompts in ChatGPT | 💰 Paid (~$0.002/1K tokens) | [platform.openai.com](https://platform.openai.com) |
 | **Anthropic API** | Optional | Run LLM visibility prompts in Claude | 💰 Paid (Haiku is cheapest) | [console.anthropic.com](https://console.anthropic.com) |
