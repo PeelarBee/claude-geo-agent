@@ -48,6 +48,8 @@ Ask only for the URL and objective. Then fetch the site automatically and extrac
    [ ] brand-mentions — Check brand presence in AI-cited platforms
    [ ] llm-prompts    — Generate LLM visibility monitoring prompts
    [ ] quick-check    — Fast status of all GEO signals (no deep analysis)
+   [ ] monitor        — Measure LLM visibility + extract structured results
+   [ ] refresh        — Update gaps, opportunities, and backlog from new data
 ```
 
 ### Auto-detect business context
@@ -59,6 +61,9 @@ Once the URL is provided, use WebFetch to fetch the homepage and up to 3 key pag
 - **Main services or products** — from navigation, homepage sections, or service pages
 - **Target customers (ICP)** — from homepage copy, "who we serve" sections, or case studies
 - **Geography** — from footer, contact page, or homepage copy
+- **City and region** — from contact details, service-area pages, or footer; if not applicable, use the main target geography
+- **Primary problem, outcome, and job to be done** — from homepage positioning and service copy
+- **Bad alternative** — infer the substitute, workaround, or status quo the customer wants to avoid; mark as "needs confirmation" if unclear
 - **Primary language** — from the HTML lang attribute or content language
 
 Then present the extracted CONFIG to the user for confirmation before proceeding:
@@ -72,6 +77,12 @@ Category:    [extracted value]
 Services:    [extracted value]
 ICP:         [extracted value]
 Geography:   [extracted value]
+City:        [extracted value or main geography]
+Region:      [extracted value or main geography]
+Problem:     [extracted value]
+Outcome:     [extracted value]
+Job:         [extracted value]
+Alt bad:     [extracted value or needs confirmation]
 Locale:      [extracted value]
 Competitors: [leave blank — ask user to add up to 3]
 Objective:   [selected objective]
@@ -80,6 +91,8 @@ Does this look correct? Add your main competitors (optional) and reply "yes" to 
 ```
 
 **MANDATORY: STOP HERE. Do not run any audit, pre-flight check, or analysis until the user explicitly confirms the CONFIG by replying "yes" or "ok" or similar. This confirmation is required every single time, even if the URL and objective were already provided.**
+
+During onboarding, only ask for competitors — do not ask anything else unless the user corrects something in the CONFIG. After CONFIG confirmation, the Run Plan may ask for missing API setup if the selected objective requires search or live LLM measurement.
 
 Confirm the business CONFIG before proceeding:
 
@@ -93,10 +106,107 @@ Competitors: [value]
 Problem:     [value]
 Outcome:     [value]
 Alt bad:     [value]
+Job:         [value]
 Geography:   [value]
+City:        [value]
+Region:      [value]
 Locale:      [value]
 Objective:   [value]
 ```
+
+---
+
+## Run Modes and Prompt Phases
+
+The 40-prompt library is not a flat checklist. Treat it as a phased audit system. Each objective runs only the phases needed for that job.
+
+### Mode 1 — `quick-check`
+
+Purpose: fast diagnostic for a new site.
+
+Run:
+1. Pre-flight checks only
+2. No LLM measurement prompts
+3. No deep content audit unless a critical issue is found
+
+Outputs:
+- `00-START-HERE.md`
+- `01-RUN-PLAN.md`
+- `02-TECHNICAL-GEO-AUDIT.md`
+- `03-FIX-GUIDE.md` with only urgent fixes and quick wins
+
+### Mode 2 — `monitor`
+
+Purpose: measure how the brand appears in LLM answers over time.
+
+Run:
+1. Measurement prompts: `10-17`
+2. Extraction prompts after each response: `20-25`
+3. Validation prompt after each extraction: `90`
+4. Optional weekly interpretation: `30`
+
+Outputs:
+- `00-START-HERE.md`
+- `01-RUN-PLAN.md`
+- `06-LLM-PROMPTS-TO-RUN.md`
+- `07-LLM-VISIBILITY-RESULTS.md`
+- structured visibility results ready for a sheet, database, or report
+- short monitoring summary with brand mentions, competitor mentions, sentiment, citations, and visibility gaps
+
+### Mode 3 — `full-audit`
+
+Purpose: complete GEO audit and client-ready action plan.
+
+Run phases in this order:
+1. Pre-flight checks
+2. Technical readiness: crawler access, llms.txt, schema, SPA status
+3. Discovery prompts: `01-05`
+4. Measurement prompts: `10-17`
+5. Extraction prompts: `20-25`
+6. Validation prompt: `90`
+7. Interpretation prompts: `30-34`
+8. Site audit prompts: `40-48`
+9. Action prompts: `50-53`
+10. Learning prompts: `60-61` when historical or prior-run data exists
+
+Outputs:
+- `00-START-HERE.md`
+- `01-RUN-PLAN.md`
+- `02-TECHNICAL-GEO-AUDIT.md`
+- `03-FIX-GUIDE.md`
+- `04-LLMS-TXT.md`
+- `05-SCHEMA.md`
+- `06-LLM-PROMPTS-TO-RUN.md`
+- `07-LLM-VISIBILITY-RESULTS.md`
+- `08-BACKLOG.md`
+
+### Mode 4 — `refresh`
+
+Purpose: update an existing audit after new content, new competitors, or new LLM results.
+
+Run:
+1. Re-run only changed pre-flight checks if the site changed
+2. Interpretation prompts: `30-34`
+3. Selected site audit prompts for changed pages: `40-48`
+4. Action prompts: `50-53`
+5. Learning prompts: `60-61`
+
+Outputs:
+- updated gap analysis
+- updated action plan
+- updated backlog
+- new prompts to add to monitoring
+
+For single-purpose objectives, run the relevant narrow phase:
+
+| Objective | Required phases |
+|---|---|
+| `llms-txt` | Pre-flight + llms.txt creation |
+| `citability` | Site audit prompts `40-48`, especially `40`, `41`, `48` |
+| `schema` | Pre-flight schema checks + prompt `45` |
+| `crawlers` | Pre-flight crawler checks only |
+| `brand-mentions` | Brand presence checks + extraction if LLM responses are available |
+| `llm-prompts` | Instantiate `prompts/llm-visibility-prompts-template.md` into `06-LLM-PROMPTS-TO-RUN.md` |
 
 ---
 
@@ -112,13 +222,288 @@ Files to generate:
 
 | File | Objective |
 |---|---|
-| `00-PREFLIGHT.md` | Always |
-| `01-FIX-GUIDE.md` | Always — most important output |
-| `02-GEO-AUDIT.md` | full-audit |
-| `03-LLMS-TXT.md` | full-audit, llms-txt |
-| `04-SCHEMA.md` | full-audit, schema |
-| `05-LLM-PROMPTS.md` | full-audit, llm-prompts |
-| `06-BACKLOG.md` | full-audit |
+| `00-START-HERE.md` | Always — plain-English executive summary and next actions |
+| `01-RUN-PLAN.md` | Always — what will run, what is blocked, and which APIs are needed |
+| `02-TECHNICAL-GEO-AUDIT.md` | quick-check, full-audit, crawlers, citability, schema |
+| `03-FIX-GUIDE.md` | Always — most important output |
+| `04-LLMS-TXT.md` | full-audit, llms-txt |
+| `05-SCHEMA.md` | full-audit, schema |
+| `06-LLM-PROMPTS-TO-RUN.md` | full-audit, monitor, llm-prompts |
+| `07-LLM-VISIBILITY-RESULTS.md` | monitor, full-audit — real results or explicit "not run" status |
+| `08-BACKLOG.md` | full-audit, refresh |
+
+Important distinction:
+- `06-LLM-PROMPTS-TO-RUN.md` is the prompt library: what to ask ChatGPT, Claude, Gemini, Perplexity, etc.
+- `07-LLM-VISIBILITY-RESULTS.md` is the measurement report: what the LLMs actually answered.
+- If prompts were generated but not executed, say clearly: "Visibility prompts are ready, but no live LLM results were collected in this run."
+
+---
+
+## Step 1A: Start Here Summary → `00-START-HERE.md`
+
+This is the first file the user should read. It must be short, plain, and decision-oriented.
+
+```markdown
+# GEO Audit Summary: [Domain]
+
+## Bottom Line
+[One paragraph in plain English. Say whether the site is strong, weak, or mixed for GEO.]
+
+## What We Found
+
+| Area | Result | What it means |
+|---|---|---|
+| Crawlability | Good / Warning / Problem | [plain explanation] |
+| HTML visibility | Good / Warning / Problem | [plain explanation] |
+| llms.txt | Good / Warning / Problem | [plain explanation] |
+| Schema | Good / Warning / Problem | [plain explanation] |
+| LLM prompt visibility | Measured / Not measured yet | [plain explanation] |
+
+## The One Thing To Fix First
+
+[The highest-leverage action.]
+
+## What Each File Means
+
+| File | Read this when you want to know... |
+|---|---|
+| `01-RUN-PLAN.md` | What will run, what is blocked, and which APIs are needed |
+| `02-TECHNICAL-GEO-AUDIT.md` | Whether AI/search crawlers can read the site |
+| `03-FIX-GUIDE.md` | Exactly what to fix first |
+| `04-LLMS-TXT.md` | Whether llms.txt is good or needs changes |
+| `05-SCHEMA.md` | What structured data to add |
+| `06-LLM-PROMPTS-TO-RUN.md` | What prompts to run in LLMs |
+| `07-LLM-VISIBILITY-RESULTS.md` | What LLMs actually said after prompts were run |
+| `08-BACKLOG.md` | The prioritized task list |
+
+## Prompt Results Status
+
+[Say one of these exactly:]
+- Live LLM prompt results were collected in this run.
+- Visibility prompts are ready, but no live LLM results were collected in this run.
+
+## Next 3 Actions
+
+1. [Action]
+2. [Action]
+3. [Action]
+```
+
+---
+
+## Step 1B: Run Plan and API Gate → `01-RUN-PLAN.md`
+
+Before running any objective, generate a run plan. This is the contract for the run.
+
+```markdown
+# GEO Run Plan: [Domain]
+
+## Objective
+[quick-check / monitor / full-audit / refresh / specific objective]
+
+## What Will Run
+
+| Phase | Status | Reason |
+|---|---|---|
+| Business CONFIG discovery | Will run / Complete | Required |
+| Technical GEO audit | Will run / Skipped | [reason] |
+| Search-backed competitor research | Will run / Blocked / Skipped | Requires `SERPER_API_KEY`; search only |
+| LLM prompt generation | Will run / Skipped | Generates `06-LLM-PROMPTS-TO-RUN.md` |
+| LLM prompt execution | Will run / Blocked / Skipped | Requires at least one LLM provider key |
+| Extraction and validation | Will run / Blocked / Skipped | Runs only after LLM prompt execution |
+| Interpretation and action plan | Will run / Partial / Skipped | Depends on available results |
+
+## API Status
+
+| API | Status | Used for |
+|---|---|---|
+| `SERPER_API_KEY` | Configured / Missing | Search and competitor evidence only |
+| `GEMINI_API_KEY` or `GOOGLE_API_KEY` | Configured / Missing | LLM prompt execution |
+| `GROQ_API_KEY` | Configured / Missing | LLM prompt execution |
+| `OPENAI_API_KEY` | Configured / Missing | LLM prompt execution |
+| `ANTHROPIC_API_KEY` | Configured / Missing | LLM prompt execution |
+| `PERPLEXITY_API_KEY` | Configured / Missing | LLM prompt execution |
+
+## Missing Setup
+
+[Say exactly what is missing. Do not print key values.]
+
+## Decision Needed
+
+[If LLM prompt execution is blocked, ask:]
+
+LLM prompt execution is blocked because no LLM provider key is configured.
+
+Add at least one provider key to run prompts automatically:
+
+```bash
+GEMINI_API_KEY=
+GROQ_API_KEY=
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+PERPLEXITY_API_KEY=
+```
+
+Recommended minimum:
+
+```bash
+SERPER_API_KEY=
+GEMINI_API_KEY=
+GROQ_API_KEY=
+```
+
+Do you want to add an LLM provider key now, or continue with the technical audit only?
+```
+
+Rules:
+- If the objective is `monitor`, do not continue until at least one LLM provider key is configured or the user explicitly chooses a prompt-only/manual run.
+- If the objective is `full-audit`, continue the technical audit when LLM keys are missing, but mark the run as `Partial full-audit: live LLM visibility not measured`.
+- If LLM keys are missing, still generate `06-LLM-PROMPTS-TO-RUN.md` and `07-LLM-VISIBILITY-RESULTS.md` with status `Not run — no LLM provider configured`.
+- Never ask for actual secret values inside generated files. Generated files must show blank placeholders only.
+
+---
+
+## Step 1C: Prompt Execution Policy
+
+LLM visibility is only measured when prompts are run in fresh, isolated model contexts. Do not treat generated prompts as results.
+
+### Provider Check
+
+Before any `monitor` or `full-audit` measurement phase, check which search and model providers are available.
+
+Never print API key values. Report only `Configured` or `Missing`.
+
+Search provider:
+
+| Provider | Environment variable | What it enables |
+|---|---|---|
+| Serper | `SERPER_API_KEY` | Search evidence and competitor research. Does not run LLM prompts. |
+
+LLM providers:
+
+| Provider | Environment variable |
+|---|---|
+| OpenAI / ChatGPT | `OPENAI_API_KEY` |
+| Anthropic / Claude | `ANTHROPIC_API_KEY` |
+| Google Gemini | `GEMINI_API_KEY` or `GOOGLE_API_KEY` |
+| Groq | `GROQ_API_KEY` |
+| Perplexity | `PERPLEXITY_API_KEY` |
+
+At least one LLM provider key is required to automatically run measurement prompts and produce real `07-LLM-VISIBILITY-RESULTS.md` data.
+
+If Serper is configured but no LLM provider is configured:
+- Say: `Search provider configured; LLM providers missing`.
+- Use Serper only for search-backed competitor research.
+- Do not claim that LLM prompts were run.
+
+If no provider key is available:
+- Do not claim that LLM prompts were run.
+- Generate `06-LLM-PROMPTS-TO-RUN.md`.
+- Generate `07-LLM-VISIBILITY-RESULTS.md` with status `Not run — no LLM provider configured`.
+- Mark the audit as `Partial full-audit: technical GEO completed, live LLM visibility not measured`.
+- Put LLM provider setup as a P1 item in `03-FIX-GUIDE.md` and `08-BACKLOG.md`.
+
+If no LLM provider is configured, include this blank setup block in `00-START-HERE.md`, `01-RUN-PLAN.md`, `03-FIX-GUIDE.md`, and `07-LLM-VISIBILITY-RESULTS.md`:
+
+```bash
+SERPER_API_KEY=
+GEMINI_API_KEY=
+GOOGLE_API_KEY=
+GROQ_API_KEY=
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+PERPLEXITY_API_KEY=
+```
+
+### Cold-Context Rule
+
+Every measurement prompt must be run in a fresh context with no business CONFIG, no site audit notes, and no prior answers in the conversation. The only input should be the user-facing prompt itself. This prevents the agent from contaminating visibility results with knowledge it already gathered during the audit.
+
+### Grouped Execution
+
+Run prompts by measurement group:
+
+| Group | Prompt IDs | What it measures |
+|---|---|---|
+| Branded | `10` | Whether the model knows the brand directly |
+| Category | `11` | Whether the brand appears for non-branded category prompts |
+| Problem-aware | `12` | Whether the brand appears when users describe the problem |
+| Comparison | `13` | Whether the brand appears in alternative/comparison prompts |
+| Transactional | `14` | Whether the brand appears in high-intent buying prompts |
+| Local / geo | `15` | Whether the brand appears in geography-specific prompts |
+| Educational | `16` | Whether the brand appears in top-of-funnel explanation prompts |
+| Alternative language | `17` | Whether the brand appears when users use messy or substitute language |
+
+After each response:
+1. Run extraction prompts `20-25`.
+2. Validate structured extraction with prompt `90`.
+3. Add the result to `07-LLM-VISIBILITY-RESULTS.md`.
+
+### Required Result Output
+
+`07-LLM-VISIBILITY-RESULTS.md` must show results grouped by prompt group, not only one aggregate score:
+
+```markdown
+# LLM Visibility Results: [Brand]
+
+Status: Live LLM results collected / Not run — no LLM provider configured / Proxy run only
+
+## Bottom Line
+[Plain-English summary.]
+
+## Provider Coverage
+
+| Provider | Status | Notes |
+|---|---|---|
+| ChatGPT | Run / Not configured | |
+| Claude | Run / Not configured | |
+| Gemini | Run / Not configured | |
+| Perplexity | Run / Not configured | |
+| Serper | Configured / Missing | Search only; not an LLM result provider |
+
+## Group Results
+
+| Group | Prompts run | Brand mentions | Competitor mentions | Citation rate | Verdict |
+|---|---:|---:|---:|---:|---|
+| Branded | 0 | 0 | 0 | 0 | Not run |
+| Category | 0 | 0 | 0 | 0 | Not run |
+| Problem-aware | 0 | 0 | 0 | 0 | Not run |
+| Comparison | 0 | 0 | 0 | 0 | Not run |
+| Transactional | 0 | 0 | 0 | 0 | Not run |
+| Local / geo | 0 | 0 | 0 | 0 | Not run |
+| Educational | 0 | 0 | 0 | 0 | Not run |
+| Alternative language | 0 | 0 | 0 | 0 | Not run |
+
+## Prompt-Level Results
+
+| Group | Prompt | Provider | Brand mentioned? | Competitors mentioned | Sentiment | Citations | Result |
+|---|---|---|---|---|---|---|---|
+| [group] | [prompt] | [provider] | Yes / No | [names] | Positive / Neutral / Negative / Mixed | Yes / No | Win / Gap / Risk |
+
+## Raw Answer Samples
+
+Include short excerpts only. Do not paste huge model responses unless the user asks.
+
+## Biggest Wins
+
+1. [Result-backed win]
+2. [Result-backed win]
+3. [Result-backed win]
+
+## Biggest Gaps
+
+1. [Result-backed gap]
+2. [Result-backed gap]
+3. [Result-backed gap]
+
+## Recommended Actions
+
+1. [Action tied to measured gap]
+2. [Action tied to measured gap]
+3. [Action tied to measured gap]
+```
+
+Never invent results. If there are no provider keys or no raw LLM responses, every group must be marked `Not run`.
 
 ---
 
@@ -206,10 +591,10 @@ Check for: Organization, Service/Product, Article, FAQPage, BreadcrumbList.
 curl -s -I https://[domain] | grep -i 'strict-transport\|x-content-type\|x-frame\|referrer-policy'
 ```
 
-### Pre-Flight Output → `00-PREFLIGHT.md`
+### Technical GEO Audit Output → `02-TECHNICAL-GEO-AUDIT.md`
 
 ```markdown
-# Pre-Flight Report: [Domain]
+# Technical GEO Audit: [Domain]
 Date: [Date]
 
 ## Site Type
@@ -245,19 +630,22 @@ Date: [Date]
 
 ### `full-audit` — Complete GEO Audit
 
-Run in this order:
-1. Pre-flight (Step 2)
-2. Crawler access deep check
-3. llms.txt — audit existing or create from scratch
-4. Schema — validate and fix
-5. Citability — score top 3-5 pages
-6. Brand mentions — check across AI-cited platforms
-7. LLM visibility prompts — generate instanced library
-8. Generate all output files
+Run as a phased audit, not as one flat list:
+1. Pre-flight checks (Step 2)
+2. Technical readiness: crawler access, llms.txt, schema, SPA status
+3. Discovery prompts: `01-05`
+4. Measurement prompts: `10-17`
+5. Extraction prompts: `20-25`
+6. Validation prompt: `90`
+7. Interpretation prompts: `30-34`
+8. Site audit prompts: `40-48`
+9. Action prompts: `50-53`
+10. Learning prompts: `60-61` when historical data exists
+11. Generate all output files
 
 ---
 
-### `llms-txt` → `03-LLMS-TXT.md`
+### `llms-txt` → `04-LLMS-TXT.md`
 
 **RULE: Fetch every page with WebFetch before writing its description. Never fabricate.**
 
@@ -311,7 +699,7 @@ Research from Princeton, Georgia Tech, and IIT Delhi (2024) found that AI system
 
 ---
 
-### `schema` → `04-SCHEMA.md`
+### `schema` → `05-SCHEMA.md`
 
 1. Extract existing JSON-LD from raw HTML
 2. Validate against Schema.org spec
@@ -361,9 +749,17 @@ Score: Wikipedia (30pts) + Reddit (20pts) + YouTube (15pts) + LinkedIn (10pts) +
 
 ---
 
-### `llm-prompts` → `05-LLM-PROMPTS.md`
+### `llm-prompts` → `06-LLM-PROMPTS-TO-RUN.md`
 
-Generate a fully instanced LLM visibility monitoring prompt library. Replace ALL `{{variables}}` with actual business values from the CONFIG.
+Instantiate `prompts/llm-visibility-prompts-template.md` into `06-LLM-PROMPTS-TO-RUN.md`. Replace ALL `{{variables}}` with actual business values from the CONFIG. Do not leave unresolved variables.
+
+Start the file with this exact warning:
+
+```markdown
+This file is the prompt library, not the measurement result.
+
+Actual LLM answer results belong in `07-LLM-VISIBILITY-RESULTS.md` after these prompts are run in ChatGPT, Claude, Gemini, Groq, Perplexity, or another model.
+```
 
 **8 modules:**
 
@@ -393,9 +789,34 @@ Generate a fully instanced LLM visibility monitoring prompt library. Replace ALL
 
 All prompts must be ready to run with no `{{variables}}` remaining.
 
+### `monitor` results → `07-LLM-VISIBILITY-RESULTS.md`
+
+Generate this file for every `monitor` run and every `full-audit` run.
+
+If prompts were not executed because no LLM provider was configured, the file must say:
+
+```markdown
+Status: Not run — no LLM provider configured
+```
+
+If prompts were executed, group results by prompt group:
+
+| Group | Prompt IDs |
+|---|---|
+| Branded | `10` |
+| Category | `11` |
+| Problem-aware | `12` |
+| Comparison | `13` |
+| Transactional | `14` |
+| Local / geo | `15` |
+| Educational | `16` |
+| Alternative language | `17` |
+
+Never mix generated prompts with measured results.
+
 ---
 
-## Step 4: GEO Audit Score → `02-GEO-AUDIT.md`
+## Step 4: Technical GEO Audit Score → `02-TECHNICAL-GEO-AUDIT.md`
 
 **GEO Score = Citability (35%) + Brand Mentions (30%) + Crawler Access (25%) + llms.txt (10%)**
 
@@ -407,7 +828,7 @@ Score interpretation:
 - 0-20: Critical — virtually invisible to AI systems
 
 ```markdown
-# GEO Audit: [Domain]
+# Technical GEO Audit: [Domain]
 Date: [Date]
 
 ## GEO Score: [X]/100 — [Excellent/Good/Fair/Poor/Critical]
@@ -442,7 +863,7 @@ Date: [Date]
 
 ---
 
-## Step 5: Fix Guide → `01-FIX-GUIDE.md`
+## Step 5: Fix Guide → `03-FIX-GUIDE.md`
 
 **Most important output. Must be specific and actionable.**
 
@@ -492,7 +913,7 @@ Date: [Date]
 
 ---
 
-## Step 6: Backlog → `06-BACKLOG.md`
+## Step 6: Backlog → `08-BACKLOG.md`
 
 ```markdown
 # GEO Optimization Backlog: [Domain]

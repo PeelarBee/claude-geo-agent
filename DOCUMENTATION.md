@@ -12,19 +12,23 @@ A GEO (Generative Engine Optimization) agent that audits and improves how a busi
 5. Validates and generates schema markup (JSON-LD) ready to implement
 6. Checks brand presence on Wikipedia, Reddit, YouTube, LinkedIn, and industry directories
 7. Generates 40 monitoring prompts fully instanced for the business — ready to run in any LLM
-8. Delivers an output folder with: pre-flight report, fix guide, GEO audit, llms.txt, schema code, prompt library, and prioritized backlog
+8. Delivers an output folder with: plain-English summary, pre-flight report, fix guide, GEO audit, llms.txt, schema code, prompt library, visibility results when prompts were executed, and prioritized backlog
 
 **Output folder:**
 
 | File | Contents |
 |---|---|
+| `00-START-HERE.md` | Plain-English summary and next actions |
 | `00-PREFLIGHT.md` | Initial site health check |
 | `01-FIX-GUIDE.md` | Step-by-step fixes in priority order *(most important)* |
 | `02-GEO-AUDIT.md` | Full GEO score and analysis |
 | `03-LLMS-TXT.md` | Ready-to-upload llms.txt file |
 | `04-SCHEMA.md` | Schema markup code ready to implement |
-| `05-LLM-PROMPTS.md` | 40 monitoring prompts for this business |
+| `05-LLM-PROMPTS.md` | 40 monitoring prompts to run for this business |
 | `06-BACKLOG.md` | Prioritized task list |
+| `07-VISIBILITY-RESULTS.md` | Actual LLM answer results by prompt group; generated only when prompts were executed |
+
+Important: generated prompts are not measured visibility. Prompt ideas go in `05-LLM-PROMPTS.md`; real answers from ChatGPT, Claude, Gemini, Perplexity, or another model go in `07-VISIBILITY-RESULTS.md`.
 
 ---
 
@@ -138,36 +142,44 @@ Generates `[domain]-geo-audit/` with:
 | `02-GEO-AUDIT.md` | Full GEO score and analysis |
 | `03-LLMS-TXT.md` | Ready-to-upload llms.txt |
 | `04-SCHEMA.md` | JSON-LD schema code ready to implement |
-| `05-LLM-PROMPTS.md` | 40 monitoring prompts for this business |
+| `05-LLM-PROMPTS.md` | 40 monitoring prompts to run for this business |
 | `06-BACKLOG.md` | Prioritized task list |
+| `07-VISIBILITY-RESULTS.md` | Actual LLM answer results by prompt group, when prompts were executed |
 
 ---
 
 ## API Setup
 
-Set these in your terminal before running the agent:
+Claude Code is the required runtime for full audits and automated monitoring.
+
+Use `.env.example` as a blank setup template. Fill in only the keys you want to use:
 
 ```bash
-export SERPER_API_KEY=your_key_here      # recommended
-export GEMINI_API_KEY=your_key_here      # optional
-export GROQ_API_KEY=your_key_here        # optional
-export OPENAI_API_KEY=your_key_here      # optional
-export ANTHROPIC_API_KEY=your_key_here   # optional
+SERPER_API_KEY=
+GEMINI_API_KEY=
+GOOGLE_API_KEY=
+GROQ_API_KEY=
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+PERPLEXITY_API_KEY=
 ```
 
 | API | Required | What it enables | Cost | Link |
 |---|---|---|---|---|
-| **Serper** | Recommended | Competitor research, find what's ranking | 2,500 free searches/month — no credit card required. Most generous free tier of any SERP API. Effectively free for most audit use cases | [serper.dev](https://serper.dev) |
-| **Gemini API** | Optional | Run LLM visibility prompts in Gemini | ✅ Free with limits (15 req/min) | [aistudio.google.com](https://aistudio.google.com) |
-| **Groq API** | Optional | Run LLM visibility prompts (fast, free) | ✅ Free with generous limits | [console.groq.com](https://console.groq.com) |
+| **Serper** | Recommended | Search evidence and competitor research. Does not run LLM prompts. | 2,500 free searches/month — no credit card required | [serper.dev](https://serper.dev) |
+| **Gemini API** | Recommended for monitoring | Run LLM visibility prompts in Gemini | Free with limits | [aistudio.google.com](https://aistudio.google.com) |
+| **Groq API** | Recommended for monitoring | Run LLM visibility prompts with fast, low-cost/open models | Free with generous limits | [console.groq.com](https://console.groq.com) |
 | **OpenAI API** | Optional | Run LLM visibility prompts in ChatGPT | 💰 Paid — see note below | [platform.openai.com](https://platform.openai.com) |
 | **Anthropic API** | Optional | Run LLM visibility prompts in Claude | 💰 Paid — see note below | [console.anthropic.com](https://console.anthropic.com) |
+| **Perplexity API** | Optional | Run answer-engine style visibility prompts | Paid | [docs.perplexity.ai](https://docs.perplexity.ai) |
 | **PageSpeed API** | Not needed | Core Web Vitals (automatic) | ✅ Free, no key needed | [developers.google.com/speed](https://developers.google.com/speed) |
 
 
 > **Note on OpenAI and Anthropic cost:** For LLM visibility monitoring, the actual cost is usually negligible — under $0.01/month for the starter run using GPT-4o mini (OpenAI) or under $0.02/month using Claude Haiku (Anthropic). These APIs are only needed if you specifically want to track how your brand appears in ChatGPT or Claude responses. For most teams, Gemini and Groq (both free) cover the same use case.
 
-**Without Serper:** The agent still runs full audits using `curl` and `WebFetch`. You only lose the real-time competitor research feature.
+**Without Serper:** The agent still runs technical GEO audits using `curl` and `WebFetch`. You only lose search-backed competitor research.
+
+**Without an LLM provider key:** The agent must not claim that LLM prompts were run. It should generate `05-LLM-PROMPTS.md` and create `07-VISIBILITY-RESULTS.md` with status `Not run — no LLM provider configured`.
 
 ---
 
@@ -179,15 +191,16 @@ export ANTHROPIC_API_KEY=your_key_here   # optional
 | Pre-flight checks | ✅ Full |
 | GEO audit report | ✅ |
 | llms.txt creation | ✅ |
-| Schema markup generation | ✅ (code only) | ✅ (implements directly) |
-| LLM visibility prompts | ✅ | ✅ |
-| Fix guide | ✅ (instructions) | ✅ (can implement) |
-| SPA detection | ❌ | ✅ |
-| robots.txt curl checks | ❌ | ✅ |
-| Disallowed routes check | ❌ | ✅ |
-| Direct file editing | ❌ | ✅ |
-| Serper integration | ❌ | ✅ |
-| API key integrations | ❌ | ✅ |
+| Schema markup generation | ✅ |
+| LLM visibility prompts | ✅ |
+| LLM visibility results with provider keys | ✅ |
+| Fix guide | ✅ |
+| SPA detection | ✅ |
+| robots.txt curl checks | ✅ |
+| Disallowed routes check | ✅ |
+| Direct file editing | ✅ |
+| Serper integration | ✅ |
+| API key integrations | ✅ |
 
 ---
 
@@ -214,5 +227,5 @@ The prompt library is grouped into phases. A complete audit can use all 40 promp
 |---|---|
 | `quick-check` | Pre-flight checks only |
 | `monitor` | Measurement `10-17` + Extraction `20-25` + Validation `90` |
-| `full-audit` | Discovery `01-05` + Measurement `10-17` + Extraction `20-25` + Validation `90` + Interpretation `30-34` + Audit `40-48` + Action `50-53` |
+| `full-audit` | Discovery `01-05` + Measurement `10-17` + Extraction `20-25` + Validation `90` + Interpretation `30-34` + Audit `40-48` + Action `50-53` + Learning `60-61` |
 | `refresh` | Interpretation `30-34` + selected Audit `40-48` + Action `50-53` + Learning `60-61` |

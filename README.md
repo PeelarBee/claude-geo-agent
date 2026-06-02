@@ -34,27 +34,34 @@ chmod +x install.sh
 
 Then restart Claude Code.
 
-## Required API Keys
+## API Setup
 
 Set these in your environment or Claude Code settings before running the agent.
 
 | API | Required | What it's used for | Cost | Link |
 |---|---|---|---|---|
-| **Serper** | Recommended | Competitor research, find what's ranking | 2,500 free searches/month — no credit card required. Most generous free tier of any SERP API. Effectively free for most audit use cases | [serper.dev](https://serper.dev) |
-| **Gemini API** | Optional | Run LLM visibility prompts in Gemini | ✅ Free with limits (15 req/min) | [aistudio.google.com](https://aistudio.google.com) |
-| **Groq API** | Optional | Run LLM visibility prompts (fast, free) | ✅ Free with generous limits | [console.groq.com](https://console.groq.com) |
-| **OpenAI API** | Optional | Run LLM visibility prompts in ChatGPT | 💰 Paid (~$0.002/1K tokens) | [platform.openai.com](https://platform.openai.com) |
-| **Anthropic API** | Optional | Run LLM visibility prompts in Claude | 💰 Paid (Haiku is cheapest) | [console.anthropic.com](https://console.anthropic.com) |
-| **PageSpeed API** | Not needed | Core Web Vitals (used automatically) | ✅ Free, no key required | [developers.google.com/speed](https://developers.google.com/speed) |
+| **Serper** | Recommended | Search evidence and competitor research. Does not run LLM prompts. | 2,500 free searches/month — no credit card required | [serper.dev](https://serper.dev) |
+| **Gemini API** | Recommended for monitoring | Run LLM visibility prompts in Gemini | Free with limits | [aistudio.google.com](https://aistudio.google.com) |
+| **Groq API** | Recommended for monitoring | Run LLM visibility prompts with fast, low-cost/open models | Free with generous limits | [console.groq.com](https://console.groq.com) |
+| **OpenAI API** | Optional | Run LLM visibility prompts in ChatGPT-style models | Paid | [platform.openai.com](https://platform.openai.com) |
+| **Anthropic API** | Optional | Run LLM visibility prompts in Claude | Paid | [console.anthropic.com](https://console.anthropic.com) |
+| **Perplexity API** | Optional | Run answer-engine style visibility prompts | Paid | [docs.perplexity.ai](https://docs.perplexity.ai) |
+| **PageSpeed API** | Not needed | Core Web Vitals (used automatically) | Free, no key required | [developers.google.com/speed](https://developers.google.com/speed) |
 
-**Note:** The agent runs pre-flight checks and GEO audits using `curl` and `WebFetch` — no API key required for the core audit. API keys are only needed for competitor research (Serper) and LLM visibility monitoring (AI provider APIs).
+**Important:** Serper is a search API, not an LLM provider. If only `SERPER_API_KEY` is configured, the agent can do competitor/search research but it must not claim that ChatGPT, Claude, Gemini, Groq, or Perplexity prompts were run.
 
-### Setting up Serper in Claude Code
+For automatic LLM visibility results, configure at least one LLM provider key. Without an LLM provider key, the agent should still generate `05-LLM-PROMPTS.md`, but `07-VISIBILITY-RESULTS.md` must say `Not run — no LLM provider configured`.
 
-Add to your `~/.claude.json` under MCP servers, or set the environment variable:
+Use `.env.example` as a blank template:
 
 ```bash
-export SERPER_API_KEY=your_key_here
+SERPER_API_KEY=
+GEMINI_API_KEY=
+GOOGLE_API_KEY=
+GROQ_API_KEY=
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+PERPLEXITY_API_KEY=
 ```
 
 ## Output Files
@@ -63,13 +70,17 @@ The agent generates a folder named `[domain]-geo-audit/` in your current directo
 
 | File | Contents |
 |---|---|
+| `00-START-HERE.md` | Plain-English summary: what happened, what matters, what to do first |
 | `00-PREFLIGHT.md` | Initial site health check — SPA detection, robots.txt, llms.txt status |
 | `01-FIX-GUIDE.md` | Step-by-step fixes in priority order (most important file) |
 | `02-GEO-AUDIT.md` | Full GEO score with citability, crawler access, brand mentions, schema |
 | `03-LLMS-TXT.md` | Ready-to-upload llms.txt file |
 | `04-SCHEMA.md` | Schema markup JSON-LD code ready to implement |
-| `05-LLM-PROMPTS.md` | LLM visibility monitoring prompts instanced for your business |
+| `05-LLM-PROMPTS.md` | Prompts to run in LLMs; this is not the measurement result |
 | `06-BACKLOG.md` | Full task list prioritized by impact |
+| `07-VISIBILITY-RESULTS.md` | Actual LLM answer results by prompt group; generated only when prompts were executed |
+
+Important: `05-LLM-PROMPTS.md` is the test plan. `07-VISIBILITY-RESULTS.md` is the measured result. If no LLM provider API keys are configured, the agent must say that results were not collected.
 
 ## Objectives
 
@@ -96,7 +107,7 @@ The 40 prompts are grouped into phases, so the agent can run the right level of 
 |---|---|
 | `quick-check` | Pre-flight only |
 | `monitor` | Measurement `10-17` + Extraction `20-25` + Validation `90` |
-| `full-audit` | Discovery `01-05` + Measurement `10-17` + Extraction `20-25` + Validation `90` + Interpretation `30-34` + Audit `40-48` + Action `50-53` |
+| `full-audit` | Discovery `01-05` + Measurement `10-17` + Extraction `20-25` + Validation `90` + Interpretation `30-34` + Audit `40-48` + Action `50-53` + Learning `60-61` |
 | `refresh` | Interpretation `30-34` + selected Audit `40-48` + Action `50-53` + Learning `60-61` |
 
 ## Requirements

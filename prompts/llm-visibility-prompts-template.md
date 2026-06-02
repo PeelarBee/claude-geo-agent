@@ -23,8 +23,8 @@ outcome:      [resultado que el cliente obtiene]
 alt_bad:      [alternativa que el cliente quiere evitar]
 job:          [job to be done principal]
 locale:       [en-US | es-AR | pt-BR | etc.]
-city:         [ciudad principal si aplica]
-region:       [región principal si aplica]
+city:         [ciudad principal si aplica; si no aplica, usar geography]
+region:       [región principal si aplica; si no aplica, usar geography]
 ```
 
 ---
