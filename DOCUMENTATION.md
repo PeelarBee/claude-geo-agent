@@ -130,9 +130,11 @@ export ANTHROPIC_API_KEY=your_key_here   # optional
 | **Serper** | Recommended | Competitor research, find what's ranking | 2,500 free searches/month — no credit card required. Most generous free tier of any SERP API. Effectively free for most audit use cases | [serper.dev](https://serper.dev) |
 | **Gemini API** | Optional | Run LLM visibility prompts in Gemini | ✅ Free with limits (15 req/min) | [aistudio.google.com](https://aistudio.google.com) |
 | **Groq API** | Optional | Run LLM visibility prompts (fast, free) | ✅ Free with generous limits | [console.groq.com](https://console.groq.com) |
-| **OpenAI API** | Optional | Run LLM visibility prompts in ChatGPT | 💰 Paid (~$0.002/1K tokens) | [platform.openai.com](https://platform.openai.com) |
-| **Anthropic API** | Optional | Run LLM visibility prompts in Claude | 💰 Paid (Haiku is cheapest) | [console.anthropic.com](https://console.anthropic.com) |
+| **OpenAI API** | Optional | Run LLM visibility prompts in ChatGPT | 💰 Paid — see note below | [platform.openai.com](https://platform.openai.com) |
+| **Anthropic API** | Optional | Run LLM visibility prompts in Claude | 💰 Paid — see note below | [console.anthropic.com](https://console.anthropic.com) |
 | **PageSpeed API** | Not needed | Core Web Vitals (automatic) | ✅ Free, no key needed | [developers.google.com/speed](https://developers.google.com/speed) |
+
+> **Note on OpenAI and Anthropic cost:** For LLM visibility monitoring (running the 8 MVP prompts monthly), the actual cost is negligible — under $0.01/month using GPT-4o mini (OpenAI) or under $0.02/month using Claude Haiku (Anthropic). These APIs are only needed if you specifically want to track how your brand appears in ChatGPT or Claude responses. For most teams, Gemini and Groq (both free) cover the same use case.
 
 **Without Serper:** The agent still runs full audits using `curl` and `WebFetch`. You only lose the real-time competitor research feature.
 
