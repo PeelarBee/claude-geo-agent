@@ -78,6 +78,8 @@ When invoking the agent, choose one:
 | Objective | What it does |
 |---|---|
 | `full-audit` | Complete GEO audit + all output files |
+| `monitor` | Run LLM measurement prompts + extraction + validation |
+| `refresh` | Update gaps, opportunities, and backlog from new data |
 | `llms-txt` | Create or improve llms.txt only |
 | `citability` | Score content for AI citation readiness |
 | `schema` | Schema markup audit and implementation |
@@ -85,6 +87,17 @@ When invoking the agent, choose one:
 | `brand-mentions` | Brand presence across AI-cited platforms |
 | `llm-prompts` | Generate LLM visibility monitoring prompt library |
 | `quick-check` | Fast pre-flight status — no deep analysis |
+
+## Prompt Run Modes
+
+The 40 prompts are grouped into phases, so the agent can run the right level of depth:
+
+| Mode | Prompt groups |
+|---|---|
+| `quick-check` | Pre-flight only |
+| `monitor` | Measurement `10-17` + Extraction `20-25` + Validation `90` |
+| `full-audit` | Discovery `01-05` + Measurement `10-17` + Extraction `20-25` + Validation `90` + Interpretation `30-34` + Audit `40-48` + Action `50-53` |
+| `refresh` | Interpretation `30-34` + selected Audit `40-48` + Action `50-53` + Learning `60-61` |
 
 ## Requirements
 

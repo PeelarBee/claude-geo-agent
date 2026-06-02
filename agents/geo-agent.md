@@ -48,6 +48,8 @@ Ask only for the URL and objective. Then fetch the site automatically and extrac
    [ ] brand-mentions — Check brand presence in AI-cited platforms
    [ ] llm-prompts    — Generate LLM visibility monitoring prompts
    [ ] quick-check    — Fast status of all GEO signals (no deep analysis)
+   [ ] monitor        — Measure LLM visibility + extract structured results
+   [ ] refresh        — Update gaps, opportunities, and backlog from new data
 ```
 
 ### Auto-detect business context
@@ -100,6 +102,93 @@ Objective:   [value]
 
 ---
 
+## Run Modes and Prompt Phases
+
+The 40-prompt library is not a flat checklist. Treat it as a phased audit system. Each objective runs only the phases needed for that job.
+
+### Mode 1 — `quick-check`
+
+Purpose: fast diagnostic for a new site.
+
+Run:
+1. Pre-flight checks only
+2. No LLM measurement prompts
+3. No deep content audit unless a critical issue is found
+
+Outputs:
+- `00-PREFLIGHT.md`
+- `01-FIX-GUIDE.md` with only urgent fixes and quick wins
+
+### Mode 2 — `monitor`
+
+Purpose: measure how the brand appears in LLM answers over time.
+
+Run:
+1. Measurement prompts: `10-17`
+2. Extraction prompts after each response: `20-25`
+3. Validation prompt after each extraction: `90`
+4. Optional weekly interpretation: `30`
+
+Outputs:
+- `05-LLM-PROMPTS.md`
+- structured visibility results ready for a sheet, database, or report
+- short monitoring summary with brand mentions, competitor mentions, sentiment, citations, and visibility gaps
+
+### Mode 3 — `full-audit`
+
+Purpose: complete GEO audit and client-ready action plan.
+
+Run phases in this order:
+1. Pre-flight checks
+2. Technical readiness: crawler access, llms.txt, schema, SPA status
+3. Discovery prompts: `01-05`
+4. Measurement prompts: `10-17`
+5. Extraction prompts: `20-25`
+6. Validation prompt: `90`
+7. Interpretation prompts: `30-34`
+8. Site audit prompts: `40-48`
+9. Action prompts: `50-53`
+10. Learning prompts: `60-61` when historical or prior-run data exists
+
+Outputs:
+- `00-PREFLIGHT.md`
+- `01-FIX-GUIDE.md`
+- `02-GEO-AUDIT.md`
+- `03-LLMS-TXT.md`
+- `04-SCHEMA.md`
+- `05-LLM-PROMPTS.md`
+- `06-BACKLOG.md`
+
+### Mode 4 — `refresh`
+
+Purpose: update an existing audit after new content, new competitors, or new LLM results.
+
+Run:
+1. Re-run only changed pre-flight checks if the site changed
+2. Interpretation prompts: `30-34`
+3. Selected site audit prompts for changed pages: `40-48`
+4. Action prompts: `50-53`
+5. Learning prompts: `60-61`
+
+Outputs:
+- updated gap analysis
+- updated action plan
+- updated backlog
+- new prompts to add to monitoring
+
+For single-purpose objectives, run the relevant narrow phase:
+
+| Objective | Required phases |
+|---|---|
+| `llms-txt` | Pre-flight + llms.txt creation |
+| `citability` | Site audit prompts `40-48`, especially `40`, `41`, `48` |
+| `schema` | Pre-flight schema checks + prompt `45` |
+| `crawlers` | Pre-flight crawler checks only |
+| `brand-mentions` | Brand presence checks + extraction if LLM responses are available |
+| `llm-prompts` | Instantiate `prompts/llm-visibility-prompts-template.md` into `05-LLM-PROMPTS.md` |
+
+---
+
 ## Step 1: Create Output Folder
 
 Create a folder in the current working directory:
@@ -117,8 +206,8 @@ Files to generate:
 | `02-GEO-AUDIT.md` | full-audit |
 | `03-LLMS-TXT.md` | full-audit, llms-txt |
 | `04-SCHEMA.md` | full-audit, schema |
-| `05-LLM-PROMPTS.md` | full-audit, llm-prompts |
-| `06-BACKLOG.md` | full-audit |
+| `05-LLM-PROMPTS.md` | full-audit, monitor, llm-prompts |
+| `06-BACKLOG.md` | full-audit, refresh |
 
 ---
 
@@ -245,15 +334,18 @@ Date: [Date]
 
 ### `full-audit` — Complete GEO Audit
 
-Run in this order:
-1. Pre-flight (Step 2)
-2. Crawler access deep check
-3. llms.txt — audit existing or create from scratch
-4. Schema — validate and fix
-5. Citability — score top 3-5 pages
-6. Brand mentions — check across AI-cited platforms
-7. LLM visibility prompts — generate instanced library
-8. Generate all output files
+Run as a phased audit, not as one flat list:
+1. Pre-flight checks (Step 2)
+2. Technical readiness: crawler access, llms.txt, schema, SPA status
+3. Discovery prompts: `01-05`
+4. Measurement prompts: `10-17`
+5. Extraction prompts: `20-25`
+6. Validation prompt: `90`
+7. Interpretation prompts: `30-34`
+8. Site audit prompts: `40-48`
+9. Action prompts: `50-53`
+10. Learning prompts: `60-61` when historical data exists
+11. Generate all output files
 
 ---
 
@@ -363,7 +455,7 @@ Score: Wikipedia (30pts) + Reddit (20pts) + YouTube (15pts) + LinkedIn (10pts) +
 
 ### `llm-prompts` → `05-LLM-PROMPTS.md`
 
-Generate a fully instanced LLM visibility monitoring prompt library. Replace ALL `{{variables}}` with actual business values from the CONFIG.
+Instantiate `prompts/llm-visibility-prompts-template.md` into `05-LLM-PROMPTS.md`. Replace ALL `{{variables}}` with actual business values from the CONFIG. Do not leave unresolved variables.
 
 **8 modules:**
 

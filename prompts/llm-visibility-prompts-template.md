@@ -1,7 +1,7 @@
-# AI Discoverability Prompt Library — Template Genérico v2
+# AI Discoverability Prompt Library — Template Generico v2
 > Versión reutilizable para cualquier cliente. Reemplazar CONFIG antes de usar.
 > Para versión instanciada: ver prompts_marketingsprint_v2.md
-> Actualizado: 2026-05-07 | 42 prompts en 8 módulos
+> Actualizado: 2026-05-07 | 40 prompts en 8 módulos
 
 ---
 
@@ -15,6 +15,9 @@ services:     [lista de servicios o productos principales]
 icp:          [perfil de cliente ideal: industria, tamaño, rol]
 geography:    [mercados objetivo]
 competitors:  [Competidor 1, Competidor 2, Competidor 3]
+competitor_1: [Competidor principal]
+competitor_2: [Segundo competidor]
+competitor_3: [Tercer competidor]
 problem:      [problema principal que resuelve la marca]
 outcome:      [resultado que el cliente obtiene]
 alt_bad:      [alternativa que el cliente quiere evitar]
@@ -225,6 +228,7 @@ Return valid JSON only. No explanation, no markdown:
 ## MÓDULO 2 — MEASUREMENT
 > Prompts para correr en LLMs y medir visibilidad real.
 > Instanciar variables desde CONFIG antes de usar.
+> Regla de generalidad: no asumir industria, etapa de empresa, modelo de compra, tipo de cliente, canal, geografia o alternativa especifica salvo que aparezca explicitamente en CONFIG.
 
 ### `10_Measure_Branded_Visibility`
 **Objetivo:** Medir presencia directa de la marca en prompts branded
@@ -244,7 +248,7 @@ How much does {{brand}} cost?
 What is {{domain}}?
 Who runs {{brand}}?
 Is {{brand}} a good option for {{icp}}?
-What kind of companies use {{brand}}?
+What kind of customers use {{brand}}?
 How is {{brand}} different from {{category}} alternatives?
 ```
 
@@ -256,19 +260,19 @@ How is {{brand}} different from {{category}} alternatives?
 
 ```
 What are the best {{category}} providers for {{icp}}?
-Top companies offering {{services}} for {{icp}}
+Top options offering {{services}} for {{icp}}
 Best solution for {{problem}} for {{icp}}
-What companies help with {{job}}?
+Who helps with {{job}}?
 Who are the leading providers in {{category}}?
 Best {{category}} for {{icp}}
-Who offers outsourced {{category}} services?
-Best {{services}} for startups
-Top {{category}} consultants for B2B companies
-Who provides senior {{category}} on a contract basis?
-Best interim {{category}} services for tech companies
+Which {{category}} options are best for {{icp}}?
+Best {{services}} for {{icp}}
+Top {{category}} providers for {{icp}}
+Who provides specialized {{category}} support for {{icp}}?
+Best {{category}} options for customers who need {{outcome}} quickly
 Who helps {{icp}} with {{job}}?
-Best options for part-time {{category}} for {{icp}}
-Who should I hire for {{category}} if I need {{outcome}}?
+Best flexible {{category}} options for {{icp}}
+Which {{category}} option should I choose if I need {{outcome}}?
 ```
 
 ---
@@ -284,13 +288,13 @@ Who can help with {{problem}}?
 What should I do if I need {{outcome}}?
 What are my options for {{problem}} if I don't want {{alt_bad}}?
 How do I get {{outcome}} without {{alt_bad}}?
-What's the best way to handle {{job}} when my team has no expert?
-Who can manage {{job}} on a project basis?
-How do I achieve {{outcome}} without a full-time hire?
+What's the best way to handle {{job}} without the right internal expertise?
+Who can help with {{job}} for a specific project or need?
+How do I achieve {{outcome}} without relying on {{alt_bad}}?
 I need {{outcome}} but I can't afford {{alt_bad}}. What should I do?
-What happens if a company skips {{category}} early on?
+What happens if someone ignores {{category}} early on?
 What's the difference between {{category}} and {{alt_bad}}?
-How do I start {{job}} if I have no team?
+How do I start {{job}} with limited internal resources?
 What does {{icp}} need for {{job}}?
 ```
 
@@ -308,12 +312,12 @@ Which is better: {{brand}} or {{competitor_1}}?
 Which is better: {{brand}} or {{competitor_2}}?
 Compare {{brand}} and {{competitor_1}} for {{icp}}
 What is the difference between {{brand}} and {{competitor_1}}?
-{{brand}} vs hiring a full-time {{category}}
-{{brand}} vs a traditional agency
+{{brand}} vs {{alt_bad}}
+{{brand}} vs doing {{job}} internally
 Is {{brand}} better than {{competitor_3}}?
 {{competitor_1}} vs {{competitor_2}} vs {{brand}}: which is best for {{icp}}?
 What {{category}} service is best for {{icp}}?
-How does {{brand}} compare to traditional consultants?
+How does {{brand}} compare to other {{category}} options?
 What are the top alternatives to {{brand}}?
 ```
 
@@ -324,18 +328,18 @@ What are the top alternatives to {{brand}}?
 **Frecuencia:** Semanal
 
 ```
-Best {{category}} service to hire now
-Who should I hire for {{services}}?
+Best {{category}} option to choose now
+Who should I choose for {{services}}?
 Best affordable {{category}} for {{icp}}
-What is the best company for {{job}}?
-Hire a {{category}} for {{icp}}
-Who can run {{job}} on a short engagement?
-Best {{category}} consultant for B2B companies
-How to hire a {{category}} for a startup
+What is the best option for {{job}}?
+Find a {{category}} provider for {{icp}}
+Who can help with {{job}} quickly?
+Best {{category}} provider for {{icp}}
+How to choose a {{category}} solution for {{icp}}
 Who offers the fastest path to {{outcome}}?
-Best senior {{category}} consultant available now
+Best {{category}} option available now
 What's the fastest way to get {{outcome}} in place?
-Best {{services}} to hire this year
+Best {{services}} options this year
 ```
 
 ---
@@ -347,13 +351,13 @@ Best {{services}} to hire this year
 ```
 Best {{category}} services in {{geography}}
 Who offers {{category}} in {{city}}?
-Remote {{category}} services for {{geography}} companies
-Best {{services}} for {{geography}} startups
-Top {{category}} for remote-first companies
-{{category}} for companies in {{geography}}
-Who helps {{geography}} companies with {{job}}?
-Best {{category}} for companies expanding from {{geography}} to the US
-{{category}} consultant for remote teams
+Remote {{category}} options for customers in {{geography}}
+Best {{services}} for {{icp}} in {{geography}}
+Top {{category}} for {{icp}} in {{geography}}
+{{category}} for customers in {{geography}}
+Who helps customers in {{geography}} with {{job}}?
+Best {{category}} for customers expanding from {{geography}} to new markets
+{{category}} provider for distributed teams
 Who provides {{category}} services globally?
 ```
 
@@ -366,16 +370,16 @@ Who provides {{category}} services globally?
 ```
 What is {{category}}?
 How does {{category}} work?
-Why would a company need {{category}}?
+Why would someone need {{category}}?
 What should I know before choosing {{category}}?
-What are common mistakes when hiring {{category}}?
+What are common mistakes when choosing {{category}}?
 What does a {{category}} actually do day to day?
 How much does {{category}} cost?
-When should a company hire {{category}} vs a full-time hire?
+When should someone choose {{category}} instead of {{alt_bad}}?
 What is the difference between {{category}} and a {{alt_bad}}?
 How long does it take to achieve {{outcome}}?
-How do you measure the success of a {{category}} engagement?
-What should I ask before hiring {{category}}?
+How do you measure the success of {{category}}?
+What should I ask before choosing {{category}}?
 ```
 
 ---
@@ -724,7 +728,7 @@ the brand is well-defined as an entity across AI systems.
 
 Check for signs of weak entity definition:
 1. Brand described inconsistently across responses
-2. Brand confused with similar companies
+2. Brand confused with similar brands, entities, or organizations
 3. Category wrongly attributed
 4. ICP described incorrectly or too vaguely
 5. Key services missing from AI descriptions
@@ -1391,5 +1395,5 @@ Return ONLY valid JSON. No explanation, no markdown:
 | 90 | Validate_Output | Validation | Cada run |
 
 ---
-*Total: 40 prompts | MVP mínimo: 10, 11, 13, 20, 30, 41, 50, 90 (8 prompts)*
+*Total: 40 prompts | Corrida inicial sugerida: 10, 11, 13, 20, 30, 41, 50, 90 (8 prompts)*
 *Para instanciar: copiar este archivo → prompts_[cliente]_v2.md → completar CONFIG → reemplazar {{variables}} en módulo 2.*

@@ -42,7 +42,7 @@ A GEO (Generative Engine Optimization) agent that audits and improves how a busi
 | 8 — Validation | 1 | Validate JSON output before logging results | Every run |
 | **Total** | **40** | | |
 
-**MVP minimum (8 prompts to start):** Branded visibility + Category visibility + Comparison + Mentions extractor + Gap analysis + Service page audit + Content action plan + Output validator
+**Starter run (8 prompts for a fast first pass):** Branded visibility + Category visibility + Comparison + Mentions extractor + Gap analysis + Service page audit + Content action plan + Output validator
 
 See [PROMPTS-INDEX.md](PROMPTS-INDEX.md) for the full breakdown of every prompt.
 
@@ -59,7 +59,7 @@ This is called **GEO: Generative Engine Optimization**. It is to AI search what 
 ## Who It's For
 
 - Marketers and SEO professionals managing AI visibility for clients or their own business
-- Agencies running AI Visibility audits
+- Teams running AI Visibility audits
 - Founders who want to understand why their brand doesn't appear in AI answers
 - Any team that needs to audit and improve LLM visibility across verticals
 
@@ -183,7 +183,7 @@ export ANTHROPIC_API_KEY=your_key_here   # optional
 | **PageSpeed API** | Not needed | Core Web Vitals (automatic) | ✅ Free, no key needed | [developers.google.com/speed](https://developers.google.com/speed) |
 
 
-> **Note on OpenAI and Anthropic cost:** For LLM visibility monitoring (running the 8 MVP prompts monthly), the actual cost is negligible — under $0.01/month using GPT-4o mini (OpenAI) or under $0.02/month using Claude Haiku (Anthropic). These APIs are only needed if you specifically want to track how your brand appears in ChatGPT or Claude responses. For most teams, Gemini and Groq (both free) cover the same use case.
+> **Note on OpenAI and Anthropic cost:** For LLM visibility monitoring, the actual cost is usually negligible — under $0.01/month for the starter run using GPT-4o mini (OpenAI) or under $0.02/month using Claude Haiku (Anthropic). These APIs are only needed if you specifically want to track how your brand appears in ChatGPT or Claude responses. For most teams, Gemini and Groq (both free) cover the same use case.
 
 **Without Serper:** The agent still runs full audits using `curl` and `WebFetch`. You only lose the real-time competitor research feature.
 
@@ -214,6 +214,8 @@ export ANTHROPIC_API_KEY=your_key_here   # optional
 | Command | What it runs |
 |---|---|
 | `full-audit` | Everything — pre-flight + full GEO audit + all output files |
+| `monitor` | LLM measurement prompts + extraction + validation |
+| `refresh` | Update gaps, opportunities, and backlog from new data |
 | `llms-txt` | Create or improve llms.txt only |
 | `citability` | Score content for AI citation readiness |
 | `schema` | Schema markup audit and implementation |
@@ -221,3 +223,14 @@ export ANTHROPIC_API_KEY=your_key_here   # optional
 | `brand-mentions` | Brand presence across AI-cited platforms |
 | `llm-prompts` | Generate LLM visibility monitoring prompt library |
 | `quick-check` | Fast pre-flight status only |
+
+## Prompt Run Modes
+
+The prompt library is grouped into phases. A complete audit can use all 40 prompts, but narrower objectives should run only the relevant groups.
+
+| Mode | Prompt groups |
+|---|---|
+| `quick-check` | Pre-flight checks only |
+| `monitor` | Measurement `10-17` + Extraction `20-25` + Validation `90` |
+| `full-audit` | Discovery `01-05` + Measurement `10-17` + Extraction `20-25` + Validation `90` + Interpretation `30-34` + Audit `40-48` + Action `50-53` |
+| `refresh` | Interpretation `30-34` + selected Audit `40-48` + Action `50-53` + Learning `60-61` |
