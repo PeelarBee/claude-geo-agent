@@ -5,30 +5,31 @@
 A GEO (Generative Engine Optimization) agent that audits and improves how a business appears in AI-generated answers — ChatGPT, Perplexity, Claude, Gemini, and Bing Copilot.
 
 **Step by step:**
-1. Asks 7 questions about the business (name, domain, industry, services, customers, competitors, objective)
-2. Runs 5 pre-flight checks: detects if the site is invisible to AI crawlers (SPA), checks which AI bots are blocked, verifies llms.txt exists and is accurate, checks schema markup, checks HTTPS
-3. Creates or rewrites the `llms.txt` file using only real copy from the site
-4. Scores content pages for AI citability — identifies which passages AI systems will quote and which they won't
-5. Validates and generates schema markup (JSON-LD) ready to implement
-6. Checks brand presence on Wikipedia, Reddit, YouTube, LinkedIn, and industry directories
-7. Generates 40 monitoring prompts fully instanced for the business — ready to run in any LLM
-8. Delivers an output folder with: plain-English summary, pre-flight report, fix guide, GEO audit, llms.txt, schema code, prompt library, visibility results when prompts were executed, and prioritized backlog
+1. Asks only for website URL and objective.
+2. Fetches the site and proposes the business CONFIG for confirmation.
+3. Generates a Run Plan showing what will run, what is blocked, and which APIs are needed.
+4. Runs technical pre-flight checks: SPA visibility, AI crawler access, robots.txt, llms.txt, schema, sitemap, HTTPS.
+5. Creates or rewrites the `llms.txt` file using only real copy from the site.
+6. Scores content pages for AI citability and validates schema markup.
+7. Generates monitoring prompts fully instanced for the business.
+8. Runs LLM visibility prompts only when at least one LLM provider key is configured.
+9. Delivers an output folder with: plain-English summary, run plan, technical GEO audit, fix guide, llms.txt, schema code, prompt library, visibility results when prompts were executed, and prioritized backlog.
 
 **Output folder:**
 
 | File | Contents |
 |---|---|
 | `00-START-HERE.md` | Plain-English summary and next actions |
-| `00-PREFLIGHT.md` | Initial site health check |
-| `01-FIX-GUIDE.md` | Step-by-step fixes in priority order *(most important)* |
-| `02-GEO-AUDIT.md` | Full GEO score and analysis |
-| `03-LLMS-TXT.md` | Ready-to-upload llms.txt file |
-| `04-SCHEMA.md` | Schema markup code ready to implement |
-| `05-LLM-PROMPTS.md` | 40 monitoring prompts to run for this business |
-| `06-BACKLOG.md` | Prioritized task list |
-| `07-VISIBILITY-RESULTS.md` | Actual LLM answer results by prompt group; generated only when prompts were executed |
+| `01-RUN-PLAN.md` | What will run, what is blocked, and which APIs are needed |
+| `02-TECHNICAL-GEO-AUDIT.md` | Technical site health check and GEO score |
+| `03-FIX-GUIDE.md` | Step-by-step fixes in priority order |
+| `04-LLMS-TXT.md` | Ready-to-upload llms.txt file |
+| `05-SCHEMA.md` | Schema markup code ready to implement |
+| `06-LLM-PROMPTS-TO-RUN.md` | 40 monitoring prompts to run for this business |
+| `07-LLM-VISIBILITY-RESULTS.md` | Actual LLM answer results by prompt group, or explicit `not run` status |
+| `08-BACKLOG.md` | Prioritized task list |
 
-Important: generated prompts are not measured visibility. Prompt ideas go in `05-LLM-PROMPTS.md`; real answers from ChatGPT, Claude, Gemini, Perplexity, or another model go in `07-VISIBILITY-RESULTS.md`.
+Important: generated prompts are not measured visibility. Prompt ideas go in `06-LLM-PROMPTS-TO-RUN.md`; real answers from ChatGPT, Claude, Gemini, Perplexity, or another model go in `07-LLM-VISIBILITY-RESULTS.md`.
 
 ---
 
@@ -137,14 +138,15 @@ Generates `[domain]-geo-audit/` with:
 
 | File | Contents |
 |---|---|
-| `00-PREFLIGHT.md` | Pre-flight check results |
-| `01-FIX-GUIDE.md` | Step-by-step fixes in priority order |
-| `02-GEO-AUDIT.md` | Full GEO score and analysis |
-| `03-LLMS-TXT.md` | Ready-to-upload llms.txt |
-| `04-SCHEMA.md` | JSON-LD schema code ready to implement |
-| `05-LLM-PROMPTS.md` | 40 monitoring prompts to run for this business |
-| `06-BACKLOG.md` | Prioritized task list |
-| `07-VISIBILITY-RESULTS.md` | Actual LLM answer results by prompt group, when prompts were executed |
+| `00-START-HERE.md` | Plain-English summary and next actions |
+| `01-RUN-PLAN.md` | What will run, what is blocked, and which APIs are needed |
+| `02-TECHNICAL-GEO-AUDIT.md` | Technical site health check and GEO score |
+| `03-FIX-GUIDE.md` | Step-by-step fixes in priority order |
+| `04-LLMS-TXT.md` | Ready-to-upload llms.txt |
+| `05-SCHEMA.md` | JSON-LD schema code ready to implement |
+| `06-LLM-PROMPTS-TO-RUN.md` | 40 monitoring prompts to run for this business |
+| `07-LLM-VISIBILITY-RESULTS.md` | Actual LLM answer results by prompt group, when prompts were executed |
+| `08-BACKLOG.md` | Prioritized task list |
 
 ---
 
@@ -179,7 +181,7 @@ PERPLEXITY_API_KEY=
 
 **Without Serper:** The agent still runs technical GEO audits using `curl` and `WebFetch`. You only lose search-backed competitor research.
 
-**Without an LLM provider key:** The agent must not claim that LLM prompts were run. It should generate `05-LLM-PROMPTS.md` and create `07-VISIBILITY-RESULTS.md` with status `Not run — no LLM provider configured`.
+**Without an LLM provider key:** The agent must not claim that LLM prompts were run. It should ask for at least one LLM provider key in `01-RUN-PLAN.md`, generate `06-LLM-PROMPTS-TO-RUN.md`, and create `07-LLM-VISIBILITY-RESULTS.md` with status `Not run — no LLM provider configured`.
 
 ---
 

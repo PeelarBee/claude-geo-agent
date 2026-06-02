@@ -11,7 +11,7 @@ A Claude Code agent for GEO (Generative Engine Optimization) — helping any bus
 - Implements schema markup for AI discoverability
 - Checks brand mentions across AI-cited platforms (Wikipedia, Reddit, YouTube, LinkedIn)
 - Generates a full LLM visibility monitoring prompt library for your business
-- Produces a client-ready output folder with fix guide, audit, and backlog
+- Produces a client-ready output folder with run plan, technical audit, fix guide, prompts, visibility results, and backlog
 
 ## How to Use
 
@@ -21,7 +21,7 @@ Invoke in Claude Code:
 @geo-agent
 ```
 
-The agent will ask you a few questions about your business, then run the selected objective and generate an output folder.
+The agent asks for the website URL and objective, auto-detects the business context, asks you to confirm it, then runs the selected objective and generates an output folder.
 
 ## Installation
 
@@ -50,7 +50,7 @@ Set these in your environment or Claude Code settings before running the agent.
 
 **Important:** Serper is a search API, not an LLM provider. If only `SERPER_API_KEY` is configured, the agent can do competitor/search research but it must not claim that ChatGPT, Claude, Gemini, Groq, or Perplexity prompts were run.
 
-For automatic LLM visibility results, configure at least one LLM provider key. Without an LLM provider key, the agent should still generate `05-LLM-PROMPTS.md`, but `07-VISIBILITY-RESULTS.md` must say `Not run — no LLM provider configured`.
+For automatic LLM visibility results, configure at least one LLM provider key. Without an LLM provider key, the agent should still generate `06-LLM-PROMPTS-TO-RUN.md`, but `07-LLM-VISIBILITY-RESULTS.md` must say `Not run — no LLM provider configured`.
 
 Use `.env.example` as a blank template:
 
@@ -71,16 +71,16 @@ The agent generates a folder named `[domain]-geo-audit/` in your current directo
 | File | Contents |
 |---|---|
 | `00-START-HERE.md` | Plain-English summary: what happened, what matters, what to do first |
-| `00-PREFLIGHT.md` | Initial site health check — SPA detection, robots.txt, llms.txt status |
-| `01-FIX-GUIDE.md` | Step-by-step fixes in priority order (most important file) |
-| `02-GEO-AUDIT.md` | Full GEO score with citability, crawler access, brand mentions, schema |
-| `03-LLMS-TXT.md` | Ready-to-upload llms.txt file |
-| `04-SCHEMA.md` | Schema markup JSON-LD code ready to implement |
-| `05-LLM-PROMPTS.md` | Prompts to run in LLMs; this is not the measurement result |
-| `06-BACKLOG.md` | Full task list prioritized by impact |
-| `07-VISIBILITY-RESULTS.md` | Actual LLM answer results by prompt group; generated only when prompts were executed |
+| `01-RUN-PLAN.md` | What will run, what is blocked, and which APIs are needed |
+| `02-TECHNICAL-GEO-AUDIT.md` | Technical site health check — SPA detection, robots.txt, llms.txt status, schema |
+| `03-FIX-GUIDE.md` | Step-by-step fixes in priority order |
+| `04-LLMS-TXT.md` | Ready-to-upload or improved llms.txt file |
+| `05-SCHEMA.md` | Schema markup JSON-LD code ready to implement |
+| `06-LLM-PROMPTS-TO-RUN.md` | Prompts to run in LLMs; this is not the measurement result |
+| `07-LLM-VISIBILITY-RESULTS.md` | Actual LLM answer results by prompt group, or explicit `not run` status |
+| `08-BACKLOG.md` | Full task list prioritized by impact |
 
-Important: `05-LLM-PROMPTS.md` is the test plan. `07-VISIBILITY-RESULTS.md` is the measured result. If no LLM provider API keys are configured, the agent must say that results were not collected.
+Important: `06-LLM-PROMPTS-TO-RUN.md` is the test plan. `07-LLM-VISIBILITY-RESULTS.md` is the measured result. If no LLM provider API keys are configured, the agent must pause at the run plan and ask for keys or continue as a technical-only audit.
 
 ## Objectives
 
