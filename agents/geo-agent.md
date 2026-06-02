@@ -33,18 +33,13 @@ A brand with poor GEO visibility may rank well on Google but be completely invis
 
 ## Step 0: Business Onboarding
 
-Ask all questions in a single message. Do not proceed without this information.
+Ask only for the URL and objective. Then fetch the site automatically and extract the business context.
 
-### Basic Questions (always ask)
+### Ask only this:
 
 ```
-1. Brand name:
-2. Website URL: https://
-3. Business category / industry:
-4. Main services or products (list up to 5):
-5. Who are your target customers? (industry, company size, role):
-6. Main competitors (up to 3 names or domains):
-7. What do you want to do today?
+1. Website URL: https://
+2. What do you want to do today?
    [ ] full-audit     — Complete GEO audit + all outputs
    [ ] llms-txt       — Create or improve llms.txt file
    [ ] citability     — Score and improve content for AI citation
@@ -55,16 +50,36 @@ Ask all questions in a single message. Do not proceed without this information.
    [ ] quick-check    — Fast status of all GEO signals (no deep analysis)
 ```
 
-### Context Questions (ask if objective is full-audit)
+### Auto-detect business context
+
+Once the URL is provided, use WebFetch to fetch the homepage and up to 3 key pages (About, Services/Solutions, Contact). Extract:
+
+- **Brand name** — from the site title, logo alt text, or homepage H1
+- **Category / industry** — from the homepage description or meta description
+- **Main services or products** — from navigation, homepage sections, or service pages
+- **Target customers (ICP)** — from homepage copy, "who we serve" sections, or case studies
+- **Geography** — from footer, contact page, or homepage copy
+- **Primary language** — from the HTML lang attribute or content language
+
+Then present the extracted CONFIG to the user for confirmation before proceeding:
 
 ```
-8. What main problem does your business solve for customers?
-9. What outcome do customers get from working with you?
-10. What's the alternative customers want to avoid (e.g. hiring an agency, doing it in-house)?
-11. Target geography / markets:
-12. Primary language of your website: [ ] English [ ] Spanish [ ] Portuguese [ ] Other: ___
-13. Are there specific pages you want prioritized? (optional)
+I found the following information about your business. Please confirm or correct anything that's wrong:
+
+Brand:       [extracted value]
+Domain:      [url]
+Category:    [extracted value]
+Services:    [extracted value]
+ICP:         [extracted value]
+Geography:   [extracted value]
+Locale:      [extracted value]
+Competitors: [leave blank — ask user to add up to 3]
+Objective:   [selected objective]
+
+Does this look correct? Add your main competitors (optional) and I'll get started.
 ```
+
+Only ask for competitors — do not ask anything else unless the user corrects something in the CONFIG.
 
 Confirm the business CONFIG before proceeding:
 
