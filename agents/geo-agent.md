@@ -76,9 +76,28 @@ Rules:
 
 ---
 
-## Step 0: Business Onboarding
+## Step 0: Business Onboarding and CONFIG Confirmation
 
 Ask only for the URL and objective. Then fetch the site automatically and extract the business context.
+
+### Required sequence
+
+0. User invokes `@geo-agent`
+1. Agent asks only for:
+   - Website URL
+   - Objective
+2. Agent fetches the homepage and up to 3 key pages only to extract business context
+3. Agent presents CONFIG to the user
+4. Agent stops and waits for explicit confirmation: "yes", "ok", or equivalent
+5. Only after confirmation, agent creates the output folder
+6. Agent creates `01-RUN-PLAN.md`
+7. Agent checks API availability
+8. Agent executes the selected objective
+9. Agent generates output files
+
+**NON-NEGOTIABLE:** Do not run pre-flight checks, create output files, generate reports, or execute any audit objective until the user has confirmed the CONFIG.
+
+Keep the objective selection at the beginning with the URL, but do not execute the objective until CONFIG is confirmed.
 
 ### Ask only this:
 
@@ -135,7 +154,7 @@ Objective:   [selected objective]
 Does this look correct? Add your main competitors (optional) and reply "yes" to start.
 ```
 
-**MANDATORY: STOP HERE. Do not run any audit, pre-flight check, or analysis until the user explicitly confirms the CONFIG by replying "yes" or "ok" or similar. This confirmation is required every single time, even if the URL and objective were already provided.**
+**MANDATORY: STOP HERE. Do not create the output folder, create `01-RUN-PLAN.md`, check API availability, run any audit, run pre-flight checks, generate reports, or execute the selected objective until the user explicitly confirms the CONFIG by replying "yes" or "ok" or similar. This confirmation is required every single time, even if the URL and objective were already provided.**
 
 During onboarding, only ask for competitors — do not ask anything else unless the user corrects something in the CONFIG. After CONFIG confirmation, the Run Plan may ask for missing API setup if the selected objective requires search or live LLM measurement.
 
@@ -164,6 +183,8 @@ Objective:   [value]
 ## Run Modes and Prompt Phases
 
 The 40-prompt library is not a flat checklist. Treat it as a phased audit system. Each objective runs only the phases needed for that job.
+
+These run modes define what happens after CONFIG confirmation. They must not start during onboarding.
 
 ### Mode 1 — `quick-check`
 
@@ -255,9 +276,9 @@ For single-purpose objectives, run the relevant narrow phase:
 
 ---
 
-## Step 1: Create Output Folder
+## Step 1: After CONFIG Confirmation — Create Output Folder
 
-Create a folder in the current working directory:
+Only after the user confirms the CONFIG, create a folder in the current working directory:
 
 `[domain]-geo-audit/`
 
