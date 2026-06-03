@@ -837,6 +837,30 @@ If interpretation prompts cannot run because measured results are missing, write
 
 Run these checks for `full-audit`, `quick-check`, `crawlers`, or when the selected objective needs the specific signal. Do not imply every pre-flight check runs for every narrow objective.
 
+### Static File Verification Rule
+
+For plain-text or static files, always use Bash with `curl`. Do not use WebFetch to check whether these files exist or to read their raw contents:
+
+- `llms.txt`
+- `robots.txt`
+- `sitemap.xml`
+- `security.txt`
+- `humans.txt`
+
+Use this pattern:
+
+```bash
+curl -s -w "\n---STATUS:%{http_code}" https://[domain]/llms.txt
+```
+
+Status logic:
+
+- `---STATUS:200` → the file exists. The file content is everything before `---STATUS:`.
+- `---STATUS:404` → the file does not exist.
+- Any other status → report the exact status and label the result according to the evidence rules.
+
+Use WebFetch only for HTML pages where semantic extraction is needed. Never use WebFetch to decide whether `llms.txt`, `robots.txt`, `sitemap.xml`, `security.txt`, or `humans.txt` exists.
+
 ### Check 1 — SPA Detection (CRITICAL)
 
 ```bash
@@ -859,7 +883,13 @@ A Single Page Application (SPA) means the site is built with JavaScript framewor
 
 ### Check 2 — robots.txt + AI Crawler Access
 
-Fetch `https://[domain]/robots.txt`
+Fetch `https://[domain]/robots.txt` with Bash/curl:
+
+```bash
+curl -s -w "\n---STATUS:%{http_code}" https://[domain]/robots.txt
+```
+
+If `---STATUS:200`, parse the content before `---STATUS:`. If `---STATUS:404`, mark `robots.txt` as not available. Do not use WebFetch for this check.
 
 Check for rules blocking these AI crawlers:
 
@@ -890,14 +920,31 @@ A `Disallow:` in robots.txt is a request, not a lock. A disallowed route returni
 
 Flag: `⚠️ DISALLOWED ROUTE LEAKING — [path] returns 200 OK`
 
-### Check 3 — llms.txt Status
+### Check 3 — Sitemap Discovery
+
+Fetch `https://[domain]/sitemap.xml` with Bash/curl:
 
 ```bash
-curl -s -o /dev/null -w "%{http_code}" https://[domain]/llms.txt
+curl -s -w "\n---STATUS:%{http_code}" https://[domain]/sitemap.xml
 ```
 
-- `404` → `❌ NO llms.txt` (critical if SPA)
-- `200` → fetch and evaluate quality
+If `---STATUS:200`, the sitemap exists and the content is everything before `---STATUS:`. If `---STATUS:404`, mark sitemap as not available. Do not use WebFetch for this check.
+
+Also inspect `robots.txt` for `Sitemap:` directives using the raw `robots.txt` content from Check 2.
+
+### Check 4 — llms.txt Status
+
+Fetch `https://[domain]/llms.txt` with Bash/curl:
+
+```bash
+curl -s -w "\n---STATUS:%{http_code}" https://[domain]/llms.txt
+```
+
+- `---STATUS:404` → `❌ NO llms.txt` (critical if SPA)
+- `---STATUS:200` → `✅ llms.txt exists`; evaluate the content before `---STATUS:`
+- Any other status → report the exact status and label the result according to the evidence rules
+
+Do not use WebFetch for this check.
 
 Quality check:
 - [ ] Company description (2+ sentences, not just a tagline)
@@ -905,7 +952,7 @@ Quality check:
 - [ ] Preferred citation format included
 - [ ] Contact or attribution info present
 
-### Check 4 — Schema Markup
+### Check 5 — Schema Markup
 
 ```bash
 curl -s https://[domain] | grep -i 'application/ld+json'
@@ -913,7 +960,7 @@ curl -s https://[domain] | grep -i 'application/ld+json'
 
 Check for: Organization, Service/Product, Article, FAQPage, BreadcrumbList.
 
-### Check 5 — HTTPS and Security Headers
+### Check 6 — HTTPS and Security Headers
 
 ```bash
 curl -s -I https://[domain] | grep -i 'strict-transport\|x-content-type\|x-frame\|referrer-policy'
@@ -1002,11 +1049,14 @@ Output evidence rules:
 
 ### `llms-txt` → `04-LLMS-TXT.md`
 
-**RULE: Fetch every page with WebFetch before writing its description. Never fabricate.**
+**RULE: Use Bash/curl to verify whether `llms.txt` exists. Use WebFetch only for HTML page descriptions. Never fabricate.**
 
-1. Fetch homepage and all key pages via WebFetch
-2. Extract observed factual information from each page
-3. Write llms.txt:
+1. Check `https://[domain]/llms.txt` with `curl -s -w "\n---STATUS:%{http_code}" https://[domain]/llms.txt`
+2. If `---STATUS:200`, the current file exists and its content is everything before `---STATUS:`
+3. If `---STATUS:404`, mark it as missing
+4. Fetch homepage and all key HTML pages via WebFetch
+5. Extract observed factual information from each page
+6. Write llms.txt:
 
 ```markdown
 # [Brand Name]
@@ -1308,7 +1358,7 @@ Types: `technical` / `content` / `schema` / `messaging` / `llms.txt`
 
 ## Non-Negotiable Rules
 
-1. **Never fabricate** — all descriptions in llms.txt and schema must be fetched from the real page via WebFetch. No invented copy.
+1. **Never fabricate** — all descriptions in llms.txt and schema must be based on fetched real pages. Use WebFetch for HTML pages; use Bash/curl for static files such as `llms.txt`, `robots.txt`, `sitemap.xml`, `security.txt`, and `humans.txt`. No invented copy.
 2. **JS-heavy sites first** — if important content depends heavily on client-side rendering, state the crawlability risk prominently and recommend crawlable HTML, valid schema, sitemap discovery, strong public content, and `llms.txt` as a supplemental context file.
 3. **Verify disallowed routes** — curl every Disallow path. Do not just list them.
 4. **English only** — all output files and reports.

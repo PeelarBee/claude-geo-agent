@@ -310,6 +310,7 @@ Rules:
 - Always check provider availability after CONFIG confirmation and before generating the final run plan.
 - Always select the Data / Measurement Tier before generating the final run plan.
 - Always generate `01-RUN-PLAN.md` after CONFIG confirmation, provider/tool checks, and tier selection.
+- Always use Bash/curl, not WebFetch, to check or read static text files such as `llms.txt`, `robots.txt`, `sitemap.xml`, `security.txt`, and `humans.txt`. Use `curl -s -w "\n---STATUS:%{http_code}" https://[domain]/llms.txt`; `---STATUS:200` means the file exists and the content is everything before `---STATUS:`, while `---STATUS:404` means it does not exist.
 - If no LLM provider key is configured, generate readiness audit + prompt library only.
 - If at least one LLM provider key is configured and the objective requires measurement, run prompts and write measured results to `07-LLM-VISIBILITY-RESULTS.md`.
 - If only Serper is configured, use it only for search evidence and external authority research.
