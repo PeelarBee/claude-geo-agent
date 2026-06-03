@@ -5,10 +5,23 @@ The GEO Visibility Score is a diagnostic readiness score, not an absolute predic
 Every score must include:
 
 - Rationale
-- Evidence class: Observed / Measured / Inferred / Not run / Not available / Unknown
+- Evidence class: Observed / Measured / Search Evidence / Inferred / Not run / Not available / Unknown
 - Evidence source
+- Evidence source type
+- Evidence date or run date when applicable
 - Confidence
 - Major gaps affecting the score
+
+## Scoring Anchors
+
+Use these anchors for each component:
+
+- 0-25% of component points = Missing, blocked, or unusable
+- 26-50% = Present but weak, vague, incomplete, or low confidence
+- 51-75% = Mostly present but with meaningful gaps
+- 76-100% = Strong, specific, evidence-backed, and actionable
+
+Do not assign high scores without clear evidence.
 
 ## 1. Crawlability & Access - 15 pts
 
@@ -40,7 +53,7 @@ Criteria:
 - Service/Product schema where relevant
 - FAQ schema where relevant
 - `sameAs` links
-- Valid JSON-LD
+- JSON-LD reviewed or validated against Schema.org requirements. If no validator was run, validation must be labeled `Not run` and the recommendation should be marked as best-effort.
 
 ## 4. AI Citability - 20 pts
 
@@ -66,6 +79,8 @@ Criteria:
 - Reddit/YouTube/Wikipedia presence where applicable
 - External signals align with the brand/category
 
+Do not penalize legitimate businesses for lacking Wikipedia presence when Wikipedia is not applicable, relevant, or likely eligible. Treat Wikipedia as a strong signal only when applicable.
+
 ## 6. Measurement Readiness - 15 pts
 
 Criteria:
@@ -76,6 +91,8 @@ Criteria:
 - Baseline stored
 - Prompt groups documented
 - Refresh cadence defined
+
+Measurement Readiness is not the same as measured LLM visibility performance. It scores whether the business has the prompt library, provider setup, baseline structure, result separation, and refresh cadence needed to measure visibility over time.
 
 ## Score Interpretation
 
@@ -89,7 +106,7 @@ Criteria:
 
 - Do not award Measured LLM visibility credit unless prompts were actually run through a configured LLM provider.
 - If no LLM provider is configured, Measurement Readiness can still receive credit for prompt library, baseline structure, and cadence, but measured-results criteria must be `Not run`.
-- Search results may contribute to External Authority Signals, not LLM visibility measurement.
+- Search Evidence may contribute to External Authority Signals. It must not contribute to Measured LLM visibility unless prompts were actually run through a configured LLM provider.
+- Every Search Evidence or Measured component must include an evidence date or run timestamp. If no date is available, lower confidence.
 - Missing evidence should lower confidence, not be treated as proof of absence unless the source was checked and returned no usable result.
 - Every recommendation tied to a low score must include evidence, confidence, priority, impact, effort, and next action.
-
