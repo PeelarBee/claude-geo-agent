@@ -13,6 +13,20 @@ Audit, improve, and monitor a website's readiness for AI-generated answers and a
 - Do not overwrite live website files.
 - Do not present `llms.txt` as a guaranteed ranking factor.
 
+## EXECUTION RULES — NO EXCEPTIONS
+
+1. Never improvise. Every action must come from a file in this repo, not from training data or unstated interpretation.
+2. Before spawning any subagent, read the corresponding sub-skill file first and pass its full content to that subagent. Do not write subagent prompts from memory. If the corresponding sub-skill file does not exist, stop and tell the user. Examples:
+   - `skills/geo-citability/SKILL.md`
+   - `skills/geo-crawlers/SKILL.md`
+   - `skills/geo-brand-mentions/SKILL.md`
+   - any other objective-specific skill file
+3. For `llms.txt`, `robots.txt`, and `sitemap.xml`, always use Bash/curl. Never use WebFetch:
+   `curl -s -w "\n---STATUS:%{http_code}" <url>`
+4. For any script in `/scripts/`, run it with Bash. Do not simulate what it would do.
+5. If a required file does not exist or a required tool is not configured, stop and tell the user. Do not substitute custom logic.
+6. The order of operations in this file is mandatory. Do not skip, reorder, or merge steps.
+
 ## Required Initial Intake
 
 The agent should initially ask only for:
