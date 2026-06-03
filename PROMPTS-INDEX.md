@@ -16,6 +16,22 @@ Measurement prompts must be run in a fresh model context with no prior brand bri
 
 ---
 
+## Provider Boundary
+
+`SERPER_API_KEY` is search only. It can support search evidence, competitor discovery, external authority checks, brand mentions in search surfaces, and source discovery. It cannot measure ChatGPT, Claude, Gemini, Groq, OpenAI, Perplexity, or Bing Copilot answer visibility.
+
+Measured LLM visibility requires at least one configured LLM provider:
+
+- `GEMINI_API_KEY` or `GOOGLE_API_KEY` for Gemini prompt execution
+- `GROQ_API_KEY` for Groq model prompt execution
+- `OPENAI_API_KEY` for OpenAI prompt execution
+- `ANTHROPIC_API_KEY` for Claude prompt execution
+- `PERPLEXITY_API_KEY` for Perplexity prompt execution
+
+Do not claim ChatGPT UI results if only OpenAI API was used. Say `OpenAI API` or `OpenAI model`. Mark Bing Copilot as `Manual / Not run` unless an actual supported measurement path exists.
+
+---
+
 ## Run Modes
 
 The prompt library is organized as a phased system. Different objectives run different prompt groups.
@@ -159,7 +175,7 @@ Use a workflow tool to run all Module 2 prompts in parallel across multiple LLMs
 - **[Make](https://make.com)** — no-code automation with LLM integrations
 
 With any of these tools you can:
-1. Run all 8 measurement prompt groups across Gemini, ChatGPT, and Perplexity monthly
+1. Run all 8 measurement prompt groups across configured LLM providers monthly
 2. Feed responses through the Module 3 extraction prompts automatically
 3. Receive a compiled report by email
 

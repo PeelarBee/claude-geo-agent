@@ -22,6 +22,19 @@ Examples:
 - Perplexity cited a competitor in a completed monitoring run.
 - Claude did not mention the brand in a completed comparison prompt.
 
+### Search Evidence Source Type
+
+Verified from search APIs or search surfaces, including Serper-backed Google results and search-discovered Reddit, YouTube, LinkedIn, Wikipedia, directory, or third-party source results.
+
+Examples:
+- Serper returned branded search results for the company name.
+- Search found a LinkedIn company page.
+- Search found Reddit or YouTube discussions mentioning the brand.
+
+Search Evidence can support competitor research, external authority checks, source discovery, and brand search presence. It is not Measured LLM visibility.
+
+Use `Observed` as the Evidence Status when the search result or API response was directly verified. Label the Evidence Source or source type as search evidence.
+
 ### Inferred
 
 Reasoned from observed evidence, but not directly proven.
@@ -62,10 +75,13 @@ Examples:
 
 - The agent must not present inferred findings as measured results.
 - The agent must not claim visibility in ChatGPT, Claude, Gemini, Perplexity, Groq, or Bing Copilot unless that provider, API, and run mode were executed.
-- Serper results may support external authority research, competitor research, and search evidence, but they are not LLM visibility measurements.
+- Serper is a search provider only. It may support external authority research, competitor research, search evidence, Reddit/YouTube/LinkedIn/Wikipedia discovery through search, brand search presence, and citation/source discovery, but it is not an LLM provider.
+- Serper cannot support live LLM visibility measurement, ChatGPT visibility, Claude visibility, Gemini visibility, Perplexity visibility, Groq/OpenAI/Anthropic answer measurement, or Bing Copilot visibility.
 - Search result presence must be labeled as search evidence or external authority evidence, not ChatGPT, Claude, Gemini, Perplexity, Groq, or Bing Copilot visibility.
 - Prompt libraries are test plans. They are not evidence that a model mentioned, cited, ranked, or omitted the brand.
 - `llms.txt` may support discovery and readability workflows, but it must not be described as a guaranteed ranking factor or inclusion mechanism.
+- Always distinguish Observed website evidence, Search evidence, Measured LLM responses, Inferred recommendations, and Not run / blocked phases.
+- Never print API key values in generated reports. In API availability tables, use only `Configured` / `Missing`.
 - Every major finding must include Evidence Status, Evidence Source, Confidence, Priority, Impact, Effort, and Recommended Action.
 - Every score must include a rationale and must show which evidence class supports the score.
 - If evidence is weak, incomplete, stale, blocked, or unavailable, the agent must say so plainly.
@@ -81,4 +97,3 @@ Every major finding must include:
 - Impact: High / Medium / Low
 - Effort: High / Medium / Low
 - Recommended Action: specific next step
-

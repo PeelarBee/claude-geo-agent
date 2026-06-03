@@ -76,6 +76,110 @@ Rules:
 
 ---
 
+## API / Provider Gate
+
+After CONFIG confirmation:
+
+1. Create output folder.
+2. Generate `01-RUN-PLAN.md`.
+3. Check provider availability.
+4. Report only `Configured` or `Missing`; never print key values.
+5. Decide what can run based on available providers.
+
+### API categories
+
+Search provider:
+
+| API | Used for |
+|---|---|
+| `SERPER_API_KEY` | Search evidence, competitor research, external authority signals, brand mentions in search surfaces |
+
+Serper can support:
+
+- competitor discovery
+- search-backed external authority checks
+- Reddit/YouTube/LinkedIn/Wikipedia discovery through search
+- brand search presence
+- citation/source discovery
+
+Serper cannot support:
+
+- live LLM visibility measurement
+- ChatGPT visibility
+- Claude visibility
+- Gemini visibility
+- Perplexity visibility
+- Groq/OpenAI/Anthropic answer measurement
+
+LLM providers:
+
+| API | Used for |
+|---|---|
+| `GEMINI_API_KEY` or `GOOGLE_API_KEY` | Gemini prompt execution |
+| `GROQ_API_KEY` | Groq model prompt execution |
+| `OPENAI_API_KEY` | OpenAI prompt execution |
+| `ANTHROPIC_API_KEY` | Claude prompt execution |
+| `PERPLEXITY_API_KEY` | Perplexity prompt execution |
+
+At least one LLM provider key is required to run measurement prompts and create measured LLM visibility results.
+
+### Provider scenarios
+
+Scenario A — No APIs configured:
+
+- Allowed: technical GEO audit, robots.txt check, sitemap check, llms.txt check/generation, schema check/generation, content citability/readiness audit, prompt library generation, fix guide, backlog.
+- Blocked: search-backed competitor/external authority checks, live LLM visibility measurement, extraction prompts based on LLM responses, LLM visibility interpretation.
+- Audit status: `Partial full-audit: technical GEO completed, live LLM visibility not measured.`
+- `07-LLM-VISIBILITY-RESULTS.md` status: `Status: Not run — no LLM provider configured`
+
+Scenario B — Only Serper configured:
+
+- Allowed: technical GEO audit, search-backed competitor research, external authority signals, brand mentions in search surfaces, prompt library generation, fix guide, backlog.
+- Blocked: live LLM visibility measurement, extraction prompts based on LLM responses, LLM visibility interpretation.
+- Audit status: `Partial full-audit: technical GEO + search evidence completed, live LLM visibility not measured.`
+- `07-LLM-VISIBILITY-RESULTS.md` status: `Status: Not run — no LLM provider configured`
+- Required warning anywhere visibility results would otherwise appear: `Serper search evidence was collected, but this is not LLM visibility measurement.`
+
+Scenario C — At least one LLM provider configured:
+
+- Allowed: measurement prompts `10-17`, extraction prompts `20-25`, validation prompt `90`, measured results in `07-LLM-VISIBILITY-RESULTS.md`.
+- Only report results for providers actually configured and executed.
+- If Gemini is configured, report `Gemini`.
+- If OpenAI is configured, report `OpenAI API` or `OpenAI model`, and include the model if known.
+- If Anthropic is configured, report `Claude / Anthropic`, and include the model if known.
+- If Perplexity is configured, report `Perplexity`.
+- If Groq is configured, report `Groq`, and include the model if known.
+- Do not claim ChatGPT UI results if only OpenAI API was used. Say `OpenAI API` or `OpenAI model`.
+- Do not claim Bing Copilot results unless there is an actual supported measurement path. Otherwise mark Bing Copilot as `Manual / Not run`.
+- `07-LLM-VISIBILITY-RESULTS.md` status: `Status: Live LLM results collected`
+
+Scenario D — Multiple LLM providers configured:
+
+- Run the same measurement prompt groups across each configured provider.
+- Separate `07-LLM-VISIBILITY-RESULTS.md` results by provider, model if known, prompt group, prompt text, brand mentioned, competitors mentioned, citations/sources, sentiment/framing, and verdict.
+
+### Non-negotiable provider rules
+
+1. If no LLM provider key is configured, do not run measurement prompts.
+2. If no LLM provider key is configured, do not run extraction prompts `20-25` on fake or placeholder responses.
+3. If no LLM provider key is configured, do not run visibility interpretation as if measured data exists.
+4. If only `SERPER_API_KEY` is configured, use it for search evidence only.
+5. Never treat Serper results as LLM visibility results.
+6. Never claim visibility in a provider unless that provider was actually run.
+7. Always distinguish Observed website evidence, Search evidence, Measured LLM responses, Inferred recommendations, and Not run / blocked phases.
+8. Never print API key values.
+9. In API availability tables, use only `Configured` / `Missing`.
+10. If a provider is missing, list it as missing but do not block the entire audit unless the selected objective is `monitor`.
+
+### Objective-specific behavior
+
+- `quick-check`: Does not require any API keys. Do not run LLM measurement. Do not generate fake visibility results.
+- `llm-prompts`: Does not require LLM provider keys. Generate `06-LLM-PROMPTS-TO-RUN.md`. Do not generate measured results.
+- `monitor`: Requires at least one LLM provider key OR explicit manual-run mode. If no LLM provider key exists, stop and ask whether the user wants to add a provider key or generate prompts for manual execution only.
+- `full-audit`: Runs everything possible. If LLM keys are missing, still complete the technical/readiness audit and prompt library. Generate `07-LLM-VISIBILITY-RESULTS.md` with `Status: Not run — no LLM provider configured`.
+
+---
+
 ## Step 0: Business Onboarding and CONFIG Confirmation
 
 Ask only for the URL and objective. Then fetch the site automatically and extract the business context.
@@ -428,12 +532,28 @@ Before running any objective, generate a run plan. This is the contract for the 
 
 | API | Status | Used for |
 |---|---|---|
-| `SERPER_API_KEY` | Configured / Missing | Search and competitor evidence only |
-| `GEMINI_API_KEY` or `GOOGLE_API_KEY` | Configured / Missing | LLM prompt execution |
-| `GROQ_API_KEY` | Configured / Missing | LLM prompt execution |
-| `OPENAI_API_KEY` | Configured / Missing | LLM prompt execution |
-| `ANTHROPIC_API_KEY` | Configured / Missing | LLM prompt execution |
-| `PERPLEXITY_API_KEY` | Configured / Missing | LLM prompt execution |
+| `SERPER_API_KEY` | Configured / Missing | Search evidence and competitor research only |
+| `GEMINI_API_KEY` / `GOOGLE_API_KEY` | Configured / Missing | Gemini prompt execution |
+| `GROQ_API_KEY` | Configured / Missing | Groq model prompt execution |
+| `OPENAI_API_KEY` | Configured / Missing | OpenAI prompt execution |
+| `ANTHROPIC_API_KEY` | Configured / Missing | Claude prompt execution |
+| `PERPLEXITY_API_KEY` | Configured / Missing | Perplexity prompt execution |
+
+## Measurement Status
+
+- Search evidence: Available / Not available
+- Live LLM visibility measurement: Available / Not available
+- Providers to be measured: [list configured LLM providers]
+- Providers not configured: [list missing LLM providers]
+- Blocked phases: [list]
+
+## Scenario Status
+
+[Say the matching status exactly:]
+- Partial full-audit: technical GEO completed, live LLM visibility not measured.
+- Partial full-audit: technical GEO + search evidence completed, live LLM visibility not measured.
+- Status: Live LLM results collected
+- Status: Manual run required — prompt library generated only
 
 ## Missing Setup
 
@@ -472,6 +592,7 @@ Rules:
 - If LLM keys are missing, still generate `06-LLM-PROMPTS-TO-RUN.md` and `07-LLM-VISIBILITY-RESULTS.md` with status `Not run — no LLM provider configured`.
 - If the user chooses a manual/prompt-only measurement path, generate `07-LLM-VISIBILITY-RESULTS.md` with status `Manual run required — prompt library generated only`.
 - Never ask for actual secret values inside generated files. Generated files must show blank placeholders only.
+- If only `SERPER_API_KEY` is configured, add this warning anywhere visibility results would otherwise appear: `Serper search evidence was collected, but this is not LLM visibility measurement.`
 
 ---
 
@@ -489,13 +610,13 @@ Search provider:
 
 | Provider | Environment variable | What it enables |
 |---|---|---|
-| Serper | `SERPER_API_KEY` | Search evidence and competitor research. Does not run LLM prompts. |
+| Serper | `SERPER_API_KEY` | Search evidence, competitor research, external authority signals, brand mentions in search surfaces. Does not run LLM prompts. |
 
 LLM providers:
 
 | Provider | Environment variable |
 |---|---|
-| OpenAI / ChatGPT | `OPENAI_API_KEY` |
+| OpenAI API / OpenAI model | `OPENAI_API_KEY` |
 | Anthropic / Claude | `ANTHROPIC_API_KEY` |
 | Google Gemini | `GEMINI_API_KEY` or `GOOGLE_API_KEY` |
 | Groq | `GROQ_API_KEY` |
@@ -515,13 +636,19 @@ If Serper is configured but no LLM provider is configured:
 - Say: `Search provider configured; LLM providers missing`.
 - Use Serper only for search-backed competitor research.
 - Do not claim that LLM prompts were run.
+- Add this warning anywhere visibility results would otherwise appear: `Serper search evidence was collected, but this is not LLM visibility measurement.`
 
 If no provider key is available:
 - Do not claim that LLM prompts were run.
 - Generate `06-LLM-PROMPTS-TO-RUN.md`.
 - Generate `07-LLM-VISIBILITY-RESULTS.md` with status `Not run — no LLM provider configured`.
-- Mark the run as `Full-audit readiness completed; live LLM visibility not measured`.
+- Mark the run as `Partial full-audit: technical GEO completed, live LLM visibility not measured.`
 - Put LLM provider setup as a P1 item in `03-FIX-GUIDE.md` and `08-BACKLOG.md`.
+
+If only `SERPER_API_KEY` is configured:
+- Mark the run as `Partial full-audit: technical GEO + search evidence completed, live LLM visibility not measured.`
+- Generate `07-LLM-VISIBILITY-RESULTS.md` with status `Not run — no LLM provider configured`.
+- Do not run measurement prompts, extraction prompts, or LLM visibility interpretation.
 
 If no LLM provider is configured, include this blank setup block in `00-START-HERE.md`, `01-RUN-PLAN.md`, `03-FIX-GUIDE.md`, and `07-LLM-VISIBILITY-RESULTS.md`:
 
@@ -577,30 +704,44 @@ Status: Live LLM results collected / Not run — no LLM provider configured / Ma
 
 | Provider | Status | Notes |
 |---|---|---|
-| ChatGPT | Run / Not configured | |
-| Claude | Run / Not configured | |
-| Gemini | Run / Not configured | |
-| Perplexity | Run / Not configured | |
 | Serper | Configured / Missing | Search only; not an LLM result provider |
+| Gemini | Run / Not configured / Not run | |
+| OpenAI | Run / Not configured / Not run | Use `OpenAI API` or `OpenAI model`; do not claim ChatGPT UI results unless the ChatGPT UI was actually measured |
+| Claude / Anthropic | Run / Not configured / Not run | Include model if known |
+| Perplexity | Run / Not configured / Not run | |
+| Groq | Run / Not configured / Not run | Include model if known |
+| Bing Copilot | Manual / Not run | No automatic provider configured unless explicitly supported |
+
+## Measurement Boundary
+
+Search results, competitor research, and external authority checks are not the same as LLM answer visibility. This file only reports measured LLM visibility when prompts were executed through configured LLM providers.
 
 ## Group Results
 
-| Group | Prompts run | Brand mentions | Competitor mentions | Citation rate | Verdict |
-|---|---:|---:|---:|---:|---|
-| Branded | 0 | 0 | 0 | 0 | Not run |
-| Category | 0 | 0 | 0 | 0 | Not run |
-| Problem-aware | 0 | 0 | 0 | 0 | Not run |
-| Comparison | 0 | 0 | 0 | 0 | Not run |
-| Transactional | 0 | 0 | 0 | 0 | Not run |
-| Local / geo | 0 | 0 | 0 | 0 | Not run |
-| Educational | 0 | 0 | 0 | 0 | Not run |
-| Alternative language | 0 | 0 | 0 | 0 | Not run |
+If no LLM provider is configured, all prompt groups must be marked:
+
+| Group | Prompts run | Verdict |
+|---|---:|---|
+| Branded | 0 | Not run |
+| Category | 0 | Not run |
+| Problem-aware | 0 | Not run |
+| Comparison | 0 | Not run |
+| Transactional | 0 | Not run |
+| Local / geo | 0 | Not run |
+| Educational | 0 | Not run |
+| Alternative language | 0 | Not run |
+
+If LLM providers are configured and executed, separate results by provider:
+
+| Provider | Model | Group | Prompt text | Brand mentioned | Competitors mentioned | Citations/sources | Sentiment/framing | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| [provider] | [model if known] | [group] | [prompt] | Yes / No | [names] | [sources] | [sentiment/framing] | Win / Gap / Risk |
 
 ## Prompt-Level Results
 
-| Group | Prompt | Provider | Brand mentioned? | Competitors mentioned | Sentiment | Citations | Result |
-|---|---|---|---|---|---|---|---|
-| [group] | [prompt] | [provider] | Yes / No | [names] | Positive / Neutral / Negative / Mixed | Yes / No | Win / Gap / Risk |
+| Group | Prompt | Provider | Model | Brand mentioned? | Competitors mentioned | Sentiment | Citations/sources | Result |
+|---|---|---|---|---|---|---|---|---|
+| [group] | [prompt] | [provider] | [model if known] | Yes / No | [names] | Positive / Neutral / Negative / Mixed | [sources] | Win / Gap / Risk |
 
 ## Raw Answer Samples
 

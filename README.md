@@ -40,17 +40,37 @@ Set these in your environment or Claude Code settings before running the agent.
 
 | API | Required | What it's used for | Cost | Link |
 |---|---|---|---|---|
-| **Serper** | Recommended | Search evidence and competitor research. Does not run LLM prompts. | 2,500 free searches/month — no credit card required | [serper.dev](https://serper.dev) |
+| **Serper** | Recommended | Search evidence, competitor research, external authority signals, brand mentions in search surfaces. Does not run LLM prompts. | 2,500 free searches/month — no credit card required | [serper.dev](https://serper.dev) |
 | **Gemini API** | Recommended for monitoring | Run LLM visibility prompts in Gemini | Free with limits | [aistudio.google.com](https://aistudio.google.com) |
 | **Groq API** | Recommended for monitoring | Run LLM visibility prompts with fast, low-cost/open models | Free with generous limits | [console.groq.com](https://console.groq.com) |
-| **OpenAI API** | Optional | Run LLM visibility prompts in ChatGPT-style models | Paid | [platform.openai.com](https://platform.openai.com) |
+| **OpenAI API** | Optional | Run LLM visibility prompts through OpenAI API models | Paid | [platform.openai.com](https://platform.openai.com) |
 | **Anthropic API** | Optional | Run LLM visibility prompts in Claude | Paid | [console.anthropic.com](https://console.anthropic.com) |
 | **Perplexity API** | Optional | Run answer-engine style visibility prompts | Paid | [docs.perplexity.ai](https://docs.perplexity.ai) |
 | **PageSpeed API** | Not needed | Core Web Vitals (used automatically) | Free, no key required | [developers.google.com/speed](https://developers.google.com/speed) |
 
-**Important:** Serper is a search API, not an LLM provider. If only `SERPER_API_KEY` is configured, the agent can do competitor/search research but it must not claim that ChatGPT, Claude, Gemini, Groq, or Perplexity prompts were run.
+**Important:** Serper is a search provider only. It must never be treated as an LLM provider and must never be used to claim ChatGPT, Claude, Gemini, Groq, OpenAI, Perplexity, or Bing Copilot visibility. If only `SERPER_API_KEY` is configured, the agent can collect search evidence, competitor research, external authority signals, and brand mentions in search surfaces, but `07-LLM-VISIBILITY-RESULTS.md` must still say `Not run — no LLM provider configured`.
 
 For automatic LLM visibility results, configure at least one LLM provider key. Without an LLM provider key, the agent should still generate `06-LLM-PROMPTS-TO-RUN.md`, but `07-LLM-VISIBILITY-RESULTS.md` must say `Not run — no LLM provider configured`.
+
+## API Categories
+
+Search provider:
+
+| API | Used for |
+|---|---|
+| `SERPER_API_KEY` | Search evidence, competitor research, external authority signals, brand mentions in search surfaces |
+
+LLM providers:
+
+| API | Used for |
+|---|---|
+| `GEMINI_API_KEY` or `GOOGLE_API_KEY` | Gemini prompt execution |
+| `GROQ_API_KEY` | Groq model prompt execution |
+| `OPENAI_API_KEY` | OpenAI prompt execution |
+| `ANTHROPIC_API_KEY` | Claude prompt execution |
+| `PERPLEXITY_API_KEY` | Perplexity prompt execution |
+
+At least one LLM provider key is required to run measurement prompts and create measured LLM visibility results.
 
 Use `.env.example` as a blank template:
 
@@ -99,7 +119,7 @@ The agent generates a folder named `[domain]-geo-audit/` in your current directo
 | `07-LLM-VISIBILITY-RESULTS.md` | Actual LLM answer results by prompt group, or explicit `not run` status |
 | `08-BACKLOG.md` | Full task list prioritized by impact |
 
-Important: `06-LLM-PROMPTS-TO-RUN.md` is the test plan. `07-LLM-VISIBILITY-RESULTS.md` is the measured result. If no LLM provider API keys are configured, the agent must pause at the run plan and ask for keys or continue as a technical-only audit.
+Important: `06-LLM-PROMPTS-TO-RUN.md` is the test plan. `07-LLM-VISIBILITY-RESULTS.md` is the measured result file only when prompts were executed through configured LLM providers. If no LLM provider API keys are configured, `full-audit` still completes the readiness audit and prompt library, while `monitor` must ask whether to add a provider key or generate prompts for manual execution only.
 
 ## Objectives
 

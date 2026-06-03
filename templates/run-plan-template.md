@@ -12,16 +12,43 @@
 
 [domain]
 
+## API Status
+
+| API | Status | Used for |
+|---|---|---|
+| `SERPER_API_KEY` | Configured / Missing | Search evidence and competitor research only |
+| `GEMINI_API_KEY` / `GOOGLE_API_KEY` | Configured / Missing | Gemini prompt execution |
+| `GROQ_API_KEY` | Configured / Missing | Groq model prompt execution |
+| `OPENAI_API_KEY` | Configured / Missing | OpenAI prompt execution |
+| `ANTHROPIC_API_KEY` | Configured / Missing | Claude prompt execution |
+| `PERPLEXITY_API_KEY` | Configured / Missing | Perplexity prompt execution |
+
+## Measurement Status
+
+- Search evidence: Available / Not available
+- Live LLM visibility measurement: Available / Not available
+- Providers to be measured: [list configured LLM providers]
+- Providers not configured: [list missing LLM providers]
+- Blocked phases: [list]
+
+## Scenario Status
+
+[Say the matching status exactly:]
+- Partial full-audit: technical GEO completed, live LLM visibility not measured.
+- Partial full-audit: technical GEO + search evidence completed, live LLM visibility not measured.
+- Status: Live LLM results collected
+- Status: Manual run required — prompt library generated only
+
 ## APIs/tools available
 
 | API/tool | Status | Used for |
 |---|---|---|
-| Serper | Configured / Missing | Search evidence only |
-| Gemini | Configured / Missing | LLM prompt execution |
-| Groq | Configured / Missing | LLM prompt execution |
-| OpenAI | Configured / Missing | LLM prompt execution |
-| Anthropic | Configured / Missing | LLM prompt execution |
-| Perplexity | Configured / Missing | LLM prompt execution |
+| Serper | Configured / Missing | Search evidence only; not LLM visibility |
+| Gemini | Configured / Missing | Gemini prompt execution |
+| Groq | Configured / Missing | Groq model prompt execution |
+| OpenAI | Configured / Missing | OpenAI prompt execution |
+| Anthropic | Configured / Missing | Claude prompt execution |
+| Perplexity | Configured / Missing | Perplexity prompt execution |
 | WebFetch/curl/local checks | Available / Not available | Technical audit evidence |
 
 ## APIs/tools not configured
@@ -75,4 +102,3 @@
 1. [Action]
 2. [Action]
 3. [Action]
-
