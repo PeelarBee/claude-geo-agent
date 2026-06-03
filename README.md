@@ -44,7 +44,7 @@ Set these in your environment or Claude Code settings before running the agent.
 | **Gemini API** | Recommended for monitoring | Run LLM visibility prompts in Gemini | Free with limits | [aistudio.google.com](https://aistudio.google.com) |
 | **Groq API** | Recommended for monitoring | Run LLM visibility prompts with fast, low-cost/open models | Free with generous limits | [console.groq.com](https://console.groq.com) |
 | **OpenAI API** | Optional | Run LLM visibility prompts through OpenAI API models | Paid | [platform.openai.com](https://platform.openai.com) |
-| **Anthropic API** | Optional | Run LLM visibility prompts in Claude | Paid | [console.anthropic.com](https://console.anthropic.com) |
+| **Anthropic API** | Optional | Run LLM visibility prompts through Claude / Anthropic API models | Paid | [console.anthropic.com](https://console.anthropic.com) |
 | **Perplexity API** | Optional | Run answer-engine style visibility prompts | Paid | [docs.perplexity.ai](https://docs.perplexity.ai) |
 | **PageSpeed API** | Not needed | Core Web Vitals (used automatically) | Free, no key required | [developers.google.com/speed](https://developers.google.com/speed) |
 
@@ -97,7 +97,7 @@ PERPLEXITY_API_KEY=
 These files keep the agent repeatable, evidence-based, and safe for client-facing GEO audits:
 
 - [EVIDENCE-RULES.md](EVIDENCE-RULES.md) - evidence classes and claim rules
-- [SCORING.md](SCORING.md) - GEO Visibility Score framework
+- [SCORING.md](SCORING.md) - GEO Readiness Score framework
 - [OUTPUT-CONTRACT.md](OUTPUT-CONTRACT.md) - required report structure
 - [LIMITATIONS.md](LIMITATIONS.md) - client-safe limitations
 - [EVALS.md](EVALS.md) - practical eval cases for agent behavior

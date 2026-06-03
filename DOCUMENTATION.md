@@ -9,8 +9,8 @@ A GEO (Generative Engine Optimization) agent that audits, improves, and monitors
 2. Fetches the site and proposes the business CONFIG for confirmation.
 3. Generates a Run Plan showing what will run, what is blocked, and which APIs are needed.
 4. Runs technical pre-flight checks: SPA visibility, AI crawler access, robots.txt, llms.txt, schema, sitemap, HTTPS.
-5. Creates or rewrites the `llms.txt` file using only real copy from the site.
-6. Scores content pages for AI citability and validates schema markup.
+5. Creates or rewrites the `llms.txt` file using factual summaries based only on fetched page content.
+6. Scores content pages for AI citation readiness and reviews schema markup.
 7. Generates monitoring prompts fully instanced for the business.
 8. Runs LLM visibility prompts only when at least one LLM provider key is configured.
 9. Delivers an output folder with: plain-English summary, run plan, technical GEO audit, fix guide, llms.txt, schema code, prompt library, visibility results when prompts were executed, and prioritized backlog.
@@ -21,15 +21,15 @@ A GEO (Generative Engine Optimization) agent that audits, improves, and monitors
 |---|---|
 | `00-START-HERE.md` | Plain-English summary and next actions |
 | `01-RUN-PLAN.md` | What will run, what is blocked, and which APIs are needed |
-| `02-TECHNICAL-GEO-AUDIT.md` | Technical site health check and GEO score |
+| `02-TECHNICAL-GEO-AUDIT.md` | Technical site health check and GEO readiness score |
 | `03-FIX-GUIDE.md` | Step-by-step fixes in priority order |
 | `04-LLMS-TXT.md` | Ready-to-upload llms.txt file |
 | `05-SCHEMA.md` | Schema markup code ready to implement |
 | `06-LLM-PROMPTS-TO-RUN.md` | 40 monitoring prompts to run for this business |
-| `07-LLM-VISIBILITY-RESULTS.md` | Actual LLM answer results by prompt group, or explicit `not run` status |
+| `07-LLM-VISIBILITY-RESULTS.md` | Measured LLM answer results by prompt group when provider prompts were executed, or explicit `not run` status |
 | `08-BACKLOG.md` | Prioritized task list |
 
-Important: generated prompts are not measured visibility. Prompt ideas go in `06-LLM-PROMPTS-TO-RUN.md`; real answers from ChatGPT, Claude, Gemini, Perplexity, or another model go in `07-LLM-VISIBILITY-RESULTS.md`.
+Important: generated prompts are not measured visibility. Prompt ideas go in `06-LLM-PROMPTS-TO-RUN.md`; measured answers from configured provider APIs or documented manual runs go in `07-LLM-VISIBILITY-RESULTS.md`.
 
 ---
 
@@ -55,7 +55,7 @@ See [PROMPTS-INDEX.md](PROMPTS-INDEX.md) for the full breakdown of every prompt.
 
 ## What This Agent Is
 
-`claude-geo-agent` is a Claude AI agent that audits and improves how ready a business is for AI-generated answers and answer-engine discovery. When someone asks ChatGPT, Perplexity, Claude, or Gemini for recommendations in your category, this agent helps identify whether your brand is likely to be discovered, understood, cited, or overlooked.
+`claude-geo-agent` is a Claude AI agent that audits and improves how ready a business is for AI-generated answers and answer-engine discovery. When someone asks an AI answer engine for recommendations in your category, this agent helps identify whether your public content gives answer systems clear, crawlable, evidence-backed context to understand the brand.
 
 This is called **GEO: Generative Engine Optimization**. It is to AI search what SEO is to Google.
 
@@ -130,7 +130,7 @@ The agent will ask for the URL, fetch the site automatically, extract the busine
 ### LLM Visibility Prompt Library
 - Generates 40 monitoring prompts fully instanced for the business
 - 8 modules: Discovery, Measurement, Extraction, Interpretation, Audit, Action, Learning, Validation
-- Ready to run in Gemini, Groq, ChatGPT, or any LLM to track visibility over time
+- Ready to run through configured LLM provider APIs or documented manual UI runs to monitor prompt-based visibility over time
 - See [PROMPTS-INDEX.md](PROMPTS-INDEX.md) for the full breakdown
 
 ### Output Folder
@@ -140,12 +140,12 @@ Generates `[domain]-geo-audit/` with:
 |---|---|
 | `00-START-HERE.md` | Plain-English summary and next actions |
 | `01-RUN-PLAN.md` | What will run, what is blocked, and which APIs are needed |
-| `02-TECHNICAL-GEO-AUDIT.md` | Technical site health check and GEO score |
+| `02-TECHNICAL-GEO-AUDIT.md` | Technical site health check and GEO readiness score |
 | `03-FIX-GUIDE.md` | Step-by-step fixes in priority order |
 | `04-LLMS-TXT.md` | Ready-to-upload llms.txt |
 | `05-SCHEMA.md` | JSON-LD schema code ready to implement |
 | `06-LLM-PROMPTS-TO-RUN.md` | 40 monitoring prompts to run for this business |
-| `07-LLM-VISIBILITY-RESULTS.md` | Actual LLM answer results by prompt group, when prompts were executed |
+| `07-LLM-VISIBILITY-RESULTS.md` | Measured LLM answer results by prompt group when provider prompts were executed, or explicit `not run` status |
 | `08-BACKLOG.md` | Prioritized task list |
 
 ---
@@ -171,13 +171,13 @@ PERPLEXITY_API_KEY=
 | **Serper** | Recommended | Search evidence and competitor research. Does not run LLM prompts. | 2,500 free searches/month — no credit card required | [serper.dev](https://serper.dev) |
 | **Gemini API** | Recommended for monitoring | Run LLM visibility prompts in Gemini | Free with limits | [aistudio.google.com](https://aistudio.google.com) |
 | **Groq API** | Recommended for monitoring | Run LLM visibility prompts with fast, low-cost/open models | Free with generous limits | [console.groq.com](https://console.groq.com) |
-| **OpenAI API** | Optional | Run LLM visibility prompts in ChatGPT | 💰 Paid — see note below | [platform.openai.com](https://platform.openai.com) |
-| **Anthropic API** | Optional | Run LLM visibility prompts in Claude | 💰 Paid — see note below | [console.anthropic.com](https://console.anthropic.com) |
+| **OpenAI API** | Optional | Run LLM visibility prompts through OpenAI API models | 💰 Paid — see note below | [platform.openai.com](https://platform.openai.com) |
+| **Anthropic API** | Optional | Run LLM visibility prompts through Claude / Anthropic API models | 💰 Paid — see note below | [console.anthropic.com](https://console.anthropic.com) |
 | **Perplexity API** | Optional | Run answer-engine style visibility prompts | Paid | [docs.perplexity.ai](https://docs.perplexity.ai) |
 | **PageSpeed API** | Not needed | Core Web Vitals (automatic) | ✅ Free, no key needed | [developers.google.com/speed](https://developers.google.com/speed) |
 
 
-> **Note on OpenAI and Anthropic cost:** For LLM visibility monitoring, the actual cost is usually negligible — under $0.01/month for the starter run using GPT-4o mini (OpenAI) or under $0.02/month using Claude Haiku (Anthropic). These APIs are only needed if you specifically want to track how your brand appears in ChatGPT or Claude responses. For most teams, Gemini and Groq (both free) cover the same use case.
+> **Note on OpenAI and Anthropic cost:** For LLM visibility monitoring, the actual cost is usually negligible — under $0.01/month for the starter run using GPT-4o mini (OpenAI) or under $0.02/month using Claude Haiku (Anthropic). These APIs are only needed if you specifically want to track how your brand appears in OpenAI API/model or Claude / Anthropic API responses. OpenAI API results are not ChatGPT UI results unless ChatGPT UI was separately measured and labeled. For most teams, Gemini and Groq (both free) cover the same measurement workflow.
 
 **Without Serper:** The agent still runs technical GEO audits using `curl` and `WebFetch`. You only lose search-backed competitor research.
 

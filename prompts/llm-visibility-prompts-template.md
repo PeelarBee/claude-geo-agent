@@ -1722,5 +1722,7 @@ Return ONLY valid JSON. No explanation, no markdown:
 | 90 | Validate_Output | Validation | Every run |
 
 ---
-*Total: 40 prompts | Suggested initial run: 10, 11, 13, 20, 30, 41, 50, 90 (8 prompts)*
+*Total: 40 prompts | Default light starter run: 10, 11, 13, 20, 23, 25, 30, 90 (8 prompts)*
+*Fuller client-facing baseline run: 10, 11, 13, 20, 21, 22, 23, 24, 25, 30, 41, 50, 90 (13 prompts)*
+*Starter runs are test plans, not visibility results, until executed and logged through configured providers or documented manual runs.*
 *To instantiate: copy this file -> prompts_[client]_v2.md -> complete CONFIG -> replace {{variables}} in Module 2.*

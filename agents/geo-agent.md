@@ -1114,7 +1114,7 @@ Start the file with this exact warning:
 ```markdown
 This file is the prompt library, not the measurement result.
 
-Actual LLM answer results belong in `07-LLM-VISIBILITY-RESULTS.md` after these prompts are run in ChatGPT, Claude, Gemini, Groq, Perplexity, or another model.
+Measured LLM answer results belong in `07-LLM-VISIBILITY-RESULTS.md` only after these prompts are executed through configured LLM provider APIs or documented manual UI runs.
 ```
 
 **8 modules:**
@@ -1178,9 +1178,9 @@ Never mix generated prompts with measured results.
 
 ---
 
-## Step 4: Technical GEO Audit Score → `02-TECHNICAL-GEO-AUDIT.md`
+## Step 4: Technical GEO Readiness Score → `02-TECHNICAL-GEO-AUDIT.md`
 
-**GEO Visibility Score /100**
+**GEO Readiness Score /100**
 
 | Component | Points |
 |---|---:|
@@ -1198,22 +1198,26 @@ Score interpretation:
 - 75-89: Strong readiness, needs optimization
 - 90-100: Excellent readiness, monitor and refine
 
-Every score must include a rationale and must show which evidence class supports the score.
+Every score must include a rationale and must show which evidence class supports the score. The GEO Readiness Score is diagnostic and must stay separate from LLM Visibility Measurement Status.
 
 ```markdown
 # Technical GEO Audit: [Domain]
 Date: [Date]
 
-## GEO Visibility Score: [X]/100 — [Poor/Basic/Moderate/Strong/Excellent readiness]
+## GEO Readiness Score: [X]/100 — [Poor/Basic/Moderate/Strong/Excellent readiness]
 
-| Component | Points | Evidence Class | Evidence Source | Rationale |
-|---|---:|---|---|---|
-| Crawlability & Access | [X]/15 | Observed / Inferred / Unknown | [source] | [rationale] |
-| Entity Clarity | [X]/20 | Observed / Inferred / Unknown | [source] | [rationale] |
-| Structured Data | [X]/15 | Observed / Inferred / Unknown | [source] | [rationale] |
-| AI Citability | [X]/20 | Observed / Inferred / Unknown | [source] | [rationale] |
-| External Authority Signals | [X]/15 | Observed / Inferred / Not run / Unknown | [source] | [rationale] |
-| Measurement Readiness | [X]/15 | Observed / Measured / Not run | [source] | [rationale] |
+## LLM Visibility Measurement Status
+
+Status: Live LLM results collected / Not run — no LLM provider configured / Manual run required — prompt library generated only
+
+| Component | Points | Evidence Class | Evidence Source Type | Evidence Source | Evidence Date / Run Date | Rationale |
+|---|---:|---|---|---|---|---|
+| Crawlability & Access | [X]/15 | Observed / Inferred / Unknown | Crawl / Rendered HTML / Local file / Not available | [source] | [date/time] | [rationale] |
+| Entity Clarity | [X]/20 | Observed / Inferred / Unknown | Crawl / Rendered HTML / Local file / Not available | [source] | [date/time] | [rationale] |
+| Structured Data | [X]/15 | Observed / Inferred / Not run / Unknown | Crawl / Rendered HTML / Local file / Not available | [source] | [date/time] | [rationale] |
+| AI Citability | [X]/20 | Observed / Inferred / Unknown | Crawl / Rendered HTML / Local file / Not available | [source] | [date/time] | [rationale] |
+| External Authority Signals | [X]/15 | Search Evidence / Observed / Inferred / Not run / Unknown | Search API / Crawl / Manual check / Not available | [source] | [date/time] | [rationale] |
+| Measurement Readiness | [X]/15 | Observed / Measured / Inferred / Not run | LLM API / Manual check / Generated artifact / Not available | [source] | [date/time] | [rationale] |
 
 ## Citability Analysis
 [Top citation-ready passages + blocks needing rewrite]
@@ -1247,7 +1251,7 @@ Date: [Date]
 Date: [Date]
 
 ## Summary
-[2-3 sentences: current GEO score, biggest problems, what fixing achieves]
+[2-3 sentences: current GEO readiness score, biggest problems, what fixing improves]
 
 ---
 
