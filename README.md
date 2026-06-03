@@ -7,8 +7,8 @@ A Claude Code agent for GEO (Generative Engine Optimization) - helping businesse
 - Detects whether important content depends heavily on client-side rendering and may be difficult for crawlers or answer engines to access
 - Audits robots.txt for blocked AI crawlers + disallowed route leaks
 - Creates or optimizes your `llms.txt` file
-- Scores content for AI citability and provides rewrite suggestions
-- Implements schema markup for AI discoverability
+- Scores content for AI citation readiness and provides rewrite suggestions
+- Generates structured data recommendations and ready-to-implement JSON-LD
 - Checks external brand authority signals across search and commonly surfaced third-party platforms such as Wikipedia, Reddit, YouTube, and LinkedIn
 - Generates a full LLM visibility monitoring prompt library for your business
 - Produces a client-ready output folder with run plan, technical audit, fix guide, prompts, visibility results, and backlog
@@ -127,7 +127,7 @@ When invoking the agent, choose one:
 
 | Objective | What it does |
 |---|---|
-| `full-audit` | Complete GEO audit + all output files |
+| `full-audit` | Complete GEO readiness audit + prompt library + measured LLM visibility when provider keys are configured |
 | `monitor` | Run LLM measurement prompts + extraction + validation |
 | `refresh` | Update gaps, opportunities, and backlog from new data |
 | `llms-txt` | Create or improve llms.txt only |
@@ -148,6 +148,8 @@ The 40 prompts are grouped into phases, so the agent can run the right level of 
 | `monitor` | Measurement `10-17` + Extraction `20-25` + Validation `90` |
 | `full-audit` | Discovery `01-05` + Measurement `10-17` + Extraction `20-25` + Validation `90` + Interpretation `30-34` + Audit `40-48` + Action `50-53` + Learning `60-61` |
 | `refresh` | Interpretation `30-34` + selected Audit `40-48` + Action `50-53` + Learning `60-61` |
+
+For `full-audit`, measurement phases run only when at least one LLM provider key is configured. If no LLM provider is configured, the agent completes the readiness audit, generates the prompt library, and marks `07-LLM-VISIBILITY-RESULTS.md` as `Not run — no LLM provider configured`.
 
 ## Requirements
 
