@@ -81,10 +81,11 @@ Rules:
 After CONFIG confirmation:
 
 1. Create output folder.
-2. Generate `01-RUN-PLAN.md`.
-3. Check provider availability.
-4. Report only `Configured` or `Missing`; never print key values.
+2. Check provider availability.
+3. Report only `Configured` or `Missing`; never print key values.
+4. Generate `01-RUN-PLAN.md` including API status, measurement availability, blocked phases, and scenario status.
 5. Decide what can run based on available providers.
+6. Execute the selected objective.
 
 ### API categories
 
@@ -176,7 +177,7 @@ Scenario D — Multiple LLM providers configured:
 - `quick-check`: Does not require any API keys. Do not run LLM measurement. Do not generate fake visibility results.
 - `llm-prompts`: Does not require LLM provider keys. Generate `06-LLM-PROMPTS-TO-RUN.md`. Do not generate measured results.
 - `monitor`: Requires at least one LLM provider key OR explicit manual-run mode. If no LLM provider key exists, stop and ask whether the user wants to add a provider key or generate prompts for manual execution only.
-- `full-audit`: Runs everything possible. If LLM keys are missing, still complete the technical/readiness audit and prompt library. Generate `07-LLM-VISIBILITY-RESULTS.md` with `Status: Not run — no LLM provider configured`.
+- `full-audit`: Runs everything possible. If LLM keys are missing, still complete the technical/readiness audit and prompt library. Generate `07-LLM-VISIBILITY-RESULTS.md` with `Status: Not run — no LLM provider configured`. Measurement, extraction, validation, and visibility interpretation only run when actual LLM responses exist. If no LLM provider is configured, those phases must be marked as `Not run` or `Blocked`, not inferred from search evidence or generated prompts.
 
 ---
 
@@ -194,8 +195,8 @@ Ask only for the URL and objective. Then fetch the site automatically and extrac
 3. Agent presents CONFIG to the user
 4. Agent stops and waits for explicit confirmation: "yes", "ok", or equivalent
 5. Only after confirmation, agent creates the output folder
-6. Agent creates `01-RUN-PLAN.md`
-7. Agent checks API availability
+6. Agent checks API/provider availability
+7. Agent creates `01-RUN-PLAN.md` including API status, measurement availability, blocked phases, and scenario status
 8. Agent executes the selected objective
 9. Agent generates output files
 
@@ -333,8 +334,8 @@ Required sequence:
 3. Agent presents CONFIG.
 4. Agent stops until user confirms CONFIG.
 5. After CONFIG confirmation, create the output folder.
-6. Generate `01-RUN-PLAN.md`.
-7. Check API/provider availability.
+6. Check API/provider availability.
+7. Generate `01-RUN-PLAN.md` including API status, measurement availability, blocked phases, and scenario status.
 8. Execute `full-audit` according to available tools/APIs.
 9. Generate outputs.
 10. Clearly mark each output as Observed, Measured, Inferred, Not run, Not available, or Unknown.
@@ -362,7 +363,7 @@ Conditional phases:
 - Live LLM measurement prompts `10-17` run only if at least one LLM provider key is configured.
 - Extraction prompts `20-25` run only after live LLM responses exist.
 - Validation prompt `90` only validates actual parsed outputs.
-- Interpretation prompts `30-34` run only if measured LLM results exist or if there is enough observed evidence to support interpretation.
+- Interpretation prompts that discuss LLM visibility, competitor dominance in answers, citations, sentiment, share of voice, or LLM recommendations must run only when measured LLM results exist. If only observed website evidence or search evidence exists, interpretation must be limited to readiness gaps and must be labeled `Inferred`.
 - Learning prompts `60-61` run only if historical or prior-run data exists.
 
 Full-audit rules:
@@ -371,6 +372,7 @@ Full-audit rules:
 - If no LLM provider key is configured, do not run measurement prompts, extraction prompts, or visibility interpretation as if they were measured.
 - If only `SERPER_API_KEY` is configured, use it for search/external authority evidence only. Do not treat Serper results as LLM visibility results.
 - If interpretation prompts cannot run because measured results are missing, write: `Not run — insufficient measured LLM visibility data`.
+- If measured LLM results are missing, write: `Not run — insufficient measured LLM visibility data` for LLM visibility interpretation.
 - Do not invent visibility gaps, competitor dominance, citations, sentiment, share of voice, or LLM recommendations without measured responses.
 
 Outputs:
@@ -498,7 +500,9 @@ This is the first file the user should read. It must be short, plain, and decisi
 
 ## Step 1B: Run Plan and API Gate → `01-RUN-PLAN.md`
 
-Before running any objective, generate a run plan. This is the contract for the run.
+Before running any objective, check provider availability and then generate a run plan. This is the contract for the run and must include API status, measurement availability, blocked phases, and scenario status.
+
+The run plan must adapt to the selected objective. It must not imply that every phase runs for every objective.
 
 ```markdown
 # GEO Run Plan: [Domain]
@@ -506,27 +510,40 @@ Before running any objective, generate a run plan. This is the contract for the 
 ## Objective
 [quick-check / monitor / full-audit / refresh / specific objective]
 
+## Objective-Specific Scope
+
+- `quick-check`: technical pre-flight only
+- `llm-prompts`: prompt library only
+- `monitor`: LLM measurement only if provider key exists or manual-run mode is selected
+- `schema`: schema audit/generation only
+- `llms-txt`: llms.txt creation/improvement only
+- `crawlers`: crawler/robots/sitemap checks only
+- `citability`: content citation readiness only
+- `brand-mentions`: external authority/search signals only
+- `full-audit`: all readiness phases + conditional search/LLM measurement phases
+- `refresh`: prior-data-dependent update only
+
 ## What Will Run
 
 | Phase | Status | Reason |
 |---|---|---|
-| Business CONFIG discovery | Will run / Complete | Required |
-| Technical GEO audit | Will run / Complete | Always runs after CONFIG confirmation |
-| SPA/rendering risk check | Will run / Complete | Always runs after CONFIG confirmation |
-| robots.txt and AI crawler access check | Will run / Complete | Always runs after CONFIG confirmation |
-| sitemap discovery | Will run / Complete / Not available | Always attempted after CONFIG confirmation |
-| llms.txt check and generation/improvement | Will run / Complete / Not available | Always runs after CONFIG confirmation |
-| schema check and JSON-LD recommendations | Will run / Complete / Not available | Always runs after CONFIG confirmation |
-| content citability/readiness audit | Will run / Complete | Always runs after CONFIG confirmation |
-| entity clarity audit | Will run / Complete | Always runs after CONFIG confirmation |
-| Search-backed competitor/external authority checks | Will run / Blocked / Skipped | Requires `SERPER_API_KEY`; search only |
-| LLM prompt generation | Will run / Skipped | Generates `06-LLM-PROMPTS-TO-RUN.md` |
-| LLM prompt execution | Will run / Blocked / Skipped | Requires at least one LLM provider key |
-| Extraction prompts `20-25` | Will run / Blocked / Skipped | Runs only after live LLM responses exist |
+| Business CONFIG discovery | Complete | Required before this plan; confirmed by user |
+| Technical GEO audit | Will run / Complete / Skipped / Not applicable | Runs for `full-audit`, `quick-check`, `crawlers`, or relevant objectives |
+| SPA/rendering risk check | Will run / Complete / Skipped / Not applicable | Runs for `full-audit`, `quick-check`, `crawlers`, or relevant objectives |
+| robots.txt and AI crawler access check | Will run / Complete / Skipped / Not applicable | Runs for `full-audit`, `quick-check`, `crawlers`, or relevant objectives |
+| sitemap discovery | Will run / Complete / Skipped / Not available | Runs for `full-audit`, `quick-check`, `crawlers`, or relevant objectives |
+| llms.txt check and generation/improvement | Will run / Complete / Skipped / Not available | Runs for `full-audit` or `llms-txt`; status depends on selected objective |
+| schema check and JSON-LD recommendations | Will run / Complete / Skipped / Not available | Runs for `full-audit` or `schema`; status depends on selected objective |
+| content citability/readiness audit | Will run / Complete / Skipped / Not applicable | Runs for `full-audit` or `citability`; status depends on selected objective |
+| entity clarity audit | Will run / Complete / Skipped / Not applicable | Runs for `full-audit` or relevant readiness objectives |
+| Search-backed competitor/external authority checks | Will run / Blocked / Skipped | Runs for `full-audit` or `brand-mentions` only when `SERPER_API_KEY` is configured; search only |
+| LLM prompt generation | Will run / Complete / Skipped | Runs for `full-audit`, `llm-prompts`, `monitor`, or manual-run mode |
+| LLM prompt execution | Will run / Blocked / Skipped | Runs for `monitor` or `full-audit` only when at least one LLM provider key is configured |
+| Extraction prompts `20-25` | Will run / Blocked / Skipped | Runs only after actual LLM responses exist |
 | Validation prompt `90` | Will run / Blocked / Skipped | Validates only actual parsed outputs |
-| Interpretation prompts `30-34` | Will run / Partial / Skipped | Requires measured LLM results or enough observed evidence |
-| Learning prompts `60-61` | Will run / Skipped | Requires historical or prior-run data |
-| Fix guide and backlog | Will run / Complete | Always runs for `full-audit` |
+| Interpretation prompts `30-34` | Will run / Blocked / Skipped / Inferred readiness only | LLM visibility interpretation requires measured LLM results; readiness-only interpretation from observed/search evidence must be labeled `Inferred` |
+| Learning prompts `60-61` | Will run / Skipped / Not applicable | Runs for `refresh` or when historical/prior-run data exists |
+| Fix guide and backlog | Will run / Complete / Skipped | Runs for `full-audit`, `refresh`, or relevant objectives |
 
 ## API Status
 
@@ -772,7 +789,9 @@ If interpretation prompts cannot run because measured results are missing, write
 
 ---
 
-## Step 2: Pre-Flight Checks (Always Run First)
+## Step 2: Pre-Flight Checks (Run When Relevant)
+
+Run these checks for `full-audit`, `quick-check`, `crawlers`, or when the selected objective needs the specific signal. Do not imply every pre-flight check runs for every narrow objective.
 
 ### Check 1 — SPA Detection (CRITICAL)
 
@@ -921,8 +940,9 @@ Run conditionally:
 2. Live LLM measurement prompts `10-17` only if at least one LLM provider key is configured.
 3. Extraction prompts `20-25` only after live LLM responses exist.
 4. Validation prompt `90` only validates actual parsed outputs.
-5. Interpretation prompts `30-34` only if measured LLM results exist or there is enough observed evidence to support interpretation.
-6. Learning prompts `60-61` only if historical or prior-run data exists.
+5. Interpretation prompts that discuss LLM visibility, competitor dominance in answers, citations, sentiment, share of voice, or LLM recommendations only when measured LLM results exist.
+6. Readiness interpretation from observed website evidence or search evidence only if it is limited to readiness gaps and labeled `Inferred`.
+7. Learning prompts `60-61` only if historical or prior-run data exists.
 
 Output evidence rules:
 - Clearly mark each output and major finding as Observed, Measured, Inferred, Not run, Not available, or Unknown.
@@ -930,6 +950,7 @@ Output evidence rules:
 - Search evidence must not be confused with LLM visibility.
 - Prompt libraries must not be confused with measured results.
 - Interpretation must not run on missing measured data. If blocked, write: `Not run — insufficient measured LLM visibility data`.
+- If measured LLM results are missing, write: `Not run — insufficient measured LLM visibility data` for LLM visibility interpretation.
 - Do not invent visibility gaps, competitor dominance, citations, sentiment, share of voice, or LLM recommendations without measured responses.
 
 ---
@@ -939,19 +960,19 @@ Output evidence rules:
 **RULE: Fetch every page with WebFetch before writing its description. Never fabricate.**
 
 1. Fetch homepage and all key pages via WebFetch
-2. Extract exact copy from each page
+2. Extract observed factual information from each page
 3. Write llms.txt:
 
 ```markdown
 # [Brand Name]
 
-> [2-3 sentence description — exact copy from site, not a rewrite]
+> [2-3 sentence factual summary based only on observed page content. Do not invent claims.]
 
 [1-2 paragraphs of context]
 
 ## [Primary section — e.g. Services, Products, Solutions]
 
-- [Page Title](URL): [Exact description from that page]
+- [Page Title](URL): [Description based only on fetched page content.]
 
 ## Pages
 
@@ -991,7 +1012,7 @@ Prioritize passages that are self-contained, fact-rich, clearly structured, and 
 ### `schema` → `05-SCHEMA.md`
 
 1. Extract existing JSON-LD from raw HTML
-2. Validate against Schema.org spec
+2. Review against Schema.org requirements and recommended properties. If a schema validator is available, validate the JSON-LD. If no validator is available, label validation as `Not run` and provide best-effort ready-to-implement JSON-LD.
 3. Identify missing schemas by page type:
    - Homepage → Organization + WebSite
    - Service page → Service
@@ -1067,7 +1088,7 @@ Actual LLM answer results belong in `07-LLM-VISIBILITY-RESULTS.md` after these p
 
 **Module 3 — Extraction:** JSON extractors to parse LLM responses — mentions, brand positioning, sentiment, competitive presence, answer type, share of voice. Run after every measurement prompt.
 
-**Module 4 — Interpretation:** Why the brand is missing from certain clusters, why competitors win, citation patterns, entity clarity gaps, messaging mismatches.
+**Module 4 — Interpretation:** Readiness interpretation from observed/search evidence, labeled `Inferred`; LLM visibility interpretation only when measured LLM responses exist. Do not infer competitor wins, citation patterns, sentiment, share of voice, or LLM recommendations without measured responses.
 
 **Module 5 — Audit:** Homepage audit, service page audit, pricing page audit, FAQ coverage, comparison content, schema readiness, content cluster coverage, social alignment, evidence and trust signals.
 
