@@ -116,7 +116,7 @@ The agent generates a folder named `[domain]-geo-audit/` in your current directo
 | `04-LLMS-TXT.md` | Ready-to-upload or improved llms.txt file |
 | `05-SCHEMA.md` | Schema markup JSON-LD code ready to implement |
 | `06-LLM-PROMPTS-TO-RUN.md` | Prompts to run in LLMs; this is not the measurement result |
-| `07-LLM-VISIBILITY-RESULTS.md` | Actual LLM answer results by prompt group, or explicit `not run` status |
+| `07-LLM-VISIBILITY-RESULTS.md` | Measured LLM answer results by prompt group when provider prompts were executed, or explicit `not run` status |
 | `08-BACKLOG.md` | Full task list prioritized by impact |
 
 Important: `06-LLM-PROMPTS-TO-RUN.md` is the test plan. `07-LLM-VISIBILITY-RESULTS.md` is the measured result file only when prompts were executed through configured LLM providers. If no LLM provider API keys are configured, `full-audit` still completes the readiness audit and prompt library, while `monitor` must ask whether to add a provider key or generate prompts for manual execution only.
