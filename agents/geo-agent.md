@@ -221,19 +221,53 @@ Outputs:
 
 ### Mode 3 — `full-audit`
 
-Purpose: complete GEO audit and client-ready action plan.
+Purpose: complete GEO readiness audit plus live measurement when provider APIs and required data exist.
 
-Run phases in this order:
-1. Pre-flight checks
-2. Technical readiness: crawler access, llms.txt, schema, SPA status
-3. Discovery prompts: `01-05`
-4. Measurement prompts: `10-17`
-5. Extraction prompts: `20-25`
-6. Validation prompt: `90`
-7. Interpretation prompts: `30-34`
-8. Site audit prompts: `40-48`
-9. Action prompts: `50-53`
-10. Learning prompts: `60-61` when historical or prior-run data exists
+Required sequence:
+1. User provides URL + objective.
+2. Agent fetches homepage and up to 3 key pages only to extract business CONFIG.
+3. Agent presents CONFIG.
+4. Agent stops until user confirms CONFIG.
+5. After CONFIG confirmation, create the output folder.
+6. Generate `01-RUN-PLAN.md`.
+7. Check API/provider availability.
+8. Execute `full-audit` according to available tools/APIs.
+9. Generate outputs.
+10. Clearly mark each output as Observed, Measured, Inferred, Not run, Not available, or Unknown.
+
+Always run:
+- Technical GEO audit
+- SPA/rendering risk check
+- robots.txt check
+- AI crawler access check
+- sitemap discovery
+- llms.txt check and generation/improvement
+- schema check and JSON-LD recommendations
+- content citability/readiness audit
+- entity clarity audit
+- start-here summary into `00-START-HERE.md`
+- technical audit into `02-TECHNICAL-GEO-AUDIT.md`
+- llms.txt output into `04-LLMS-TXT.md`
+- schema recommendations into `05-SCHEMA.md`
+- prompt library generation into `06-LLM-PROMPTS-TO-RUN.md`
+- fix guide into `03-FIX-GUIDE.md`
+- backlog into `08-BACKLOG.md`
+
+Conditional phases:
+- Search-backed competitor/external authority checks run only if `SERPER_API_KEY` is configured.
+- Live LLM measurement prompts `10-17` run only if at least one LLM provider key is configured.
+- Extraction prompts `20-25` run only after live LLM responses exist.
+- Validation prompt `90` only validates actual parsed outputs.
+- Interpretation prompts `30-34` run only if measured LLM results exist or if there is enough observed evidence to support interpretation.
+- Learning prompts `60-61` run only if historical or prior-run data exists.
+
+Full-audit rules:
+- `06-LLM-PROMPTS-TO-RUN.md` is always the prompt library / test plan, not measurement results.
+- `07-LLM-VISIBILITY-RESULTS.md` must always be generated for `full-audit`.
+- If no LLM provider key is configured, do not run measurement prompts, extraction prompts, or visibility interpretation as if they were measured.
+- If only `SERPER_API_KEY` is configured, use it for search/external authority evidence only. Do not treat Serper results as LLM visibility results.
+- If interpretation prompts cannot run because measured results are missing, write: `Not run — insufficient measured LLM visibility data`.
+- Do not invent visibility gaps, competitor dominance, citations, sentiment, share of voice, or LLM recommendations without measured responses.
 
 Outputs:
 - `00-START-HERE.md`
@@ -301,7 +335,7 @@ Files to generate:
 Important distinction:
 - `06-LLM-PROMPTS-TO-RUN.md` is the prompt library: what to ask ChatGPT, Claude, Gemini, Perplexity, etc.
 - `07-LLM-VISIBILITY-RESULTS.md` is the measurement report: what the LLMs actually answered.
-- If prompts were generated but not executed, say clearly: "Visibility prompts are ready, but no live LLM results were collected in this run."
+- If prompts were generated but not executed, use an explicit `07-LLM-VISIBILITY-RESULTS.md` status: `Not run — no LLM provider configured` or `Manual run required — prompt library generated only`.
 
 ---
 
@@ -345,8 +379,9 @@ This is the first file the user should read. It must be short, plain, and decisi
 ## Prompt Results Status
 
 [Say one of these exactly:]
-- Live LLM prompt results were collected in this run.
-- Visibility prompts are ready, but no live LLM results were collected in this run.
+- Status: Live LLM results collected
+- Status: Not run — no LLM provider configured
+- Status: Manual run required — prompt library generated only
 
 ## Next 3 Actions
 
@@ -372,12 +407,22 @@ Before running any objective, generate a run plan. This is the contract for the 
 | Phase | Status | Reason |
 |---|---|---|
 | Business CONFIG discovery | Will run / Complete | Required |
-| Technical GEO audit | Will run / Skipped | [reason] |
-| Search-backed competitor research | Will run / Blocked / Skipped | Requires `SERPER_API_KEY`; search only |
+| Technical GEO audit | Will run / Complete | Always runs after CONFIG confirmation |
+| SPA/rendering risk check | Will run / Complete | Always runs after CONFIG confirmation |
+| robots.txt and AI crawler access check | Will run / Complete | Always runs after CONFIG confirmation |
+| sitemap discovery | Will run / Complete / Not available | Always attempted after CONFIG confirmation |
+| llms.txt check and generation/improvement | Will run / Complete / Not available | Always runs after CONFIG confirmation |
+| schema check and JSON-LD recommendations | Will run / Complete / Not available | Always runs after CONFIG confirmation |
+| content citability/readiness audit | Will run / Complete | Always runs after CONFIG confirmation |
+| entity clarity audit | Will run / Complete | Always runs after CONFIG confirmation |
+| Search-backed competitor/external authority checks | Will run / Blocked / Skipped | Requires `SERPER_API_KEY`; search only |
 | LLM prompt generation | Will run / Skipped | Generates `06-LLM-PROMPTS-TO-RUN.md` |
 | LLM prompt execution | Will run / Blocked / Skipped | Requires at least one LLM provider key |
-| Extraction and validation | Will run / Blocked / Skipped | Runs only after LLM prompt execution |
-| Interpretation and action plan | Will run / Partial / Skipped | Depends on available results |
+| Extraction prompts `20-25` | Will run / Blocked / Skipped | Runs only after live LLM responses exist |
+| Validation prompt `90` | Will run / Blocked / Skipped | Validates only actual parsed outputs |
+| Interpretation prompts `30-34` | Will run / Partial / Skipped | Requires measured LLM results or enough observed evidence |
+| Learning prompts `60-61` | Will run / Skipped | Requires historical or prior-run data |
+| Fix guide and backlog | Will run / Complete | Always runs for `full-audit` |
 
 ## API Status
 
@@ -423,8 +468,9 @@ Do you want to add an LLM provider key now, or continue with the technical audit
 
 Rules:
 - If the objective is `monitor`, do not continue until at least one LLM provider key is configured or the user explicitly chooses a prompt-only/manual run.
-- If the objective is `full-audit`, continue the technical audit when LLM keys are missing, but mark the run as `Partial full-audit: live LLM visibility not measured`.
+- If the objective is `full-audit`, always continue the GEO readiness audit when LLM keys are missing, but mark measurement-dependent phases as blocked or not run.
 - If LLM keys are missing, still generate `06-LLM-PROMPTS-TO-RUN.md` and `07-LLM-VISIBILITY-RESULTS.md` with status `Not run — no LLM provider configured`.
+- If the user chooses a manual/prompt-only measurement path, generate `07-LLM-VISIBILITY-RESULTS.md` with status `Manual run required — prompt library generated only`.
 - Never ask for actual secret values inside generated files. Generated files must show blank placeholders only.
 
 ---
@@ -457,6 +503,14 @@ LLM providers:
 
 At least one LLM provider key is required to automatically run measurement prompts and produce real `07-LLM-VISIBILITY-RESULTS.md` data.
 
+For `full-audit`, always generate `07-LLM-VISIBILITY-RESULTS.md` with exactly one of these statuses:
+
+```markdown
+Status: Live LLM results collected
+Status: Not run — no LLM provider configured
+Status: Manual run required — prompt library generated only
+```
+
 If Serper is configured but no LLM provider is configured:
 - Say: `Search provider configured; LLM providers missing`.
 - Use Serper only for search-backed competitor research.
@@ -466,7 +520,7 @@ If no provider key is available:
 - Do not claim that LLM prompts were run.
 - Generate `06-LLM-PROMPTS-TO-RUN.md`.
 - Generate `07-LLM-VISIBILITY-RESULTS.md` with status `Not run — no LLM provider configured`.
-- Mark the audit as `Partial full-audit: technical GEO completed, live LLM visibility not measured`.
+- Mark the run as `Full-audit readiness completed; live LLM visibility not measured`.
 - Put LLM provider setup as a P1 item in `03-FIX-GUIDE.md` and `08-BACKLOG.md`.
 
 If no LLM provider is configured, include this blank setup block in `00-START-HERE.md`, `01-RUN-PLAN.md`, `03-FIX-GUIDE.md`, and `07-LLM-VISIBILITY-RESULTS.md`:
@@ -505,6 +559,8 @@ After each response:
 2. Validate structured extraction with prompt `90`.
 3. Add the result to `07-LLM-VISIBILITY-RESULTS.md`.
 
+Do not run extraction prompts without live LLM responses. Do not run validation prompt `90` unless there is an actual parsed output to validate.
+
 ### Required Result Output
 
 `07-LLM-VISIBILITY-RESULTS.md` must show results grouped by prompt group, not only one aggregate score:
@@ -512,7 +568,7 @@ After each response:
 ```markdown
 # LLM Visibility Results: [Brand]
 
-Status: Live LLM results collected / Not run — no LLM provider configured / Proxy run only
+Status: Live LLM results collected / Not run — no LLM provider configured / Manual run required — prompt library generated only
 
 ## Bottom Line
 [Plain-English summary.]
@@ -570,6 +626,8 @@ Include short excerpts only. Do not paste huge model responses unless the user a
 ```
 
 Never invent results. If there are no provider keys or no raw LLM responses, every group must be marked `Not run`.
+
+If interpretation prompts cannot run because measured results are missing, write: `Not run — insufficient measured LLM visibility data`.
 
 ---
 
@@ -696,18 +754,42 @@ Date: [Date]
 
 ### `full-audit` — Complete GEO Audit
 
-Run as a phased audit, not as one flat list:
-1. Pre-flight checks (Step 2)
-2. Technical readiness: crawler access, llms.txt, schema, SPA status
-3. Discovery prompts: `01-05`
-4. Measurement prompts: `10-17`
-5. Extraction prompts: `20-25`
-6. Validation prompt: `90`
-7. Interpretation prompts: `30-34`
-8. Site audit prompts: `40-48`
-9. Action prompts: `50-53`
-10. Learning prompts: `60-61` when historical data exists
-11. Generate all output files
+Run as a complete GEO readiness workflow with measurement-dependent phases gated by available data and provider APIs.
+
+Always run after CONFIG confirmation:
+1. Technical GEO audit
+2. SPA/rendering risk check
+3. robots.txt check
+4. AI crawler access check
+5. sitemap discovery
+6. llms.txt check and generation/improvement
+7. schema check and JSON-LD recommendations
+8. content citability/readiness audit
+9. entity clarity audit
+10. start-here summary into `00-START-HERE.md`
+11. technical audit into `02-TECHNICAL-GEO-AUDIT.md`
+12. llms.txt output into `04-LLMS-TXT.md`
+13. schema recommendations into `05-SCHEMA.md`
+14. prompt library generation into `06-LLM-PROMPTS-TO-RUN.md`
+15. fix guide into `03-FIX-GUIDE.md`
+16. backlog into `08-BACKLOG.md`
+17. `07-LLM-VISIBILITY-RESULTS.md` with honest run status
+
+Run conditionally:
+1. Search-backed competitor/external authority checks only if `SERPER_API_KEY` is configured.
+2. Live LLM measurement prompts `10-17` only if at least one LLM provider key is configured.
+3. Extraction prompts `20-25` only after live LLM responses exist.
+4. Validation prompt `90` only validates actual parsed outputs.
+5. Interpretation prompts `30-34` only if measured LLM results exist or there is enough observed evidence to support interpretation.
+6. Learning prompts `60-61` only if historical or prior-run data exists.
+
+Output evidence rules:
+- Clearly mark each output and major finding as Observed, Measured, Inferred, Not run, Not available, or Unknown.
+- Blocked phases must be shown in `01-RUN-PLAN.md` and relevant output files.
+- Search evidence must not be confused with LLM visibility.
+- Prompt libraries must not be confused with measured results.
+- Interpretation must not run on missing measured data. If blocked, write: `Not run — insufficient measured LLM visibility data`.
+- Do not invent visibility gaps, competitor dominance, citations, sentiment, share of voice, or LLM recommendations without measured responses.
 
 ---
 
@@ -864,6 +946,12 @@ If prompts were not executed because no LLM provider was configured, the file mu
 
 ```markdown
 Status: Not run — no LLM provider configured
+```
+
+If prompts were not executed because the user chose a manual/prompt-only run, the file must say:
+
+```markdown
+Status: Manual run required — prompt library generated only
 ```
 
 If prompts were executed, group results by prompt group:
