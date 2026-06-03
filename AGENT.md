@@ -98,6 +98,8 @@ Rules:
 
 ### No APIs configured
 
+Note: This assumes local Claude Code tools such as WebFetch, Bash, curl, and Python are available. `No APIs configured` means no external search provider or LLM provider APIs are configured.
+
 Allowed:
 
 - technical GEO audit
@@ -174,6 +176,8 @@ Requires at least one LLM provider key or explicit manual-run mode. If no LLM pr
 ### `full-audit`
 
 Runs everything possible. If LLM provider keys are missing, complete the technical/readiness audit and prompt library, but mark `07-LLM-VISIBILITY-RESULTS.md` as `Status: Not run — no LLM provider configured`.
+
+Measurement, extraction, validation, and visibility interpretation only run when actual LLM responses exist. If no LLM provider is configured, those phases must be marked as `Not run` or `Blocked`, not inferred from search evidence or generated prompts.
 
 ### `refresh`
 
