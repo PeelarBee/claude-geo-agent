@@ -1,15 +1,15 @@
 # claude-geo-agent
 
-A Claude Code agent for GEO (Generative Engine Optimization) — helping any business become visible in AI-generated answers across ChatGPT, Perplexity, Claude, Gemini, and Bing Copilot.
+A Claude Code agent for GEO (Generative Engine Optimization) - helping businesses audit, improve, and monitor their readiness for AI-generated answers and answer-engine discovery.
 
 ## What This Agent Does
 
-- Detects if your site is a SPA (invisible to AI crawlers)
+- Detects whether important content depends heavily on client-side rendering and may be difficult for crawlers or answer engines to access
 - Audits robots.txt for blocked AI crawlers + disallowed route leaks
 - Creates or optimizes your `llms.txt` file
 - Scores content for AI citability and provides rewrite suggestions
 - Implements schema markup for AI discoverability
-- Checks brand mentions across AI-cited platforms (Wikipedia, Reddit, YouTube, LinkedIn)
+- Checks external brand authority signals across search and commonly surfaced third-party platforms such as Wikipedia, Reddit, YouTube, and LinkedIn
 - Generates a full LLM visibility monitoring prompt library for your business
 - Produces a client-ready output folder with run plan, technical audit, fix guide, prompts, visibility results, and backlog
 
@@ -64,6 +64,25 @@ ANTHROPIC_API_KEY=
 PERPLEXITY_API_KEY=
 ```
 
+## Measurement Boundaries
+
+- Search APIs are not LLM answer engines.
+- Prompt libraries are not measurement results.
+- LLM answers vary by model, provider, date, location, personalization, retrieval mode, and prompt wording.
+- The agent must not report measured visibility unless the relevant provider was configured and the prompt run was completed.
+- If no LLM provider is configured, `07-LLM-VISIBILITY-RESULTS.md` must say: `Not run — no LLM provider configured`.
+
+## Quality & Reliability
+
+These files keep the agent repeatable, evidence-based, and safe for client-facing GEO audits:
+
+- [EVIDENCE-RULES.md](EVIDENCE-RULES.md) - evidence classes and claim rules
+- [SCORING.md](SCORING.md) - GEO Visibility Score framework
+- [OUTPUT-CONTRACT.md](OUTPUT-CONTRACT.md) - required report structure
+- [LIMITATIONS.md](LIMITATIONS.md) - client-safe limitations
+- [EVALS.md](EVALS.md) - practical eval cases for agent behavior
+- [AGENT.md](AGENT.md) - operating instructions and guardrails
+
 ## Output Files
 
 The agent generates a folder named `[domain]-geo-audit/` in your current directory:
@@ -95,7 +114,7 @@ When invoking the agent, choose one:
 | `citability` | Score content for AI citation readiness |
 | `schema` | Schema markup audit and implementation |
 | `crawlers` | AI crawler access check and fix |
-| `brand-mentions` | Brand presence across AI-cited platforms |
+| `brand-mentions` | External brand authority signals across search and commonly surfaced third-party platforms |
 | `llm-prompts` | Generate LLM visibility monitoring prompt library |
 | `quick-check` | Fast pre-flight status — no deep analysis |
 

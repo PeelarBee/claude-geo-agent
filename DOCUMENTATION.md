@@ -2,7 +2,7 @@
 
 ## What This Agent Does — Simple Overview
 
-A GEO (Generative Engine Optimization) agent that audits and improves how a business appears in AI-generated answers — ChatGPT, Perplexity, Claude, Gemini, and Bing Copilot.
+A GEO (Generative Engine Optimization) agent that audits, improves, and monitors a business's readiness to be discovered, understood, and cited in AI-generated answers.
 
 **Step by step:**
 1. Asks only for website URL and objective.
@@ -55,7 +55,7 @@ See [PROMPTS-INDEX.md](PROMPTS-INDEX.md) for the full breakdown of every prompt.
 
 ## What This Agent Is
 
-`claude-geo-agent` is a Claude AI agent that audits and improves how a business appears in AI-generated answers. When someone asks ChatGPT, Perplexity, Claude, or Gemini for recommendations in your category, this agent helps ensure your brand shows up — and shows up well.
+`claude-geo-agent` is a Claude AI agent that audits and improves how ready a business is for AI-generated answers and answer-engine discovery. When someone asks ChatGPT, Perplexity, Claude, or Gemini for recommendations in your category, this agent helps identify whether your brand is likely to be discovered, understood, cited, or overlooked.
 
 This is called **GEO: Generative Engine Optimization**. It is to AI search what SEO is to Google.
 
@@ -90,7 +90,7 @@ The agent will ask for the URL, fetch the site automatically, extract the busine
 ## What the Agent Does — Full Capability List
 
 ### Pre-Flight Checks (always runs first)
-- **SPA Detection** — identifies if the site is built with React, Vue, or Vite (common in Lovable). SPAs are invisible to AI crawlers.
+- **SPA / JS-heavy content detection** — identifies whether important content depends heavily on client-side rendering and may be difficult for crawlers or answer engines to access.
 - **robots.txt audit** — checks which AI crawlers are blocked (GPTBot, ClaudeBot, PerplexityBot, etc.)
 - **Disallowed routes sanity check** — verifies that blocked routes are actually closed (not returning 200 OK)
 - **llms.txt status** — checks if the file exists and evaluates its quality
@@ -113,7 +113,7 @@ The agent will ask for the URL, fetch the site automatically, extract the busine
 - Fetches every key page via WebFetch
 - Uses only real copy from the site (never fabricates)
 - Writes a complete, structured llms.txt ready to upload
-- Handles SPA sites where this file is the only AI-readable content
+- Supports JS-heavy sites with supplemental context, while still recommending crawlable HTML, schema, sitemap discovery, and strong public content
 
 ### Schema Markup
 - Detects existing JSON-LD
@@ -121,7 +121,7 @@ The agent will ask for the URL, fetch the site automatically, extract the busine
 - Output is ready-to-implement code
 
 ### Brand Mentions Audit
-- Wikipedia API check (most important AI citation signal)
+- Wikipedia check when applicable; it can be a strong entity signal for eligible/public-interest brands, but many legitimate businesses will not qualify for a Wikipedia page
 - Reddit presence
 - YouTube presence
 - LinkedIn company page
@@ -217,7 +217,7 @@ PERPLEXITY_API_KEY=
 | `citability` | Score content for AI citation readiness |
 | `schema` | Schema markup audit and implementation |
 | `crawlers` | AI crawler access check and fix |
-| `brand-mentions` | Brand presence across AI-cited platforms |
+| `brand-mentions` | External brand authority signals across search and commonly surfaced third-party platforms |
 | `llm-prompts` | Generate LLM visibility monitoring prompt library |
 | `quick-check` | Fast pre-flight status only |
 

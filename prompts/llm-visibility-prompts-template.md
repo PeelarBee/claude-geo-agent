@@ -1,44 +1,46 @@
-# AI Discoverability Prompt Library — Template Generico v2
-> Versión reutilizable para cualquier cliente. Reemplazar CONFIG antes de usar.
-> Para versión instanciada: ver prompts_marketingsprint_v2.md
-> Actualizado: 2026-05-07 | 40 prompts en 8 módulos
+# GEO / AI Search Visibility Prompt Library — Generic Template v2
+> Reusable version for any client. Replace CONFIG before use.
+> For an instantiated version: see prompts_marketingsprint_v2.md
+> Updated: 2026-05-07 | 40 prompts in 8 modules
+
+> **Measurement warning:** This file is a prompt library and monitoring framework, not a measurement result. LLM visibility is only measured when prompts are executed in fresh, isolated model contexts through configured LLM providers. Generated prompts must never be reported as measured visibility.
 
 ---
 
-## CONFIG — Completar por cliente
+## CONFIG — Complete Per Client
 
 ```
-brand:        [Nombre de la marca]
-domain:       [dominio.com]
-category:     [categoría / vertical del negocio]
-services:     [lista de servicios o productos principales]
-icp:          [perfil de cliente ideal: industria, tamaño, rol]
-geography:    [mercados objetivo]
-competitors:  [Competidor 1, Competidor 2, Competidor 3]
-competitor_1: [Competidor principal]
-competitor_2: [Segundo competidor]
-competitor_3: [Tercer competidor]
-problem:      [problema principal que resuelve la marca]
-outcome:      [resultado que el cliente obtiene]
-alt_bad:      [alternativa que el cliente quiere evitar]
-job:          [job to be done principal]
+brand:        [Brand name]
+domain:       [domain.com]
+category:     [business category / vertical]
+services:     [main services or products]
+icp:          [ideal customer profile: industry, size, role]
+geography:    [target markets]
+competitors:  [Competitor 1, Competitor 2, Competitor 3]
+competitor_1: [Primary competitor]
+competitor_2: [Second competitor]
+competitor_3: [Third competitor]
+problem:      [main problem the brand solves]
+outcome:      [outcome the customer wants]
+alt_bad:      [alternative the customer wants to avoid]
+job:          [primary job to be done]
 locale:       [en-US | es-AR | pt-BR | etc.]
-city:         [ciudad principal si aplica; si no aplica, usar geography]
-region:       [región principal si aplica; si no aplica, usar geography]
+city:         [primary city if applicable; otherwise use geography]
+region:       [primary region if applicable; otherwise use geography]
 ```
 
 ---
 
-## MÓDULO 1 — DISCOVERY
+## MODULE 1 — DISCOVERY
 
 ### `01_Discovery_Universe`
-**Objetivo:** Generar el universo completo de prompts a monitorear
-**Frecuencia:** Mensual o al iniciar con un cliente nuevo
+**Objective:** Generate the complete prompt universe to monitor
+**Frequency:** Monthly or when starting with a new client
 
 ```
 You are an AI visibility strategist.
 
-Generate a complete prompt universe to evaluate how visible this brand is across LLMs.
+Generate a complete prompt universe to monitor how this brand appears across LLMs when prompts are actually run through configured providers.
 
 Brand: {{brand}}
 Domain: {{domain}}
@@ -65,25 +67,82 @@ Rules:
 - Mix of high-intent and exploratory
 - Include synonyms and adjacent problem framing
 - No repetition with minor variations
+- Return prompt objects with prompt, cluster, intent, and priority wherever a prompt is generated
 
 Return valid JSON only. No explanation, no markdown, no text outside the JSON:
 {
-  "branded": [],
-  "category": [],
-  "problem_aware": [],
-  "comparison": [],
-  "transactional": [],
-  "local": [],
-  "educational": [],
-  "alternative_language": []
+  "branded": [
+    {
+      "prompt": "",
+      "cluster": "branded",
+      "intent": "",
+      "priority": "high | medium | low"
+    }
+  ],
+  "category": [
+    {
+      "prompt": "",
+      "cluster": "category",
+      "intent": "",
+      "priority": "high | medium | low"
+    }
+  ],
+  "problem_aware": [
+    {
+      "prompt": "",
+      "cluster": "problem_aware",
+      "intent": "",
+      "priority": "high | medium | low"
+    }
+  ],
+  "comparison": [
+    {
+      "prompt": "",
+      "cluster": "comparison",
+      "intent": "",
+      "priority": "high | medium | low"
+    }
+  ],
+  "transactional": [
+    {
+      "prompt": "",
+      "cluster": "transactional",
+      "intent": "",
+      "priority": "high | medium | low"
+    }
+  ],
+  "local": [
+    {
+      "prompt": "",
+      "cluster": "local",
+      "intent": "",
+      "priority": "high | medium | low"
+    }
+  ],
+  "educational": [
+    {
+      "prompt": "",
+      "cluster": "educational",
+      "intent": "",
+      "priority": "high | medium | low"
+    }
+  ],
+  "alternative_language": [
+    {
+      "prompt": "",
+      "cluster": "alternative_language",
+      "intent": "",
+      "priority": "high | medium | low"
+    }
+  ]
 }
 ```
 
 ---
 
 ### `02_Language_Map`
-**Objetivo:** Detectar cómo habla la marca vs cómo habla el usuario
-**Frecuencia:** Mensual
+**Objective:** Detect how the brand speaks vs how users speak
+**Frequency:** Monthly
 
 ```
 You are a market language analyst.
@@ -115,8 +174,8 @@ Return valid JSON only. No explanation, no markdown:
 ---
 
 ### `03_Alternative_Phrase_Discovery`
-**Objetivo:** Encontrar frases alternativas, sinónimos e imperfectas que usaría un usuario real
-**Frecuencia:** Mensual
+**Objective:** Find alternative, synonymous, and imperfect phrases real users might use
+**Frequency:** Monthly
 
 ```
 You are a linguistics and search behavior analyst.
@@ -141,21 +200,70 @@ Find:
 
 Return valid JSON only. No explanation, no markdown:
 {
-  "informal_synonyms": [],
-  "pre_awareness_phrases": [],
-  "objection_phrases": [],
-  "informal_comparison_phrases": [],
-  "imprecise_user_phrases": [],
-  "non_expert_phrases": [],
-  "adjacent_problem_phrases": []
+  "informal_synonyms": [
+    {
+      "prompt": "",
+      "cluster": "alternative_language",
+      "intent": "informal synonym",
+      "priority": "high | medium | low"
+    }
+  ],
+  "pre_awareness_phrases": [
+    {
+      "prompt": "",
+      "cluster": "problem_aware",
+      "intent": "pre-awareness",
+      "priority": "high | medium | low"
+    }
+  ],
+  "objection_phrases": [
+    {
+      "prompt": "",
+      "cluster": "objection",
+      "intent": "objection",
+      "priority": "high | medium | low"
+    }
+  ],
+  "informal_comparison_phrases": [
+    {
+      "prompt": "",
+      "cluster": "comparison",
+      "intent": "informal comparison",
+      "priority": "high | medium | low"
+    }
+  ],
+  "imprecise_user_phrases": [
+    {
+      "prompt": "",
+      "cluster": "alternative_language",
+      "intent": "imprecise real-user phrasing",
+      "priority": "high | medium | low"
+    }
+  ],
+  "non_expert_phrases": [
+    {
+      "prompt": "",
+      "cluster": "educational",
+      "intent": "non-expert phrasing",
+      "priority": "high | medium | low"
+    }
+  ],
+  "adjacent_problem_phrases": [
+    {
+      "prompt": "",
+      "cluster": "adjacent_problem",
+      "intent": "adjacent problem",
+      "priority": "high | medium | low"
+    }
+  ]
 }
 ```
 
 ---
 
 ### `04_Competitor_Query_Discovery`
-**Objetivo:** Descubrir qué prompts favorecen a los competidores específicamente
-**Frecuencia:** Mensual
+**Objective:** Discover prompts that specifically favor competitors
+**Frequency:** Monthly
 
 ```
 You are a competitive AI visibility analyst.
@@ -179,19 +287,54 @@ Consider:
 Return valid JSON only. No explanation, no markdown:
 {
   "competitor_dominant_prompt_types": [],
-  "competitor_branded_prompt_examples": [],
-  "feature_gap_prompts": [],
-  "authority_gap_prompts": [],
-  "niche_prompts_competitors_own": [],
-  "recommended_counter_prompts_to_monitor": []
+  "competitor_branded_prompt_examples": [
+    {
+      "prompt": "",
+      "cluster": "comparison",
+      "intent": "competitor-branded",
+      "priority": "high | medium | low"
+    }
+  ],
+  "feature_gap_prompts": [
+    {
+      "prompt": "",
+      "cluster": "feature_gap",
+      "intent": "feature comparison",
+      "priority": "high | medium | low"
+    }
+  ],
+  "authority_gap_prompts": [
+    {
+      "prompt": "",
+      "cluster": "authority_gap",
+      "intent": "authority comparison",
+      "priority": "high | medium | low"
+    }
+  ],
+  "niche_prompts_competitors_own": [
+    {
+      "prompt": "",
+      "cluster": "niche",
+      "intent": "competitor-owned niche",
+      "priority": "high | medium | low"
+    }
+  ],
+  "recommended_counter_prompts_to_monitor": [
+    {
+      "prompt": "",
+      "cluster": "counter_prompt",
+      "intent": "defensive monitoring",
+      "priority": "high | medium | low"
+    }
+  ]
 }
 ```
 
 ---
 
 ### `05_Local_Intent_Discovery`
-**Objetivo:** Encontrar queries locales o geográficas relevantes
-**Frecuencia:** Mensual o al entrar a nuevos mercados
+**Objective:** Find relevant local or geographic queries
+**Frequency:** Monthly or when entering new markets
 
 ```
 You are a local and geographic search intent analyst.
@@ -215,24 +358,70 @@ Include:
 
 Return valid JSON only. No explanation, no markdown:
 {
-  "city_specific_prompts": [],
-  "region_specific_prompts": [],
-  "language_variant_prompts": [],
-  "local_provider_prompts": [],
-  "mixed_language_prompts": []
+  "city_specific_prompts": [
+    {
+      "prompt": "",
+      "cluster": "local",
+      "intent": "city-specific",
+      "priority": "high | medium | low"
+    }
+  ],
+  "region_specific_prompts": [
+    {
+      "prompt": "",
+      "cluster": "local",
+      "intent": "region-specific",
+      "priority": "high | medium | low"
+    }
+  ],
+  "language_variant_prompts": [
+    {
+      "prompt": "",
+      "cluster": "local",
+      "intent": "language variant",
+      "priority": "high | medium | low"
+    }
+  ],
+  "local_provider_prompts": [
+    {
+      "prompt": "",
+      "cluster": "local",
+      "intent": "local provider",
+      "priority": "high | medium | low"
+    }
+  ],
+  "mixed_language_prompts": [
+    {
+      "prompt": "",
+      "cluster": "local",
+      "intent": "mixed language",
+      "priority": "high | medium | low"
+    }
+  ]
 }
 ```
 
 ---
 
-## MÓDULO 2 — MEASUREMENT
-> Prompts para correr en LLMs y medir visibilidad real.
-> Instanciar variables desde CONFIG antes de usar.
-> Regla de generalidad: no asumir industria, etapa de empresa, modelo de compra, tipo de cliente, canal, geografia o alternativa especifica salvo que aparezca explicitamente en CONFIG.
+## MODULE 2 — MEASUREMENT
+> Prompts to run in LLMs to measure real visibility.
+> Instantiate variables from CONFIG before use.
+> Generality rule: do not assume industry, company stage, purchase model, customer type, channel, geography, or specific alternative unless it appears explicitly in CONFIG.
+> Cold-context rule: measurement prompts must be run in a fresh model context with no business CONFIG, no prior audit notes, and no previous answers.
+
+Interpretation definitions:
+- Branded prompts measure entity recognition.
+- Non-branded category prompts measure category visibility.
+- Problem-aware prompts measure demand discovery.
+- Comparison prompts measure competitive positioning.
+- Transactional prompts measure commercial recommendation likelihood.
+- Local prompts measure geography-specific discoverability.
+- Educational prompts measure top-of-funnel topical authority.
+- Alternative language prompts measure messy real-user language visibility.
 
 ### `10_Measure_Branded_Visibility`
-**Objetivo:** Medir presencia directa de la marca en prompts branded
-**Frecuencia:** Semanal
+**Objective:** Measure direct brand presence in branded prompts
+**Frequency:** Weekly
 
 ```
 What is {{brand}}?
@@ -255,8 +444,8 @@ How is {{brand}} different from {{category}} alternatives?
 ---
 
 ### `11_Measure_Category_Visibility`
-**Objetivo:** Medir si aparecen en búsquedas de categoría
-**Frecuencia:** Semanal
+**Objective:** Measure whether the brand appears in category prompts
+**Frequency:** Weekly
 
 ```
 What are the best {{category}} providers for {{icp}}?
@@ -273,13 +462,16 @@ Best {{category}} options for customers who need {{outcome}} quickly
 Who helps {{icp}} with {{job}}?
 Best flexible {{category}} options for {{icp}}
 Which {{category}} option should I choose if I need {{outcome}}?
+We're a {{icp}} trying to get {{outcome}}. What options should we consider?
+What companies are actually good at {{job}} for {{icp}}?
+Who would you shortlist for {{services}} if the buyer is {{icp}}?
 ```
 
 ---
 
 ### `12_Measure_Problem_Aware_Visibility`
-**Objetivo:** Visibilidad en búsquedas de problema real del usuario
-**Frecuencia:** Semanal
+**Objective:** Measure visibility in real user problem-aware prompts
+**Frequency:** Weekly
 
 ```
 How do I solve {{problem}}?
@@ -296,13 +488,15 @@ What happens if someone ignores {{category}} early on?
 What's the difference between {{category}} and {{alt_bad}}?
 How do I start {{job}} with limited internal resources?
 What does {{icp}} need for {{job}}?
+I need help with {{problem}} but I'm not sure what kind of provider to look for. Who would you recommend?
+I don't want to use {{alt_bad}}. What are better alternatives?
 ```
 
 ---
 
 ### `13_Measure_Comparison_Visibility`
-**Objetivo:** Cómo aparece la marca frente a competidores
-**Frecuencia:** Semanal
+**Objective:** Measure how the brand appears against competitors
+**Frequency:** Weekly
 
 ```
 {{brand}} vs {{competitor_1}}
@@ -314,6 +508,7 @@ Compare {{brand}} and {{competitor_1}} for {{icp}}
 What is the difference between {{brand}} and {{competitor_1}}?
 {{brand}} vs {{alt_bad}}
 {{brand}} vs doing {{job}} internally
+{{brand}} vs {{alt_bad}} for {{icp}}
 Is {{brand}} better than {{competitor_3}}?
 {{competitor_1}} vs {{competitor_2}} vs {{brand}}: which is best for {{icp}}?
 What {{category}} service is best for {{icp}}?
@@ -324,8 +519,8 @@ What are the top alternatives to {{brand}}?
 ---
 
 ### `14_Measure_Transactional_Visibility`
-**Objetivo:** Presencia en búsquedas de alta intención comercial
-**Frecuencia:** Semanal
+**Objective:** Measure presence in high-commercial-intent prompts
+**Frequency:** Weekly
 
 ```
 Best {{category}} option to choose now
@@ -340,13 +535,15 @@ Who offers the fastest path to {{outcome}}?
 Best {{category}} option available now
 What's the fastest way to get {{outcome}} in place?
 Best {{services}} options this year
+Who would you recommend if we need {{services}} but want to avoid {{alt_bad}}?
+Which providers should a {{icp}} evaluate before buying {{services}}?
 ```
 
 ---
 
 ### `15_Measure_Local_Visibility`
-**Objetivo:** Visibilidad geográfica y local
-**Frecuencia:** Semanal
+**Objective:** Measure geographic and local visibility
+**Frequency:** Weekly
 
 ```
 Best {{category}} services in {{geography}}
@@ -364,8 +561,8 @@ Who provides {{category}} services globally?
 ---
 
 ### `16_Measure_Educational_Visibility`
-**Objetivo:** Visibilidad en búsquedas informacionales / TOFU
-**Frecuencia:** Quincenal
+**Objective:** Measure visibility in informational / top-of-funnel prompts
+**Frequency:** Bi-weekly
 
 ```
 What is {{category}}?
@@ -385,11 +582,11 @@ What should I ask before choosing {{category}}?
 ---
 
 ### `17_Measure_Alternative_Language_Visibility`
-**Objetivo:** Medir visibilidad cuando el usuario usa lenguaje distinto al de la marca
-**Frecuencia:** Quincenal
+**Objective:** Measure visibility when users use language different from the brand's wording
+**Frequency:** Bi-weekly
 
 ```
-[Usar las frases generadas por 03_Alternative_Phrase_Discovery como prompts individuales]
+[Use the phrases generated by 03_Alternative_Phrase_Discovery as individual prompts]
 
 Run each phrase from the "messy_real_user_phrases", "pre_awareness_phrases",
 and "informal_synonyms" arrays as standalone prompts in the LLM.
@@ -398,13 +595,13 @@ Log each run separately in Prompt_Runs with Cluster = "alternative_language".
 
 ---
 
-## MÓDULO 3 — EXTRACTION
-> Parsing defensivo aplicado. Nunca asumir JSON limpio del modelo.
-> Siempre correr 90_Validate_Output después de estos prompts.
+## MODULE 3 — EXTRACTION
+> Defensive parsing applied. Never assume clean JSON from the model.
+> Always run 90_Validate_Output after these prompts.
 
 ### `20_Extract_Mentions_and_Citations`
-**Objetivo:** Extraer menciones de marca, dominios y URLs citadas
-**Frecuencia:** Cada run
+**Objective:** Extract brand mentions, domains, and cited URLs
+**Frequency:** Every run
 
 ```
 You are a structured data extraction engine. Your only job is to extract data and return valid JSON.
@@ -420,6 +617,9 @@ CRITICAL RULES:
 - brand_position and citation_position must be integers (1 = first) or null.
 - mention_count must be an integer, minimum 0.
 - All array fields must be arrays even if empty: use [] not null.
+- evidence_quote must be a short exact excerpt from the model answer, or null when unavailable.
+- evidence_source must identify the model answer, citation URL/domain, or null when unavailable.
+- source_type must be exactly one of: "model_answer", "citation", "inferred", null.
 
 LLM response to analyze:
 {{response}}
@@ -435,6 +635,9 @@ Return this exact structure:
   "citation_position": null,
   "competitors_mentioned": [],
   "competitor_count": 0,
+  "evidence_quote": null,
+  "evidence_source": null,
+  "source_type": null,
   "notes": ""
 }
 ```
@@ -442,8 +645,8 @@ Return this exact structure:
 ---
 
 ### `21_Extract_Brand_Positioning`
-**Objetivo:** Detectar en qué posición y con qué protagonismo aparece la marca
-**Frecuencia:** Cada run
+**Objective:** Detect where and how prominently the brand appears
+**Frequency:** Every run
 
 ```
 You are a brand positioning analyst. Your only job is to evaluate and return valid JSON.
@@ -454,6 +657,9 @@ CRITICAL RULES:
 - Return ONLY valid JSON. No explanation, no markdown, no text before or after.
 - Use only the allowed values specified per field.
 - If brand is not mentioned, return "not_present" for all applicable fields.
+- evidence_quote must be a short exact excerpt from the model answer, or null when unavailable.
+- evidence_source must identify the model answer, citation URL/domain, or null when unavailable.
+- source_type must be exactly one of: "model_answer", "citation", "inferred", null.
 
 Analyze this LLM response:
 {{response}}
@@ -467,15 +673,18 @@ Return this exact structure:
   "listed_position_if_option": null,
   "recommended_as_top_choice": false,
   "mentioned_with_caveats": false,
-  "caveat_description": null
+  "caveat_description": null,
+  "evidence_quote": null,
+  "evidence_source": null,
+  "source_type": null
 }
 ```
 
 ---
 
 ### `22_Extract_Sentiment_and_Framing`
-**Objetivo:** Clasificar tono y framing de la marca en la respuesta
-**Frecuencia:** Cada run
+**Objective:** Classify sentiment and framing of the brand in the response
+**Frequency:** Every run
 
 ```
 You are a sentiment and framing analyst. Your only job is to evaluate and return valid JSON.
@@ -487,6 +696,9 @@ CRITICAL RULES:
 - sentiment must be exactly one of: "positive", "neutral", "negative", "mixed", null
 - framing must be exactly one of: "recommended", "mentioned_only", "compared", "criticized", "unclear", null
 - If brand is not in the response, use null for both.
+- evidence_quote must be a short exact excerpt from the model answer, or null when unavailable.
+- evidence_source must identify the model answer, citation URL/domain, or null when unavailable.
+- source_type must be exactly one of: "model_answer", "citation", "inferred", null.
 
 Analyze this LLM response:
 {{response}}
@@ -496,15 +708,18 @@ Return this exact structure:
   "sentiment_toward_brand": null,
   "framing_of_brand": null,
   "tone_evidence": "",
-  "framing_evidence": ""
+  "framing_evidence": "",
+  "evidence_quote": null,
+  "evidence_source": null,
+  "source_type": null
 }
 ```
 
 ---
 
 ### `23_Extract_Competitive_Presence`
-**Objetivo:** Detectar qué competidores aparecen y cuánto dominan la respuesta
-**Frecuencia:** Cada run
+**Objective:** Detect which competitors appear and how much they dominate the response
+**Frequency:** Every run
 
 ```
 You are a competitive intelligence analyst. Your only job is to extract data and return valid JSON.
@@ -516,6 +731,9 @@ CRITICAL RULES:
 - Return ONLY valid JSON. No explanation, no markdown, no text before or after.
 - All arrays must be arrays even if empty: [].
 - dominant_competitor must be a string (competitor name) or null.
+- evidence_quote must be a short exact excerpt from the model answer, or null when unavailable.
+- evidence_source must identify the model answer, citation URL/domain, or null when unavailable.
+- source_type must be exactly one of: "model_answer", "citation", "inferred", null.
 
 Analyze this LLM response:
 {{response}}
@@ -527,15 +745,18 @@ Return this exact structure:
   "dominant_competitor": null,
   "dominant_competitor_position": null,
   "brand_vs_dominant_competitor": "brand_wins | tied | competitor_wins | brand_absent",
-  "unknown_competitors_mentioned": []
+  "unknown_competitors_mentioned": [],
+  "evidence_quote": null,
+  "evidence_source": null,
+  "source_type": null
 }
 ```
 
 ---
 
 ### `24_Extract_Answer_Type`
-**Objetivo:** Clasificar el tipo de respuesta que dio el LLM
-**Frecuencia:** Cada run
+**Objective:** Classify the type of answer the LLM gave
+**Frequency:** Every run
 
 ```
 You are a response classifier. Your only job is to classify and return valid JSON.
@@ -544,6 +765,9 @@ CRITICAL RULES:
 - Return ONLY valid JSON. No explanation, no markdown, no text before or after.
 - answer_type must be exactly one of the allowed values.
 - cites_sources must be true or false (boolean, not string).
+- evidence_quote must be a short exact excerpt from the model answer, or null when unavailable.
+- evidence_source must identify the model answer, citation URL/domain, or null when unavailable.
+- source_type must be exactly one of: "model_answer", "citation", "inferred", null.
 
 Analyze this LLM response:
 {{response}}
@@ -556,15 +780,18 @@ Return this exact structure:
   "source_count": 0,
   "includes_recommendation": false,
   "includes_caveat": false,
-  "format": "prose | bullet_list | numbered_list | table | mixed"
+  "format": "prose | bullet_list | numbered_list | table | mixed",
+  "evidence_quote": null,
+  "evidence_source": null,
+  "source_type": null
 }
 ```
 
 ---
 
 ### `25_Extract_Share_of_Voice`
-**Objetivo:** Evaluar peso competitivo cualitativo de la marca en la respuesta
-**Frecuencia:** Cada run
+**Objective:** Evaluate qualitative competitive weight of the brand in the response
+**Frequency:** Every run
 
 ```
 You are a competitive visibility analyst. Your only job is to evaluate and return valid JSON.
@@ -576,6 +803,9 @@ CRITICAL RULES:
 - Return ONLY valid JSON. No explanation, no markdown, no text before or after.
 - All string fields must use only the allowed values specified.
 - summary must be a single plain-text sentence, no quotes inside.
+- evidence_quote must be a short exact excerpt from the model answer, or null when unavailable.
+- evidence_source must identify the model answer, citation URL/domain, or null when unavailable.
+- source_type must be exactly one of: "model_answer", "citation", "inferred", null.
 
 Analyze this LLM response:
 {{response}}
@@ -587,17 +817,21 @@ Return this exact structure:
   "brand_framing": "favorable | neutral | poor | not_present",
   "click_likelihood": "high | medium | low | none",
   "trust_likelihood": "high | medium | low | none",
-  "summary": ""
+  "summary": "",
+  "evidence_quote": null,
+  "evidence_source": null,
+  "source_type": null
 }
 ```
 
 ---
 
-## MÓDULO 4 — INTERPRETATION
+## MODULE 4 — INTERPRETATION
+> Mandatory rule for prompts 30-34: If the provided data is incomplete, explicitly state what cannot be concluded. Do not infer competitor advantages, citation patterns, or entity gaps without observed evidence.
 
 ### `30_Interpret_Visibility_Gaps`
-**Objetivo:** Explicar por qué la marca no aparece en ciertos clusters
-**Frecuencia:** Semanal
+**Objective:** Explain why the brand does not appear in certain clusters
+**Frequency:** Weekly
 
 ```
 You are an AI discoverability analyst.
@@ -623,6 +857,7 @@ Look for:
 
 Return valid JSON only. No explanation, no markdown:
 {
+  "cannot_conclude": [],
   "top_reasons_brand_is_missing": [],
   "content_gaps": [],
   "messaging_gaps": [],
@@ -634,8 +869,8 @@ Return valid JSON only. No explanation, no markdown:
 ---
 
 ### `31_Interpret_Competitor_Advantage`
-**Objetivo:** Explicar por qué los competidores aparecen cuando la marca no
-**Frecuencia:** Semanal
+**Objective:** Explain why competitors appear when the brand does not
+**Frequency:** Weekly
 
 ```
 You are a competitive AI visibility analyst.
@@ -660,6 +895,7 @@ Look for:
 
 Return valid JSON only. No explanation, no markdown:
 {
+  "cannot_conclude": [],
   "competitor_advantages_by_type": {
     "content_volume": [],
     "authority_signals": [],
@@ -677,8 +913,8 @@ Return valid JSON only. No explanation, no markdown:
 ---
 
 ### `32_Interpret_Citation_Patterns`
-**Objetivo:** Entender por qué ciertas URLs son citadas y otras no
-**Frecuencia:** Quincenal
+**Objective:** Understand why certain URLs are cited and others are not
+**Frequency:** Bi-weekly
 
 ```
 You are analyzing why certain URLs are more citable in AI-generated responses.
@@ -700,6 +936,7 @@ Compare cited vs non-cited pages. Identify patterns in:
 
 Return valid JSON only. No explanation, no markdown:
 {
+  "cannot_conclude": [],
   "patterns_in_cited_pages": [],
   "patterns_in_non_cited_pages": [],
   "main_differences": [],
@@ -711,8 +948,8 @@ Return valid JSON only. No explanation, no markdown:
 ---
 
 ### `33_Interpret_Entity_Clarity_Gaps`
-**Objetivo:** Evaluar si la marca está mal definida como entidad en LLMs
-**Frecuencia:** Mensual
+**Objective:** Evaluate whether the brand is poorly defined as an entity in LLM responses
+**Frequency:** Monthly
 
 ```
 You are an entity clarity analyst for AI search visibility.
@@ -737,6 +974,7 @@ Check for signs of weak entity definition:
 
 Return valid JSON only. No explanation, no markdown:
 {
+  "cannot_conclude": [],
   "entity_clarity_score": 0,
   "inconsistency_patterns": [],
   "wrong_attributions": [],
@@ -749,8 +987,8 @@ Return valid JSON only. No explanation, no markdown:
 ---
 
 ### `34_Interpret_Messaging_Gaps`
-**Objetivo:** Detectar mismatch entre lenguaje del sitio y lenguaje del usuario
-**Frecuencia:** Mensual
+**Objective:** Detect mismatch between website language and user language
+**Frequency:** Monthly
 
 ```
 You are a messaging alignment analyst.
@@ -771,6 +1009,7 @@ Identify:
 
 Return valid JSON only. No explanation, no markdown:
 {
+  "cannot_conclude": [],
   "brand_only_terms": [],
   "customer_only_terms": [],
   "llm_category_terms_missing_from_site": [],
@@ -782,11 +1021,16 @@ Return valid JSON only. No explanation, no markdown:
 
 ---
 
-## MÓDULO 5 — AUDIT
+## MODULE 5 — AUDIT
+> Scoring anchors for prompts 40-48 whenever a 0-10 score is requested:
+> - 0-2 = absent or unusable
+> - 3-5 = present but weak/vague
+> - 6-8 = clear but incomplete
+> - 9-10 = strong, specific, evidence-backed
 
 ### `40_Audit_Homepage`
-**Objetivo:** Auditar homepage para AI discoverability
-**Frecuencia:** Mensual
+**Objective:** Audit the homepage for AI discoverability
+**Frequency:** Monthly
 
 ```
 You are a GEO/AEO/SEO auditor specialized in AI discoverability.
@@ -820,8 +1064,8 @@ Return valid JSON only. No explanation, no markdown:
 ---
 
 ### `41_Audit_Service_Page`
-**Objetivo:** Auditar páginas de servicio o solución para citabilidad
-**Frecuencia:** Semanal o tras cambios
+**Objective:** Audit service or solution pages for citability
+**Frequency:** Weekly or after changes
 
 ```
 You are auditing a service or solution page for LLM citation readiness.
@@ -856,8 +1100,8 @@ Return valid JSON only. No explanation, no markdown:
 ---
 
 ### `42_Audit_Pricing_Page`
-**Objetivo:** Auditar pricing page para AI discoverability
-**Frecuencia:** Mensual
+**Objective:** Audit the pricing page for AI discoverability
+**Frequency:** Monthly
 
 ```
 You are auditing a pricing page for LLM citation readiness.
@@ -893,8 +1137,8 @@ Return valid JSON only. No explanation, no markdown:
 ---
 
 ### `43_Audit_FAQ_Coverage`
-**Objetivo:** Auditar si el sitio tiene cobertura de FAQs para los clusters de prompts clave
-**Frecuencia:** Mensual
+**Objective:** Audit whether the site has FAQ coverage for key prompt clusters
+**Frequency:** Monthly
 
 ```
 You are auditing FAQ coverage for AI search visibility.
@@ -925,8 +1169,8 @@ Return valid JSON only. No explanation, no markdown:
 ---
 
 ### `44_Audit_Comparison_Content`
-**Objetivo:** Auditar si el sitio tiene páginas comparativas que los LLMs citarían
-**Frecuencia:** Mensual
+**Objective:** Audit whether the site has comparison pages that LLMs could cite
+**Frequency:** Monthly
 
 ```
 You are auditing comparison content for AI citation readiness.
@@ -961,8 +1205,8 @@ Return valid JSON only. No explanation, no markdown:
 ---
 
 ### `45_Audit_Schema_Readiness`
-**Objetivo:** Auditar schema markup para AI discoverability
-**Frecuencia:** Mensual
+**Objective:** Audit schema markup for AI discoverability
+**Frequency:** Monthly
 
 ```
 You are a schema markup analyst for AI search visibility.
@@ -1000,8 +1244,8 @@ Return valid JSON only. No explanation, no markdown:
 ---
 
 ### `46_Audit_Content_Cluster_Coverage`
-**Objetivo:** Auditar arquitectura de contenidos contra clusters de prompts
-**Frecuencia:** Mensual
+**Objective:** Audit content architecture against prompt clusters
+**Frequency:** Monthly
 
 ```
 You are auditing the content architecture of a website for AI search visibility.
@@ -1030,8 +1274,8 @@ Return valid JSON only. No explanation, no markdown:
 ---
 
 ### `47_Audit_Social_Alignment`
-**Objetivo:** Auditar si social media refuerza la misma entidad y temas del sitio
-**Frecuencia:** Quincenal
+**Objective:** Audit whether social media reinforces the same entity and themes as the site
+**Frequency:** Bi-weekly
 
 ```
 You are a brand discoverability analyst.
@@ -1060,8 +1304,8 @@ Return valid JSON only. No explanation, no markdown:
 ---
 
 ### `48_Audit_Evidence_and_Trust`
-**Objetivo:** Auditar prueba, evidencia y trust signals para citabilidad en LLMs
-**Frecuencia:** Mensual
+**Objective:** Audit proof, evidence, and trust signals for LLM citability
+**Frequency:** Monthly
 
 ```
 You are a trust and evidence analyst for AI discoverability.
@@ -1071,7 +1315,7 @@ Domain: {{domain}}
 Pages to review: {{pages_to_audit}}
 Evidence elements found: {{evidence_elements}}
 
-LLMs heavily favor content with verifiable evidence, specific claims, and trust signals.
+Content with verifiable evidence, specific claims, and trust signals is generally easier for answer engines and human reviewers to evaluate.
 
 Evaluate:
 1. Presence of specific data points or statistics
@@ -1101,11 +1345,11 @@ Return valid JSON only. No explanation, no markdown:
 
 ---
 
-## MÓDULO 6 — ACTION
+## MODULE 6 — ACTION
 
 ### `50_Generate_Action_Plan_Content`
-**Objetivo:** Qué contenido crear para cerrar gaps de visibilidad
-**Frecuencia:** Semanal
+**Objective:** Decide what content to create to close visibility gaps
+**Frequency:** Weekly
 
 ```
 You are a content strategist specialized in AI and search discoverability.
@@ -1122,6 +1366,7 @@ Rules:
 - Prioritize by expected LLM citation impact
 - Separate quick wins (1-3 days) from medium-term (1-2 weeks)
 - Specify format: FAQ, comparison, how-to, glossary, use-case, local, alternatives
+- Every recommendation must include evidence_source and acceptance_criteria
 
 Return valid JSON only. No explanation, no markdown:
 {
@@ -1131,6 +1376,8 @@ Return valid JSON only. No explanation, no markdown:
       "format": "",
       "target_prompt_cluster": "",
       "rationale": "",
+      "evidence_source": "",
+      "acceptance_criteria": "",
       "effort": "low | medium | high"
     }
   ],
@@ -1140,18 +1387,30 @@ Return valid JSON only. No explanation, no markdown:
       "format": "",
       "target_prompt_cluster": "",
       "rationale": "",
+      "evidence_source": "",
+      "acceptance_criteria": "",
       "effort": "low | medium | high"
     }
   ],
-  "strategic_content": []
+  "strategic_content": [
+    {
+      "page_title": "",
+      "format": "",
+      "target_prompt_cluster": "",
+      "rationale": "",
+      "evidence_source": "",
+      "acceptance_criteria": "",
+      "effort": "low | medium | high"
+    }
+  ]
 }
 ```
 
 ---
 
 ### `51_Build_Optimization_Backlog`
-**Objetivo:** Crear tabla de tareas ejecutables ordenadas por impacto
-**Frecuencia:** Semanal
+**Objective:** Create an executable task table ordered by impact
+**Frequency:** Weekly
 
 ```
 You are building an execution backlog for AI visibility improvement.
@@ -1163,6 +1422,7 @@ Competitor wins: {{competitor_wins}}
 Existing assets available: {{existing_assets}}
 
 Each item must be a concrete, actionable task.
+Each item must include evidence_source and acceptance_criteria.
 
 Return valid JSON array only. No explanation, no markdown:
 [
@@ -1171,6 +1431,8 @@ Return valid JSON array only. No explanation, no markdown:
     "type": "content | technical | messaging | schema | structural",
     "target_url": "",
     "rationale": "",
+    "evidence_source": "",
+    "acceptance_criteria": "",
     "expected_impact": "high | medium | low",
     "effort": "high | medium | low",
     "priority": "P1 | P2 | P3",
@@ -1182,8 +1444,8 @@ Return valid JSON array only. No explanation, no markdown:
 ---
 
 ### `52_Recommend_Page_Fixes`
-**Objetivo:** Recomendaciones específicas para mejorar una URL concreta
-**Frecuencia:** Bajo demanda
+**Objective:** Specific recommendations to improve a single URL
+**Frequency:** On demand
 
 ```
 You are optimizing a specific URL for AI citation and discoverability.
@@ -1194,23 +1456,60 @@ Relevant prompt cluster: {{prompt_cluster}}
 Competing pages being cited instead: {{competing_pages}}
 
 Recommend specific changes. Avoid vague advice.
+Every recommendation must include evidence_source and acceptance_criteria.
 
 Return valid JSON only. No explanation, no markdown:
 {
-  "add": [],
-  "remove": [],
-  "rewrite": [],
-  "new_blocks_to_add": [],
-  "entity_clarity_changes": [],
-  "citation_improvements": []
+  "add": [
+    {
+      "change": "",
+      "evidence_source": "",
+      "acceptance_criteria": ""
+    }
+  ],
+  "remove": [
+    {
+      "change": "",
+      "evidence_source": "",
+      "acceptance_criteria": ""
+    }
+  ],
+  "rewrite": [
+    {
+      "change": "",
+      "evidence_source": "",
+      "acceptance_criteria": ""
+    }
+  ],
+  "new_blocks_to_add": [
+    {
+      "block": "",
+      "evidence_source": "",
+      "acceptance_criteria": ""
+    }
+  ],
+  "entity_clarity_changes": [
+    {
+      "change": "",
+      "evidence_source": "",
+      "acceptance_criteria": ""
+    }
+  ],
+  "citation_improvements": [
+    {
+      "change": "",
+      "evidence_source": "",
+      "acceptance_criteria": ""
+    }
+  ]
 }
 ```
 
 ---
 
 ### `53_Generate_Action_Plan_Technical`
-**Objetivo:** Fixes técnicos y de messaging en páginas existentes
-**Frecuencia:** Semanal
+**Objective:** Technical and messaging fixes for existing pages
+**Frequency:** Weekly
 
 ```
 You are a technical SEO and GEO specialist.
@@ -1223,6 +1522,7 @@ Competitor patterns: {{competitor_patterns}}
 Recommend structural, technical, and messaging changes to improve AI citation readiness.
 Do NOT recommend new content creation (that's 50_Generate_Action_Plan_Content).
 Focus only on: existing pages, site structure, schema, messaging, headings, entity clarity.
+Every recommendation must include evidence_source and acceptance_criteria.
 
 Return valid JSON only. No explanation, no markdown:
 {
@@ -1231,6 +1531,8 @@ Return valid JSON only. No explanation, no markdown:
       "fix": "",
       "page_or_section": "",
       "rationale": "",
+      "evidence_source": "",
+      "acceptance_criteria": "",
       "effort": "low | medium | high"
     }
   ],
@@ -1239,21 +1541,41 @@ Return valid JSON only. No explanation, no markdown:
       "change": "",
       "page_or_section": "",
       "rationale": "",
+      "evidence_source": "",
+      "acceptance_criteria": "",
       "effort": "low | medium | high"
     }
   ],
-  "structural_changes": [],
-  "schema_additions": []
+  "structural_changes": [
+    {
+      "change": "",
+      "page_or_section": "",
+      "rationale": "",
+      "evidence_source": "",
+      "acceptance_criteria": "",
+      "effort": "low | medium | high"
+    }
+  ],
+  "schema_additions": [
+    {
+      "schema_type": "",
+      "page_or_section": "",
+      "rationale": "",
+      "evidence_source": "",
+      "acceptance_criteria": "",
+      "effort": "low | medium | high"
+    }
+  ]
 }
 ```
 
 ---
 
-## MÓDULO 7 — OPTIMIZATION / LEARNING
+## MODULE 7 — OPTIMIZATION / LEARNING
 
 ### `60_Generate_New_Prompts_from_Gaps`
-**Objetivo:** Expandir la biblioteca de prompts según lo que no está funcionando
-**Frecuencia:** Mensual
+**Objective:** Expand the prompt library based on what is not working
+**Frequency:** Monthly
 
 ```
 You are expanding a prompt library based on AI visibility gaps.
@@ -1279,8 +1601,8 @@ Return valid JSON array only. No explanation, no markdown:
 ---
 
 ### `61_Detect_Emerging_Opportunities`
-**Objetivo:** Identificar patrones nuevos y oportunidades emergentes en el tiempo
-**Frecuencia:** Mensual
+**Objective:** Identify new patterns and emerging opportunities over time
+**Frequency:** Monthly
 
 ```
 You are an AI visibility pattern analyst.
@@ -1307,17 +1629,18 @@ Return valid JSON only. No explanation, no markdown:
 
 ---
 
-## MÓDULO 8 — VALIDACIÓN
-> Correr siempre antes de escribir resultados en Sheets.
+## MODULE 8 — VALIDATION
+> Always run before writing results to Sheets.
 
 ### `90_Validate_Output`
-**Objetivo:** Verificar que el JSON parseado es válido antes de guardarlo
-**Frecuencia:** Cada run, después de cualquier prompt de extraction o audit
+**Objective:** Verify that parsed JSON is valid before saving it
+**Frequency:** Every run, after any extraction or audit prompt
 
 ```
 You are a data quality validator for an AI visibility monitoring system.
 
 Parsed output to validate: {{parsed_output}}
+Provider status: {{provider_status}}
 
 Expected schema type: {{schema_type}}
 Options: "mentions_extract" | "positioning_extract" | "sentiment_extract" |
@@ -1329,8 +1652,12 @@ Validate:
 2. All score fields are integers between 0 and 10 (inclusive)
 3. All array fields are actual arrays, not null or string
 4. Enum fields use only allowed values
-5. No field contains raw markdown or code block syntax (```)
-6. Boolean fields are true/false, not "true"/"false" strings
+5. No field contains unresolved template variables like "{{brand}}" or "{{variable_name}}"
+6. No field contains markdown, markdown headings, or code block syntax (```)
+7. Boolean fields are true/false, not "true"/"false" strings
+8. No measured visibility result is present if provider status is not configured
+9. All enum values are valid for their schema
+10. All scores are within the required range for their schema
 
 Return ONLY valid JSON. No explanation, no markdown:
 {
@@ -1349,51 +1676,51 @@ Return ONLY valid JSON. No explanation, no markdown:
 
 ---
 
-## RESUMEN — Nomenclatura y frecuencia
+## SUMMARY — Naming and Frequency
 
-| ID | Nombre | Módulo | Frecuencia |
+| ID | Name | Module | Frequency |
 |----|--------|--------|------------|
-| 01 | Discovery_Universe | Discovery | Mensual |
-| 02 | Language_Map | Discovery | Mensual |
-| 03 | Alternative_Phrase_Discovery | Discovery | Mensual |
-| 04 | Competitor_Query_Discovery | Discovery | Mensual |
-| 05 | Local_Intent_Discovery | Discovery | Mensual |
-| 10 | Measure_Branded_Visibility | Measurement | Semanal |
-| 11 | Measure_Category_Visibility | Measurement | Semanal |
-| 12 | Measure_Problem_Aware_Visibility | Measurement | Semanal |
-| 13 | Measure_Comparison_Visibility | Measurement | Semanal |
-| 14 | Measure_Transactional_Visibility | Measurement | Semanal |
-| 15 | Measure_Local_Visibility | Measurement | Semanal |
-| 16 | Measure_Educational_Visibility | Measurement | Quincenal |
-| 17 | Measure_Alternative_Language_Visibility | Measurement | Quincenal |
-| 20 | Extract_Mentions_and_Citations | Extraction | Cada run |
-| 21 | Extract_Brand_Positioning | Extraction | Cada run |
-| 22 | Extract_Sentiment_and_Framing | Extraction | Cada run |
-| 23 | Extract_Competitive_Presence | Extraction | Cada run |
-| 24 | Extract_Answer_Type | Extraction | Cada run |
-| 25 | Extract_Share_of_Voice | Extraction | Cada run |
-| 30 | Interpret_Visibility_Gaps | Interpretation | Semanal |
-| 31 | Interpret_Competitor_Advantage | Interpretation | Semanal |
-| 32 | Interpret_Citation_Patterns | Interpretation | Quincenal |
-| 33 | Interpret_Entity_Clarity_Gaps | Interpretation | Mensual |
-| 34 | Interpret_Messaging_Gaps | Interpretation | Mensual |
-| 40 | Audit_Homepage | Audit | Mensual |
-| 41 | Audit_Service_Page | Audit | Semanal / tras cambios |
-| 42 | Audit_Pricing_Page | Audit | Mensual |
-| 43 | Audit_FAQ_Coverage | Audit | Mensual |
-| 44 | Audit_Comparison_Content | Audit | Mensual |
-| 45 | Audit_Schema_Readiness | Audit | Mensual |
-| 46 | Audit_Content_Cluster_Coverage | Audit | Mensual |
-| 47 | Audit_Social_Alignment | Audit | Quincenal |
-| 48 | Audit_Evidence_and_Trust | Audit | Mensual |
-| 50 | Generate_Action_Plan_Content | Action | Semanal |
-| 51 | Build_Optimization_Backlog | Action | Semanal |
-| 52 | Recommend_Page_Fixes | Action | Bajo demanda |
-| 53 | Generate_Action_Plan_Technical | Action | Semanal |
-| 60 | Generate_New_Prompts_from_Gaps | Learning | Mensual |
-| 61 | Detect_Emerging_Opportunities | Learning | Mensual |
-| 90 | Validate_Output | Validation | Cada run |
+| 01 | Discovery_Universe | Discovery | Monthly |
+| 02 | Language_Map | Discovery | Monthly |
+| 03 | Alternative_Phrase_Discovery | Discovery | Monthly |
+| 04 | Competitor_Query_Discovery | Discovery | Monthly |
+| 05 | Local_Intent_Discovery | Discovery | Monthly |
+| 10 | Measure_Branded_Visibility | Measurement | Weekly |
+| 11 | Measure_Category_Visibility | Measurement | Weekly |
+| 12 | Measure_Problem_Aware_Visibility | Measurement | Weekly |
+| 13 | Measure_Comparison_Visibility | Measurement | Weekly |
+| 14 | Measure_Transactional_Visibility | Measurement | Weekly |
+| 15 | Measure_Local_Visibility | Measurement | Weekly |
+| 16 | Measure_Educational_Visibility | Measurement | Bi-weekly |
+| 17 | Measure_Alternative_Language_Visibility | Measurement | Bi-weekly |
+| 20 | Extract_Mentions_and_Citations | Extraction | Every run |
+| 21 | Extract_Brand_Positioning | Extraction | Every run |
+| 22 | Extract_Sentiment_and_Framing | Extraction | Every run |
+| 23 | Extract_Competitive_Presence | Extraction | Every run |
+| 24 | Extract_Answer_Type | Extraction | Every run |
+| 25 | Extract_Share_of_Voice | Extraction | Every run |
+| 30 | Interpret_Visibility_Gaps | Interpretation | Weekly |
+| 31 | Interpret_Competitor_Advantage | Interpretation | Weekly |
+| 32 | Interpret_Citation_Patterns | Interpretation | Bi-weekly |
+| 33 | Interpret_Entity_Clarity_Gaps | Interpretation | Monthly |
+| 34 | Interpret_Messaging_Gaps | Interpretation | Monthly |
+| 40 | Audit_Homepage | Audit | Monthly |
+| 41 | Audit_Service_Page | Audit | Weekly / after changes |
+| 42 | Audit_Pricing_Page | Audit | Monthly |
+| 43 | Audit_FAQ_Coverage | Audit | Monthly |
+| 44 | Audit_Comparison_Content | Audit | Monthly |
+| 45 | Audit_Schema_Readiness | Audit | Monthly |
+| 46 | Audit_Content_Cluster_Coverage | Audit | Monthly |
+| 47 | Audit_Social_Alignment | Audit | Bi-weekly |
+| 48 | Audit_Evidence_and_Trust | Audit | Monthly |
+| 50 | Generate_Action_Plan_Content | Action | Weekly |
+| 51 | Build_Optimization_Backlog | Action | Weekly |
+| 52 | Recommend_Page_Fixes | Action | On demand |
+| 53 | Generate_Action_Plan_Technical | Action | Weekly |
+| 60 | Generate_New_Prompts_from_Gaps | Learning | Monthly |
+| 61 | Detect_Emerging_Opportunities | Learning | Monthly |
+| 90 | Validate_Output | Validation | Every run |
 
 ---
-*Total: 40 prompts | Corrida inicial sugerida: 10, 11, 13, 20, 30, 41, 50, 90 (8 prompts)*
-*Para instanciar: copiar este archivo → prompts_[cliente]_v2.md → completar CONFIG → reemplazar {{variables}} en módulo 2.*
+*Total: 40 prompts | Suggested initial run: 10, 11, 13, 20, 30, 41, 50, 90 (8 prompts)*
+*To instantiate: copy this file -> prompts_[client]_v2.md -> complete CONFIG -> replace {{variables}} in Module 2.*
