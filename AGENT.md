@@ -47,11 +47,12 @@ The agent must follow this sequence every time:
 5. Agent presents CONFIG to the user.
 6. Agent stops and waits for explicit confirmation: `yes`, `ok`, or equivalent.
 7. Only after CONFIG confirmation, agent creates the output folder.
-8. Agent generates `01-RUN-PLAN.md`.
-9. Agent checks API/provider availability.
-10. Agent executes the selected objective.
-11. Agent generates output files.
-12. Agent clearly marks every major finding as Observed, Measured, Search evidence, Inferred, Not run, Not available, or Unknown.
+8. Agent checks API/provider availability.
+9. Agent selects the Data / Measurement Tier.
+10. Agent generates `01-RUN-PLAN.md`.
+11. Agent executes the selected objective.
+12. Agent generates output files.
+13. Agent clearly marks every major finding as Observed, Measured, Search Evidence, Inferred, Not run, Not available, or Unknown.
 
 ## CONFIG Confirmation Gate
 
@@ -159,6 +160,85 @@ Rules:
 - Do not claim Bing Copilot results unless there is an actual supported measurement path.
 - Mark unsupported providers as `Manual / Not run`.
 
+## Data / Measurement Tier Model
+
+The agent must select and report a Data / Measurement Tier after CONFIG confirmation and provider/tool checks. The selected tier controls what can run, which evidence classes are allowed, and which phases must be blocked.
+
+Use `Mixed` only when a run combines evidence from more than one tier. Mixed outputs must still label each finding by its specific evidence class and must not turn readiness or search evidence into measured LLM visibility.
+
+### Tier 0 - GEO Readiness Audit, no LLM provider APIs required
+
+Can run:
+
+- homepage and up to 3 key page fetch
+- robots.txt check
+- sitemap check
+- noindex/canonical/status checks
+- raw HTML content availability
+- headings / answer extractability checks
+- schema presence and local syntax check if available
+- llms.txt presence and quality
+- AI crawler directives in robots.txt
+- entity clarity
+- content freshness / evidence quality
+- FAQ / prompt coverage
+- trust/proof signals
+
+Can report:
+
+- Observed
+- Inferred
+- Not available
+- Unknown
+- Search Evidence only if search tools were used
+
+Cannot report measured LLM visibility, provider visibility, LLM citation share, or prompt-based visibility scores.
+
+### Tier 1 - Enhanced Technical / Search Evidence, optional integrations
+
+Can run only when configured:
+
+- rendered page checks if render tool/MCP exists
+- Search Evidence via Serper or equivalent
+- Search Console / analytics evidence if explicitly configured
+- PSI/Core Web Vitals if explicitly configured
+- competitor/source discovery via search
+
+Can report:
+
+- Search Evidence for search/API evidence
+- Observed or Measured only for actual technical checks that were run
+- provider/tool status and blocked phases
+
+Cannot report LLM visibility unless LLM providers or documented manual runs exist.
+
+### Tier 2 - LLM Visibility Measurement
+
+Requires:
+
+- configured LLM provider API or documented manual UI run
+- fresh/cold-context prompt execution
+- provider logged
+- interface logged: API / Manual UI
+- model logged if known
+- prompt text logged
+- run date/time logged
+- raw response or response summary logged
+- extraction result logged
+
+Can report:
+
+- Measured LLM visibility only for the providers actually run
+
+Must not:
+
+- treat Serper/search results as LLM visibility
+- label OpenAI API results as ChatGPT UI unless ChatGPT UI was manually measured
+- label Bing Copilot as measured unless documented manual/supported run exists
+
+Important rule:
+If no LLM provider is configured, `07-LLM-VISIBILITY-RESULTS.md` must say exactly: `Status: Not run — no LLM provider configured`.
+
 ## Objective-Specific Behavior
 
 ### `quick-check`
@@ -227,8 +307,9 @@ Rules:
 ## Run Logic
 
 - Always confirm CONFIG before execution.
-- Always generate `01-RUN-PLAN.md` after CONFIG confirmation.
-- Always check provider availability before measurement phases.
+- Always check provider availability after CONFIG confirmation and before generating the final run plan.
+- Always select the Data / Measurement Tier before generating the final run plan.
+- Always generate `01-RUN-PLAN.md` after CONFIG confirmation, provider/tool checks, and tier selection.
 - If no LLM provider key is configured, generate readiness audit + prompt library only.
 - If at least one LLM provider key is configured and the objective requires measurement, run prompts and write measured results to `07-LLM-VISIBILITY-RESULTS.md`.
 - If only Serper is configured, use it only for search evidence and external authority research.
@@ -242,6 +323,7 @@ Rules:
 - Use the scoring framework from `SCORING.md`.
 - Use evidence rules from `EVIDENCE-RULES.md`.
 - Include limitations from `LIMITATIONS.md`.
+- Identify the Data / Measurement Tier in every output.
 - Never mix prompt plans with measured results.
 
 ## Quality Bar

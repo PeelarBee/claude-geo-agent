@@ -1,6 +1,6 @@
-# GEO Visibility Score /100
+# GEO Readiness Score /100
 
-The GEO Visibility Score is a diagnostic readiness score, not an absolute prediction of AI answer inclusion.
+The GEO Readiness Score is a diagnostic readiness score, not an absolute prediction of AI answer inclusion or measured LLM visibility.
 
 Every score must include:
 
@@ -94,6 +94,18 @@ Criteria:
 
 Measurement Readiness is not the same as measured LLM visibility performance. It scores whether the business has the prompt library, provider setup, baseline structure, result separation, and refresh cadence needed to measure visibility over time.
 
+## LLM Visibility Measurement Status
+
+Report LLM visibility measurement separately from the GEO Readiness Score.
+
+Allowed statuses:
+
+- Status: Live LLM results collected
+- Status: Not run — no LLM provider configured
+- Status: Manual run required — prompt library generated only
+
+Do not combine readiness checks and measured LLM provider results into one unsupported visibility claim. Tier 0 and Tier 1 evidence can support readiness, authority, and source-discovery analysis, but Tier 2 provider/manual prompt execution is required for measured LLM visibility.
+
 ## Score Interpretation
 
 - 0-39 = Poor GEO readiness
@@ -107,6 +119,7 @@ Measurement Readiness is not the same as measured LLM visibility performance. It
 - Do not award Measured LLM visibility credit unless prompts were actually run through a configured LLM provider.
 - If no LLM provider is configured, Measurement Readiness can still receive credit for prompt library, baseline structure, and cadence, but measured-results criteria must be `Not run`.
 - Search Evidence may contribute to External Authority Signals. It must not contribute to Measured LLM visibility unless prompts were actually run through a configured LLM provider.
+- The GEO Readiness Score must stay separate from LLM Visibility Measurement Status.
 - Every Search Evidence or Measured component must include an evidence date or run timestamp. If no date is available, lower confidence.
 - Missing evidence should lower confidence, not be treated as proof of absence unless the source was checked and returned no usable result.
 - Every recommendation tied to a low score must include evidence, confidence, priority, impact, effort, and next action.

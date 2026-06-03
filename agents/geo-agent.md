@@ -83,9 +83,10 @@ After CONFIG confirmation:
 1. Create output folder.
 2. Check provider availability.
 3. Report only `Configured` or `Missing`; never print key values.
-4. Generate `01-RUN-PLAN.md` including API status, measurement availability, blocked phases, and scenario status.
-5. Decide what can run based on available providers.
-6. Execute the selected objective.
+4. Select the Data / Measurement Tier based on available APIs/tools and evidence.
+5. Generate `01-RUN-PLAN.md` including API status, tier selection, measurement availability, blocked phases, and scenario status.
+6. Decide what can run based on available providers and evidence tier.
+7. Execute the selected objective.
 
 ### API categories
 
@@ -172,6 +173,38 @@ Scenario D — Multiple LLM providers configured:
 9. In API availability tables, use only `Configured` / `Missing`.
 10. If a provider is missing, list it as missing but do not block the entire audit unless the selected objective is `monitor`.
 
+### Data / Measurement Tier Model
+
+After CONFIG confirmation, the agent must check available APIs/tools, select a tier, generate `01-RUN-PLAN.md`, run only phases supported by available evidence, and mark blocked phases honestly.
+
+Use `Mixed` only when a run combines evidence from more than one tier. Mixed outputs must still label each finding by its specific evidence class and must not turn readiness or search evidence into measured LLM visibility.
+
+#### Tier 0 — GEO Readiness Audit, no LLM provider APIs required
+
+Can run: homepage and up to 3 key page fetch, robots.txt check, sitemap check, noindex/canonical/status checks, raw HTML content availability, headings / answer extractability checks, schema presence and local syntax check if available, llms.txt presence and quality, AI crawler directives in robots.txt, entity clarity, content freshness / evidence quality, FAQ / prompt coverage, and trust/proof signals.
+
+Can report: Observed, Inferred, Not available, Unknown, and Search Evidence only if search tools were used.
+
+Cannot report: measured LLM visibility, ChatGPT visibility, Claude visibility, Gemini visibility, Perplexity visibility, Groq visibility, Bing Copilot visibility, LLM citation share, or prompt-based visibility scores.
+
+#### Tier 1 — Enhanced Technical / Search Evidence, optional integrations
+
+Can run only when configured: rendered page checks if render tool/MCP exists, Search Evidence via Serper or equivalent, Search Console / analytics evidence if explicitly configured, PSI/Core Web Vitals if explicitly configured, and competitor/source discovery via search.
+
+Can report: Search Evidence for search/API evidence, Observed or Measured only for actual technical checks that were run, provider/tool status, and blocked phases.
+
+Cannot report: LLM visibility unless LLM providers or documented manual runs exist.
+
+#### Tier 2 — LLM Visibility Measurement
+
+Requires: configured LLM provider API or documented manual UI run, fresh/cold-context prompt execution, provider logged, interface logged as API / Manual UI, model logged if known, prompt text logged, run date/time logged, raw response or response summary logged, and extraction result logged.
+
+Can report: Measured LLM visibility only for the providers actually run.
+
+Must not treat Serper/search results as LLM visibility, label OpenAI API results as ChatGPT UI unless ChatGPT UI was manually measured, or label Bing Copilot as measured unless documented manual/supported run exists.
+
+Important rule: If no LLM provider is configured, `07-LLM-VISIBILITY-RESULTS.md` must say exactly: `Status: Not run — no LLM provider configured`.
+
 ### Objective-specific behavior
 
 - `quick-check`: Does not require any API keys. Do not run LLM measurement. Do not generate fake visibility results.
@@ -196,9 +229,10 @@ Ask only for the URL and objective. Then fetch the site automatically and extrac
 4. Agent stops and waits for explicit confirmation: "yes", "ok", or equivalent
 5. Only after confirmation, agent creates the output folder
 6. Agent checks API/provider availability
-7. Agent creates `01-RUN-PLAN.md` including API status, measurement availability, blocked phases, and scenario status
-8. Agent executes the selected objective
-9. Agent generates output files
+7. Agent selects the Data / Measurement Tier
+8. Agent creates `01-RUN-PLAN.md` including API status, tier selection, measurement availability, blocked phases, and scenario status
+9. Agent executes the selected objective
+10. Agent generates output files
 
 **NON-NEGOTIABLE:** Do not run pre-flight checks, create output files, generate reports, or execute any audit objective until the user has confirmed the CONFIG.
 
@@ -335,10 +369,11 @@ Required sequence:
 4. Agent stops until user confirms CONFIG.
 5. After CONFIG confirmation, create the output folder.
 6. Check API/provider availability.
-7. Generate `01-RUN-PLAN.md` including API status, measurement availability, blocked phases, and scenario status.
-8. Execute `full-audit` according to available tools/APIs.
-9. Generate outputs.
-10. Clearly mark each output as Observed, Measured, Inferred, Not run, Not available, or Unknown.
+7. Select the Data / Measurement Tier.
+8. Generate `01-RUN-PLAN.md` including API status, tier selection, measurement availability, blocked phases, and scenario status.
+9. Execute `full-audit` according to available tools/APIs and tier-supported evidence.
+10. Generate outputs.
+11. Clearly mark each output as Observed, Measured, Search Evidence, Inferred, Not run, Not available, or Unknown.
 
 Always run:
 - Technical GEO audit
@@ -500,7 +535,7 @@ This is the first file the user should read. It must be short, plain, and decisi
 
 ## Step 1B: Run Plan and API Gate → `01-RUN-PLAN.md`
 
-Before running any objective, check provider availability and then generate a run plan. This is the contract for the run and must include API status, measurement availability, blocked phases, and scenario status.
+Before running any objective, check provider availability, select the Data / Measurement Tier, and then generate a run plan. This is the contract for the run and must include API status, tier selection, measurement availability, blocked phases, and scenario status.
 
 The run plan must adapt to the selected objective. It must not imply that every phase runs for every objective.
 
@@ -563,6 +598,15 @@ The run plan must adapt to the selected objective. It must not imply that every 
 - Providers to be measured: [list configured LLM providers]
 - Providers not configured: [list missing LLM providers]
 - Blocked phases: [list]
+
+## Data / Measurement Tier
+
+- Tier selected: Tier 0 / Tier 1 / Tier 2 / Mixed
+- Reason:
+- Available evidence:
+- Blocked evidence:
+- Measurement-dependent phases:
+- LLM visibility measurement status:
 
 ## Scenario Status
 
@@ -945,7 +989,8 @@ Run conditionally:
 7. Learning prompts `60-61` only if historical or prior-run data exists.
 
 Output evidence rules:
-- Clearly mark each output and major finding as Observed, Measured, Inferred, Not run, Not available, or Unknown.
+- Clearly mark each output and major finding as Observed, Measured, Search Evidence, Inferred, Not run, Not available, or Unknown.
+- Identify whether each output is based on Tier 0, Tier 1, Tier 2, or mixed evidence.
 - Blocked phases must be shown in `01-RUN-PLAN.md` and relevant output files.
 - Search evidence must not be confused with LLM visibility.
 - Prompt libraries must not be confused with measured results.

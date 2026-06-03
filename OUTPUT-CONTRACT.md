@@ -9,6 +9,7 @@ Every audit output must include the required metadata block below:
 - Objective
 - Date/time of run
 - Domain
+- Data / Measurement Tier: Tier 0 / Tier 1 / Tier 2 / Mixed
 - APIs/tools available
 - APIs/tools not configured
 - What was run
@@ -26,6 +27,8 @@ Full report-style outputs must include the full report sections below:
 - Next Actions
 
 Artifact-style outputs, such as llms.txt drafts, schema drafts, or prompt libraries, may include a full report section and mark it `Not applicable` with a short reason when the section does not apply. Do not omit required metadata. If a required report section is not applicable to the objective or artifact type, include the section and mark it `Not applicable` with a short reason.
+
+Every output must identify whether it is based on Tier 0, Tier 1, Tier 2, or mixed evidence. Do not combine readiness checks and measured LLM provider results into one unsupported visibility claim.
 
 ## Finding Format
 
@@ -57,7 +60,7 @@ Every finding must use this structure:
 
 ## `01-RUN-PLAN.md`
 
-`01-RUN-PLAN.md` must be generated after CONFIG confirmation and before audit outputs are generated.
+`01-RUN-PLAN.md` must be generated after CONFIG confirmation, provider/tool checks, and tier selection, and before audit outputs are generated.
 
 The run plan must report provider availability without printing secret values. Use only `Configured` or `Missing`.
 
@@ -69,6 +72,17 @@ The run plan must report provider availability without printing secret values. U
 - Outputs to generate:
 - Outputs intentionally skipped:
 - Reason for skipped outputs:
+
+## Data / Measurement Tier
+
+- Tier selected: Tier 0 / Tier 1 / Tier 2 / Mixed
+- Reason:
+- Available evidence:
+- Blocked evidence:
+- Measurement-dependent phases:
+- LLM visibility measurement status:
+
+Use `Mixed` only when an output combines evidence from more than one tier. Mixed evidence must still be labeled at the finding level and must not convert readiness or search evidence into measured LLM visibility.
 
 ## API Status
 

@@ -1,6 +1,6 @@
 # GEO Run Plan: [Domain]
 
-This run plan must be created after CONFIG confirmation and before audit execution. It defines what will run, what will not run, what is blocked, and which evidence classes are allowed for this run.
+This run plan must be created after CONFIG confirmation, provider/tool checks, and Data / Measurement Tier selection, and before audit execution. It defines what will run, what will not run, what is blocked, and which evidence classes are allowed for this run.
 
 ## CONFIG Confirmation
 
@@ -58,6 +58,17 @@ Do not print API secret values. Report provider status only as Configured / Miss
 * LLM visibility result status: Live LLM results collected / Not run — no LLM provider configured / Manual run required — prompt library generated only
 
 If no LLM provider is configured, `07-LLM-VISIBILITY-RESULTS.md` must say exactly: `Status: Not run — no LLM provider configured`
+
+## Data / Measurement Tier
+
+* Tier selected: Tier 0 / Tier 1 / Tier 2 / Mixed
+* Reason:
+* Available evidence:
+* Blocked evidence:
+* Measurement-dependent phases:
+* LLM visibility measurement status:
+
+Use `Mixed` only when this run combines evidence from more than one tier. Mixed evidence must still be labeled by finding and must not convert readiness or search evidence into measured LLM visibility.
 
 ## Provider Boundary
 

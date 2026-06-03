@@ -11,6 +11,9 @@
 - Serper, Google, Bing, or other search results may be used only as Search Evidence.
 - Search Evidence can support external authority, discoverability, competitor research, and source presence checks.
 - Search Evidence must not be reported as measured LLM visibility.
+- Offline readiness audits can identify technical, structural, and content signals, but cannot report measured LLM visibility.
+- Search evidence can support external authority and source discovery, but cannot prove LLM answer inclusion.
+- Measured LLM visibility requires actual provider/manual prompt execution.
 - Without LLM provider APIs, the agent can generate readiness audits and prompt libraries, but cannot report measured LLM visibility.
 - If no LLM provider is configured, `07-LLM-VISIBILITY-RESULTS.md` must say exactly: `Status: Not run — no LLM provider configured`.
 - Generated prompts are a test plan only, not visibility results.
