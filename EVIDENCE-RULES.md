@@ -4,9 +4,15 @@ These rules control how `claude-geo-agent` labels claims, findings, scores, and 
 
 ## Evidence Classes
 
+Allowed Evidence Status values:
+
+Observed / Measured / Search Evidence / Inferred / Not Run / Not Available / Unknown
+
 ### Observed
 
-Directly verified from a website, raw or rendered HTML, `robots.txt`, sitemap, `llms.txt`, structured data, API response, HTTP response, or local file.
+Directly verified from a website, raw or rendered HTML, HTTP response, `robots.txt`, sitemap, `llms.txt`, structured data, local file, or local check.
+
+Use `Observed` for direct website, file, HTTP, schema, sitemap, `robots.txt`, `llms.txt`, or local checks.
 
 Examples:
 - `robots.txt` blocks `/services/`.
@@ -22,9 +28,11 @@ Examples:
 - Perplexity cited a competitor in a completed monitoring run.
 - Claude did not mention the brand in a completed comparison prompt.
 
-### Search Evidence Source Type
+### Search Evidence
 
 Verified from search APIs or search surfaces, including Serper-backed Google results and search-discovered Reddit, YouTube, LinkedIn, Wikipedia, directory, or third-party source results.
+
+Use `Search Evidence` as the Evidence Status when a finding is based on search APIs, search results, or search-discovered third-party sources. Use `Observed` for direct website, file, HTTP, schema, sitemap, `robots.txt`, `llms.txt`, or local checks.
 
 Examples:
 - Serper returned branded search results for the company name.
@@ -33,11 +41,9 @@ Examples:
 
 Search Evidence can support competitor research, external authority checks, source discovery, and brand search presence. It is not Measured LLM visibility.
 
-Use `Observed` as the Evidence Status when the search result or API response was directly verified. Label the Evidence Source or source type as search evidence.
-
 ### Inferred
 
-Reasoned from observed evidence, but not directly proven.
+Reasoned from observed or search evidence, but not directly proven.
 
 Examples:
 - Thin About content may weaken entity clarity.
@@ -46,7 +52,7 @@ Examples:
 
 ### Not Run
 
-Blocked because the objective, API key, access, provider, run mode, or tool was not available.
+The check, prompt, provider, or phase was not attempted because it was blocked, skipped, out of scope, or unavailable for the selected objective.
 
 Examples:
 - LLM visibility prompts were not run because no LLM provider key was configured.
@@ -55,7 +61,7 @@ Examples:
 
 ### Not Available
 
-The source, page, file, or data does not exist or returned no usable result.
+The agent attempted to retrieve or verify the source, but the source, page, file, or data did not exist or returned no usable result.
 
 Examples:
 - `/llms.txt` returned `404`.
@@ -75,25 +81,35 @@ Examples:
 
 - The agent must not present inferred findings as measured results.
 - The agent must not claim visibility in ChatGPT, Claude, Gemini, Perplexity, Groq, or Bing Copilot unless that provider, API, and run mode were executed.
-- Serper is a search provider only. It may support external authority research, competitor research, search evidence, Reddit/YouTube/LinkedIn/Wikipedia discovery through search, brand search presence, and citation/source discovery, but it is not an LLM provider.
+- Serper is a search provider only. It may support external authority research, competitor research, Search Evidence, Reddit/YouTube/LinkedIn/Wikipedia discovery through search, brand search presence, and citation/source discovery, but it is not an LLM provider.
 - Serper cannot support live LLM visibility measurement, ChatGPT visibility, Claude visibility, Gemini visibility, Perplexity visibility, Groq/OpenAI/Anthropic answer measurement, or Bing Copilot visibility.
-- Search result presence must be labeled as search evidence or external authority evidence, not ChatGPT, Claude, Gemini, Perplexity, Groq, or Bing Copilot visibility.
+- Search result presence must use `Search Evidence` as the Evidence Status. It may support external authority findings, but it must not be labeled as ChatGPT, Claude, Gemini, Perplexity, Groq, or Bing Copilot visibility.
+- Do not use Search Evidence to infer LLM answer behavior. Search Evidence can support readiness and authority analysis, but it cannot prove what ChatGPT, Claude, Gemini, Perplexity, Groq, or Bing Copilot answered.
 - Prompt libraries are test plans. They are not evidence that a model mentioned, cited, ranked, or omitted the brand.
 - `llms.txt` may support discovery and readability workflows, but it must not be described as a guaranteed ranking factor or inclusion mechanism.
-- Always distinguish Observed website evidence, Search evidence, Measured LLM responses, Inferred recommendations, and Not run / blocked phases.
+- Always distinguish Observed website evidence, Search Evidence, Measured LLM responses, Inferred recommendations, and Not Run / blocked phases.
 - Never print API key values in generated reports. In API availability tables, use only `Configured` / `Missing`.
-- Every major finding must include Evidence Status, Evidence Source, Confidence, Priority, Impact, Effort, and Recommended Action.
+- Every major finding must include Evidence Status, Evidence Source Type, Evidence Source, Evidence Date or Run Date, Confidence, Priority, Impact, Effort, Recommended Action, and Acceptance Criteria.
 - Every score must include a rationale and must show which evidence class supports the score.
 - If evidence is weak, incomplete, stale, blocked, or unavailable, the agent must say so plainly.
+
+## Freshness Rule
+
+Every Measured LLM result and Search Evidence finding must include a date or run timestamp.
+
+If the date is missing, confidence should be Medium or Low depending on the case.
 
 ## Required Finding Fields
 
 Every major finding must include:
 
-- Evidence Status: Observed / Measured / Inferred / Not run / Not available / Unknown
-- Evidence Source: URL, file, API, local check, or `not available`
+- Evidence Status: Observed / Measured / Search Evidence / Inferred / Not Run / Not Available / Unknown
+- Evidence Source Type: website / search / LLM provider / local check / file / API / manual / not available
+- Evidence Source: URL, file, API, local check, provider, manual note, or `not available`
+- Evidence Date or Run Date
 - Confidence: High / Medium / Low
 - Priority: Critical / High / Medium / Low
 - Impact: High / Medium / Low
 - Effort: High / Medium / Low
 - Recommended Action: specific next step
+- Acceptance Criteria: what must be true after the fix or follow-up is complete
