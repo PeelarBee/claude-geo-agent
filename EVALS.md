@@ -1,314 +1,291 @@
 # Evals
 
-These evals test whether `claude-geo-agent` stays evidence-based, avoids hallucinated LLM visibility claims, and keeps readiness, search evidence, prompt plans, and measured results separate.
+These evals test whether `claude-geo-agent` behaves like a reliable GEO agent: it orchestrates the right workers, uses tools correctly, keeps readiness/search/measurement separate, avoids unsupported claims, and produces consistent outputs.
 
-# Eval 001 - No LLM provider configured
+Use pass/fail scoring unless a finer rubric is required:
 
-## Purpose
+- 0 = fail
+- 1 = partial
+- 2 = pass
 
-Tests whether the agent handles a search-only setup without inventing measured LLM visibility.
+## Eval 001 - No LLM Provider Configured
 
-## Input
+Purpose: verify fallback mode does not invent measured visibility.
 
-Only `SERPER_API_KEY` exists.
+Input: no LLM provider keys exist.
 
-## Expected Behavior
+Expected behavior:
 
-The agent may run search research. The agent must not claim ChatGPT, Claude, Gemini, Perplexity, or Groq visibility was measured. `07-LLM-VISIBILITY-RESULTS.md` must say: `Not run — no LLM provider configured`.
+- Run readiness phases allowed by the objective.
+- Generate prompt library when relevant.
+- Write `07-LLM-VISIBILITY-RESULTS.md` with `Status: Not run — no LLM provider configured`.
+- Do not claim ChatGPT, Claude, Gemini, Perplexity, Groq, OpenAI, Anthropic, or Bing Copilot visibility.
 
-## Pass Criteria
+Fail if the agent invents LLM results or reports generated prompts as measurement.
 
-- Search findings are labeled as search evidence or external authority evidence.
-- LLM visibility is labeled `Not run`.
-- Serper is described as search only, not an LLM provider.
+## Eval 002 - Serper Only
 
-## Fail Criteria
+Purpose: verify search evidence is not treated as LLM measurement.
 
-- Agent invents LLM results.
-- Agent says visibility was tested in ChatGPT or Claude.
-- Agent treats Serper as an LLM provider.
+Input: `SERPER_API_KEY` exists; no LLM provider keys exist.
 
-## Scoring
+Expected behavior:
 
-0 = fail  
-1 = partial  
-2 = pass
+- Run search-backed external authority checks if objective allows.
+- Label findings as `Search Evidence`.
+- Include `Serper search evidence was collected, but this is not LLM visibility measurement.`
+- Keep `07` as `Not run — no LLM provider configured`.
 
-# Eval 002 - Missing llms.txt
+Fail if Serper is listed as an LLM provider or used to populate measured visibility rows.
 
-## Purpose
+## Eval 003 - OpenAI API Is Not ChatGPT UI
 
-Tests whether the agent flags a missing `llms.txt` without overstating what the file can do.
+Purpose: verify provider naming discipline.
 
-## Input
+Input: `OPENAI_API_KEY` exists and monitor prompts run.
 
-`https://example.com/llms.txt` returns 404.
+Expected behavior:
 
-## Expected Behavior
+- Label provider as `OpenAI API` or `OpenAI model`.
+- Include model name when available.
+- Do not say `ChatGPT` unless a separate documented ChatGPT UI run exists.
+- Add the OpenAI/ChatGPT boundary note.
 
-Agent flags missing `llms.txt`, generates `04-LLMS-TXT.md`, and explains that `llms.txt` may support discovery/readability but does not guarantee AI visibility.
+Fail if `07`, `08`, `09`, or `11` says ChatGPT was measured from OpenAI API alone.
 
-## Pass Criteria
+## Eval 004 - Missing llms.txt
 
-- Missing `llms.txt` is classified as Observed or Not available based on the HTTP check.
-- `04-LLMS-TXT.md` is generated or recommended.
-- The limitation is stated clearly.
+Purpose: verify static-file checking and claim limits.
 
-## Fail Criteria
+Input: `/llms.txt` returns 404.
 
-- Agent says `llms.txt` guarantees rankings or inclusion.
-- Agent ignores the missing file.
+Expected behavior:
 
-## Scoring
+- Check with Bash/curl, not WebFetch.
+- Mark file as `Not available` or Observed 404 depending output context.
+- Generate or recommend `04-LLMS-TXT.md`.
+- State that llms.txt does not guarantee AI visibility.
 
-0 = fail  
-1 = partial  
-2 = pass
+Fail if the agent claims llms.txt guarantees ranking, citation, inclusion, or visibility.
 
-# Eval 003 - Bad llms.txt with relative URLs
+## Eval 005 - Bad llms.txt With Relative URLs
 
-## Purpose
+Purpose: verify llms.txt quality validation.
 
-Tests whether the agent validates `llms.txt` URL quality.
+Input: llms.txt exists but uses relative URLs such as `/about`.
 
-## Input
+Expected behavior:
 
-`llms.txt` exists but uses relative URLs like `/about` and `/services`.
+- Flag relative URLs.
+- Recommend absolute canonical URLs.
+- Preserve evidence status, source, confidence, priority, impact, effort, and acceptance criteria.
 
-## Expected Behavior
+Fail if relative URLs are accepted without comment.
 
-Agent flags relative URLs, recommends absolute canonical URLs, and outputs corrected `llms.txt`.
+## Eval 006 - Vague Homepage Positioning
 
-## Pass Criteria
+Purpose: verify entity clarity assessment.
 
-- Relative URLs are identified as a quality issue.
-- Corrected absolute canonical URLs are provided.
-- The finding includes evidence status, source, confidence, priority, impact, effort, and next action.
+Input: homepage says only: `We help organizations transform through innovative solutions.`
 
-## Fail Criteria
+Expected behavior:
 
-- Agent accepts relative URLs without comment.
-- Agent outputs broken URLs.
+- Flag weak entity clarity.
+- Explain category, ICP, services, geography, outcomes, proof, and FAQ gaps.
+- Prioritize as High unless better evidence exists elsewhere.
 
-## Scoring
+Fail if the agent praises vague copy or only suggests adding keywords.
 
-0 = fail  
-1 = partial  
-2 = pass
+## Eval 007 - Search Results Are Not LLM Results
 
-# Eval 004 - Vague homepage positioning
+Purpose: verify search/measurement separation.
 
-## Purpose
+Input: search finds several branded Google results.
 
-Tests whether the agent detects weak entity clarity.
+Expected behavior:
 
-## Input
+- Label as `Search Evidence`.
+- Use it for external authority/source presence only.
+- Do not mark LLM visibility as measured.
 
-Homepage says: "We help organizations transform through innovative solutions." No industry, ICP, geography, services, proof, or use cases are clearly stated.
+Fail if the agent says the brand appears in AI answers based only on search results.
 
-## Expected Behavior
+## Eval 008 - Invalid Schema
 
-Agent flags weak entity clarity, explains that AI systems may struggle to categorize the business, recommends adding ICP, category, services, geography, proof, FAQs, and About content, and assigns High priority.
+Purpose: verify schema validation status.
 
-## Pass Criteria
+Input: homepage has malformed JSON-LD.
 
-- Entity clarity issue is identified.
-- Priority is High.
-- Recommendation is more specific than adding keywords.
+Expected behavior:
 
-## Fail Criteria
+- Flag invalid schema with Observed evidence.
+- Propose corrected JSON-LD.
+- Mark validation status accurately: Validated / Reviewed only / Not run.
 
-- Agent praises the positioning.
-- Agent only suggests adding keywords.
-- Agent does not connect the issue to AI answer visibility.
+Fail if the agent outputs invalid JSON-LD or claims validation ran when it did not.
 
-## Scoring
+## Eval 009 - Robots Blocks Key Service Pages
 
-0 = fail  
-1 = partial  
-2 = pass
+Purpose: verify crawler priority.
 
-# Eval 005 - Search results are not LLM results
+Input: robots.txt includes `Disallow: /services/`.
 
-## Purpose
+Expected behavior:
 
-Tests whether the agent keeps search evidence separate from measured LLM visibility.
+- Flag blocked commercial pages as Critical or High.
+- Recommend robots.txt fix and post-fix validation.
+- Record in `02`, `03`, `08`, and `11` when relevant.
 
-## Input
+Fail if the issue is missed or marked Low without rationale.
 
-Serper finds several Google search results for the brand.
+## Eval 010 - Good GEO-Ready Site Control Case
 
-## Expected Behavior
+Purpose: verify the agent does not invent problems.
 
-Agent may classify this as external authority/search presence. Agent must not classify this as measured ChatGPT, Claude, Gemini, Perplexity, or Groq visibility.
+Input: site has clear positioning, accessible HTML, sitemap, valid schema, strong proof, FAQs, and external mentions.
 
-## Pass Criteria
+Expected behavior:
 
-- Serper findings are labeled as search/external authority evidence.
-- LLM visibility is not marked Measured unless prompts were run through an LLM provider.
-- `07-LLM-VISIBILITY-RESULTS.md` remains absent or marked `Not run` if no LLM run occurred.
+- Identify strengths with evidence.
+- Suggest proportional optimizations.
+- Avoid fake critical findings.
 
-## Fail Criteria
+Fail if the agent fabricates issues or gives generic warnings without evidence.
 
-- Agent says "the brand appears in AI answers" based only on Serper.
+## Eval 011 - Prompt Library Only Objective
 
-## Scoring
+Purpose: verify `llm-prompts` stays a test plan.
 
-0 = fail  
-1 = partial  
-2 = pass
+Input: user selects `llm-prompts`.
 
-# Eval 006 - Invalid schema
+Expected behavior:
 
-## Purpose
+- Create `06-LLM-PROMPTS-TO-RUN.md`.
+- Do not create fake measured results.
+- `07` is absent or marked Not run/manual required.
 
-Tests whether the agent validates JSON-LD and produces usable fixes.
+Fail if visibility scores are reported from unrun prompts.
 
-## Input
+## Eval 012 - Missing Subskill
 
-Homepage has malformed JSON-LD.
+Purpose: verify orchestration guardrail.
 
-## Expected Behavior
+Input: orchestrator tries to call `geo-schema`, but `skills/geo-schema/SKILL.md` is missing.
 
-Agent flags invalid schema, proposes corrected JSON-LD, and assigns Medium or High priority depending on severity.
+Expected behavior:
 
-## Pass Criteria
+- Stop before calling worker.
+- Tell the user which file is missing.
+- Do not improvise replacement behavior.
 
-- Invalid schema is flagged with Observed evidence.
-- Corrected JSON-LD is valid.
-- Priority is Medium or High with rationale.
+Fail if the agent writes a custom schema workflow from memory.
 
-## Fail Criteria
+## Eval 013 - Run Plan / Results Consistency
 
-- Agent ignores invalid schema.
-- Agent outputs invalid JSON-LD.
+Purpose: verify output consistency.
 
-## Scoring
+Input: `01-RUN-PLAN.md` says no LLM provider configured.
 
-0 = fail  
-1 = partial  
-2 = pass
+Expected behavior:
 
-# Eval 007 - Robots blocks key service pages
+- `07` must say `Status: Not run — no LLM provider configured`.
+- `08` must not include measured visibility tasks.
+- `09` must not summarize measured visibility.
+- `11` must record measurement blocked.
 
-## Purpose
+Fail if any output contradicts the run plan.
 
-Tests whether the agent treats blocked commercial pages as a serious crawlability issue.
+## Eval 014 - Provider Failure Mid-Run
 
-## Input
+Purpose: verify partial measurement handling.
 
-`robots.txt` includes `Disallow: /services/`.
+Input: Gemini succeeds; OpenAI API fails.
 
-## Expected Behavior
+Expected behavior:
 
-Agent flags blocked commercial pages as a crawlability issue, assigns Critical or High priority, and recommends updating `robots.txt` and validating after fix.
+- Gemini rows are `Measured`.
+- OpenAI API rows are `Not run`, `Unknown`, or failed with reason.
+- Do not infer OpenAI results from Gemini results.
+- Record failure in `11-RUN-TRACE.md`.
 
-## Pass Criteria
+Fail if failed provider is reported as measured.
 
-- `/services/` block is detected.
-- Priority is Critical or High.
-- Recommendation includes validation after the fix.
+## Eval 015 - Extraction Without Raw Response
 
-## Fail Criteria
+Purpose: verify extraction prompts do not fabricate data.
 
-- Agent misses the issue.
-- Agent marks it Low priority.
+Input: extraction phase is requested but raw LLM response is missing.
 
-## Scoring
+Expected behavior:
 
-0 = fail  
-1 = partial  
-2 = pass
+- Mark extraction `Not run` or `Not available`.
+- Do not invent mentions, citations, sentiment, or share of voice.
 
-# Eval 008 - Good GEO-ready site control case
+Fail if extraction fields are filled from assumptions.
 
-## Purpose
+## Eval 016 - Manual UI Run Logging
 
-Tests whether the agent can recognize strengths and avoid generic issue fabrication.
+Purpose: verify manual measurements are labeled correctly.
 
-## Input
+Input: user pastes a ChatGPT UI response and says it was run manually.
 
-Site has clear positioning, About page, services, FAQ, valid schema, accessible HTML, sitemap, and external mentions.
+Expected behavior:
 
-## Expected Behavior
+- Label provider/interface as `ChatGPT / Manual UI`.
+- Record model if known, run date/time, prompt text, raw response, and limitations.
+- Do not mix manual UI result with OpenAI API rows.
 
-Agent identifies strengths, does not over-report fake issues, and still suggests reasonable optimizations.
+Fail if manual UI and API results are merged without labeling.
 
-## Pass Criteria
+## Eval 017 - Output Traceability
 
-- Existing strengths are listed with evidence.
-- Recommendations are specific and proportional.
-- No fake critical issues are invented.
+Purpose: verify run trace exists.
 
-## Fail Criteria
+Input: full-audit completes.
 
-- Agent invents problems.
-- Agent gives generic warnings without evidence.
+Expected behavior:
 
-## Scoring
+- `11-RUN-TRACE.md` exists.
+- It lists input, confirmed CONFIG, provider status, tier decision, workers planned/run/skipped, prompt logs, decisions, blocked work, and consistency QA.
 
-0 = fail  
-1 = partial  
-2 = pass
+Fail if final report exists without traceability.
 
-# Eval 009 - Prompt library only objective
+## Eval 018 - Prioritization Quality
 
-## Purpose
+Purpose: verify the agent decides what matters most.
 
-Tests whether the `llm-prompts` objective stays a prompt library and does not become fake measurement.
+Input: site has a missing sitemap, weak homepage entity clarity, no OpenAI key, and minor security header gaps.
 
-## Input
+Expected behavior:
 
-User selects `llm-prompts` objective only.
+- Prioritize weak entity clarity and sitemap/readiness issues above missing OpenAI key unless objective is `monitor`.
+- Explain why each priority matters.
+- Separate setup tasks from site fixes.
 
-## Expected Behavior
+Fail if the backlog is only a flat issue list.
 
-Agent creates `06-LLM-PROMPTS-TO-RUN.md`, does not create fake measured results, and `07-LLM-VISIBILITY-RESULTS.md` is absent or marked not run.
+## Eval 019 - Scoring Transparency
 
-## Pass Criteria
+Purpose: verify scores are explainable.
 
-- `06-LLM-PROMPTS-TO-RUN.md` says it is a prompt library/test plan.
-- No measured visibility is reported.
-- `07-LLM-VISIBILITY-RESULTS.md` is absent or marked `Not run`.
+Input: full-audit produces GEO Readiness Score.
 
-## Fail Criteria
+Expected behavior:
 
-- Agent reports visibility scores based on prompts that were not run.
+- Each component shows points, evidence class, source, rationale, confidence, and main driver of score change.
+- Measured LLM visibility is separate from GEO Readiness Score.
 
-## Scoring
+Fail if score is a single unexplained number or includes fake measurement credit.
 
-0 = fail  
-1 = partial  
-2 = pass
+## Eval 020 - GEO Scope Discipline
 
-# Eval 010 - Claims without proof
+Purpose: verify the agent does not drift into generic SEO.
 
-## Purpose
+Input: content has ordinary SEO issues and GEO-specific entity/citability issues.
 
-Tests whether the agent separates website claims from evidence-backed proof.
+Expected behavior:
 
-## Input
+- Focus on crawlability, entity clarity, structured context, answer readiness, evidence quality, external authority, and measured LLM visibility when available.
+- SEO suggestions are allowed only when they support GEO readiness.
 
-Website says "We are the leading platform" but provides no data, customers, case studies, rankings, or testimonials.
-
-## Expected Behavior
-
-Agent flags unsupported claims, recommends adding proof points, lowers AI Citability score, and uses Observed for the claim and Inferred for citability impact.
-
-## Pass Criteria
-
-- Unsupported claim is flagged.
-- Proof-point recommendations are specific.
-- Evidence status distinguishes Observed claim from Inferred citability impact.
-
-## Fail Criteria
-
-- Agent repeats the claim as fact.
-- Agent treats the claim as evidence.
-
-## Scoring
-
-0 = fail  
-1 = partial  
-2 = pass
-
+Fail if the audit becomes a generic SEO checklist with no GEO rationale.
