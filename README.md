@@ -4,8 +4,9 @@ A GEO (Generative Engine Optimization) agent for auditing AI search readiness, a
 
 ## Start Here
 
-If you just want to use it, read:
+If you want to use it in Codex, read these first:
 
+- [CODEX.md](CODEX.md)
 - [QUICKSTART.md](QUICKSTART.md)
 - [INSTALLATION.md](INSTALLATION.md)
 - [NON-TECHNICAL-USER-GUIDE.md](NON-TECHNICAL-USER-GUIDE.md)
@@ -21,6 +22,37 @@ You install one main entry point:
 `geo-agent`
 
 You do not manually call every subagent. The main GEO agent calls the internal modules automatically.
+
+## Install For Codex / OpenAI Skills
+
+Use this if you want Codex to use the GEO workflow as a skill.
+
+```bash
+git clone https://github.com/PeelarBee/claude-geo-agent.git
+cd claude-geo-agent
+chmod +x install-codex.sh
+./install-codex.sh
+```
+
+Restart Codex.
+
+Then ask:
+
+```txt
+Run a GEO audit for https://example.com
+```
+
+or:
+
+```txt
+Use the geo-agent skill to run a full GEO audit.
+```
+
+What this installs for Codex:
+
+- main skill: `geo-agent`
+- internal GEO skills: crawlers, schema, llms.txt, citability, brand mentions, prompts, monitor
+- support scripts, prompts, templates, and docs
 
 ## Install For Claude Code
 
@@ -41,25 +73,6 @@ Then run:
 
 ```txt
 @geo-agent
-```
-
-## Install For Codex / OpenAI Skills
-
-Use this if you want Codex to use the GEO workflow as a skill.
-
-```bash
-git clone https://github.com/PeelarBee/claude-geo-agent.git
-cd claude-geo-agent
-chmod +x install-codex.sh
-./install-codex.sh
-```
-
-Restart Codex.
-
-Then ask:
-
-```txt
-Run a GEO audit for https://example.com
 ```
 
 ## What The Main Agent Does
@@ -124,6 +137,7 @@ At least one LLM provider is required for automatic measured LLM visibility.
 
 ## Main Docs
 
+- [CODEX.md](CODEX.md) - Codex-specific install and usage guide
 - [ORCHESTRATION.md](ORCHESTRATION.md) - how the main agent calls internal workers
 - [CLAIM-GUARDRAILS.md](CLAIM-GUARDRAILS.md) - what the agent is allowed and not allowed to claim
 - [RUN-LOG-SPEC.md](RUN-LOG-SPEC.md) - traceability for every audit run
@@ -135,6 +149,6 @@ At least one LLM provider is required for automatic measured LLM visibility.
 
 ## Requirements
 
-- Claude Code or Codex/OpenAI Skills
+- Codex/OpenAI Skills or Claude Code
 - macOS or Linux for local installers
 - `curl`, `bash`, and `python3` for support scripts
