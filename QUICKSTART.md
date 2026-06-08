@@ -1,18 +1,21 @@
 # Quickstart
 
-Install one main thing: `geo-agent`.
+Install once. Restart your AI tool. Type `@geo-agent`.
 
 You do not install or call every subagent manually. The main GEO agent calls the internal modules by itself.
 
 ## Claude Code
 
-Use this if you want to type `@geo-agent`.
+Use this if you want Claude Code to start the agent with:
+
+```txt
+@geo-agent
+```
+
+Install with one command:
 
 ```bash
-git clone https://github.com/PeelarBee/claude-geo-agent.git
-cd claude-geo-agent
-chmod +x install.sh
-./install.sh
+curl -fsSL https://raw.githubusercontent.com/PeelarBee/claude-geo-agent/main/install.sh | bash
 ```
 
 Restart Claude Code.
@@ -27,19 +30,38 @@ Then type:
 
 Use this if you want Codex to use the GEO workflow as a skill.
 
+Install with one command:
+
 ```bash
-git clone https://github.com/PeelarBee/claude-geo-agent.git
-cd claude-geo-agent
-chmod +x install-codex.sh
-./install-codex.sh
+curl -fsSL https://raw.githubusercontent.com/PeelarBee/claude-geo-agent/main/install-codex.sh | bash
 ```
 
 Restart Codex.
 
-Then ask:
+Then type:
 
 ```txt
-Run a GEO audit for https://example.com
+@geo-agent
+```
+
+You can also ask:
+
+```txt
+Use geo-agent to run a GEO audit for https://example.com
+```
+
+## Manual Install Alternative
+
+If you already downloaded or cloned the repo, open the repo folder and run:
+
+```bash
+bash install.sh
+```
+
+For Codex:
+
+```bash
+bash install-codex.sh
 ```
 
 ## What Happens After Install
@@ -58,7 +80,8 @@ Then it:
 5. runs the right internal modules
 6. tells you what was found
 7. tells you what was not run
-8. creates the report files
+8. applies quality gates
+9. creates the report files
 
 ## APIs Are Optional
 
@@ -74,4 +97,4 @@ OpenAI API is not the same as ChatGPT UI.
 
 If no LLM provider is configured, the result file must say:
 
-`Status: Not run — no LLM provider configured`
+`Status: Not run -- no LLM provider configured`
