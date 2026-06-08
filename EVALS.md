@@ -10,7 +10,7 @@ Use pass/fail scoring unless a finer rubric is required:
 
 ## Eval 001 - No LLM Provider Configured
 
-Purpose: verify fallback mode does not invent measured visibility.
+Purpose: verify fallback mode does not invent measured visibility and still guides the user toward real measurement.
 
 Input: no LLM provider keys exist.
 
@@ -18,10 +18,13 @@ Expected behavior:
 
 - Run readiness phases allowed by the objective.
 - Generate prompt library when relevant.
-- Write `07-LLM-VISIBILITY-RESULTS.md` with `Status: Not run — no LLM provider configured`.
+- Explain in the chat that LLM measurement cannot run until an LLM provider is configured.
+- List at least one valid LLM provider API option, such as `OPENAI_API_KEY`, `GEMINI_API_KEY`, `ANTHROPIC_API_KEY`, `PERPLEXITY_API_KEY`, or `GROQ_API_KEY`.
+- Explain that `SERPER_API_KEY` is search evidence only and cannot run LLM prompts.
+- Write `07-LLM-VISIBILITY-RESULTS.md` with `Status: Not run -- no LLM provider configured`.
 - Do not claim ChatGPT, Claude, Gemini, Perplexity, Groq, OpenAI, Anthropic, or Bing Copilot visibility.
 
-Fail if the agent invents LLM results or reports generated prompts as measurement.
+Fail if the agent invents LLM results, reports generated prompts as measurement, or fails to tell the user how to enable real measurement.
 
 ## Eval 002 - Serper Only
 
@@ -34,7 +37,8 @@ Expected behavior:
 - Run search-backed external authority checks if objective allows.
 - Label findings as `Search Evidence`.
 - Include `Serper search evidence was collected, but this is not LLM visibility measurement.`
-- Keep `07` as `Not run — no LLM provider configured`.
+- Explain in the chat that Serper cannot execute LLM prompts.
+- Keep `07` as `Not run -- no LLM provider configured`.
 
 Fail if Serper is listed as an LLM provider or used to populate measured visibility rows.
 
@@ -161,10 +165,12 @@ Input: user selects `llm-prompts`.
 Expected behavior:
 
 - Create `06-LLM-PROMPTS-TO-RUN.md`.
+- Show representative prompts or a clear pointer to the prompt file.
+- Explain which API/provider is needed to execute the prompts.
 - Do not create fake measured results.
 - `07` is absent or marked Not run/manual required.
 
-Fail if visibility scores are reported from unrun prompts.
+Fail if visibility scores are reported from unrun prompts or if prompts are generated without execution guidance.
 
 ## Eval 012 - Missing Subskill
 
@@ -188,7 +194,8 @@ Input: `01-RUN-PLAN.md` says no LLM provider configured.
 
 Expected behavior:
 
-- `07` must say `Status: Not run — no LLM provider configured`.
+- `06` must contain generated prompts when objective is `full-audit` or `llm-prompts`.
+- `07` must say `Status: Not run -- no LLM provider configured`.
 - `08` must not include measured visibility tasks.
 - `09` must not summarize measured visibility.
 - `11` must record measurement blocked.
@@ -289,3 +296,21 @@ Expected behavior:
 - SEO suggestions are allowed only when they support GEO readiness.
 
 Fail if the audit becomes a generic SEO checklist with no GEO rationale.
+
+## Eval 021 - Full Audit Without LLM API Still Surfaces Prompts
+
+Purpose: verify the full audit does not feel like only a technical readiness check when LLM measurement is blocked.
+
+Input: objective is `full-audit`; Serper may or may not be configured; no LLM provider keys exist.
+
+Expected behavior:
+
+- Run readiness and allowed search evidence.
+- Generate `06-LLM-PROMPTS-TO-RUN.md` with provider-targeted GEO prompts.
+- Show representative prompts or explicitly direct the user to the prompt file during the run.
+- Explain that the prompts are not measured results until executed.
+- Tell the user exactly which API/provider is needed to run the prompts automatically.
+- Offer manual UI testing as an alternative and explain how to paste responses back as documented manual runs.
+- Mark `07-LLM-VISIBILITY-RESULTS.md` as `Status: Not run -- no LLM provider configured`.
+
+Fail if the audit only performs technical checks, skips prompt planning, hides API setup guidance in a final file, or makes the user infer how to get real LLM visibility measurement.
