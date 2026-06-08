@@ -17,6 +17,7 @@ They are support tools for the orchestrator. Users normally do not call them dir
 | `run-llm-prompt.sh` | Runs one prompt against a configured LLM provider and logs provider/interface/model/date/prompt/response |
 | `create-api-setup-guide.sh` | Creates plain-English API setup guidance |
 | `assemble-final-report.sh` | Combines outputs into `09-FINAL-REPORT.md` |
+| `validate-output-consistency.sh` | Checks that run plan, results, backlog, final report, and run trace do not contradict each other |
 
 ## Important Boundaries
 
@@ -37,6 +38,13 @@ scripts/static-geo-checks.sh https://example.com > example.com-geo-audit/02-TECH
 scripts/render-not-run-results.sh example.com-geo-audit "Example Brand" Missing
 scripts/create-api-setup-guide.sh example.com-geo-audit "Example Brand"
 scripts/assemble-final-report.sh example.com-geo-audit
+scripts/validate-output-consistency.sh example.com-geo-audit
 ```
 
 The real orchestrator should decide which scripts to run based on objective, provider status, and evidence tier.
+
+## Final QA Rule
+
+Before the agent presents a full audit as final, it should run or apply the same checks as `validate-output-consistency.sh`.
+
+If the validator fails, the final report should not be delivered as final until the contradiction is fixed or clearly marked as a limitation.
