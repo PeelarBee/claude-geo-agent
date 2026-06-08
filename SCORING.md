@@ -1,102 +1,203 @@
 # GEO Readiness Score /100
 
-The GEO Readiness Score is a diagnostic readiness score, not an absolute prediction of AI answer inclusion or measured LLM visibility.
+The GEO Readiness Score is a diagnostic readiness score. It is not a prediction of AI answer inclusion and it is not measured LLM visibility.
 
-Every score must include:
+Measured LLM visibility must be reported separately as `LLM Visibility Measurement Status`.
 
-- Rationale
-- Evidence class: Observed / Measured / Search Evidence / Inferred / Not run / Not available / Unknown
+## Required Score Transparency
+
+Every score must show:
+
+- Component points earned
+- Component max points
+- Evidence class
 - Evidence source
 - Evidence source type
-- Evidence date or run date when applicable
+- Evidence date or run date
 - Confidence
-- Major gaps affecting the score
+- Main positive drivers
+- Main negative drivers
+- What would raise the score
+- What would lower confidence
+- Priority created by the score
+
+Use this structure:
+
+```md
+| Component | Points | Evidence Status | Evidence Source Type | Evidence Source | Evidence Date / Run Date | Confidence | Positive Drivers | Negative Drivers | What Changes The Score |
+|---|---:|---|---|---|---|---|---|---|---|
+```
+
+## Component Weights
+
+| Component | Points | What it measures |
+|---|---:|---|
+| Crawlability & Access | 15 | Can crawlers and answer engines discover important public content? |
+| Entity Clarity | 20 | Is the brand/category/ICP/problem/outcome/geography clear? |
+| Structured Data | 15 | Does schema help machines understand the entity and page type? |
+| AI Citability | 20 | Is content answer-ready, extractable, specific, and evidence-backed? |
+| External Authority Signals | 15 | Do search/third-party surfaces support the brand as an entity/source? |
+| Measurement Readiness | 15 | Is the brand set up to measure prompt-based visibility over time? |
 
 ## Scoring Anchors
 
 Use these anchors for each component:
 
-- 0-25% of component points = Missing, blocked, or unusable
-- 26-50% = Present but weak, vague, incomplete, or low confidence
-- 51-75% = Mostly present but with meaningful gaps
-- 76-100% = Strong, specific, evidence-backed, and actionable
+- 0-25% of component points: missing, blocked, inaccessible, or unusable
+- 26-50%: present but weak, vague, incomplete, or low confidence
+- 51-75%: mostly present with meaningful gaps
+- 76-100%: strong, specific, evidence-backed, and actionable
 
 Do not assign high scores without clear evidence.
 
 ## 1. Crawlability & Access - 15 pts
 
-Criteria:
+Positive drivers:
 
-- `robots.txt` does not block important content
-- Important pages are accessible
+- Important pages return successful status codes
+- `robots.txt` does not block key public content
 - Sitemap exists and is discoverable
-- Important content is available in initial or rendered HTML
+- Important content is available in raw or rendered HTML
 - Key pages are not accidentally noindexed
+
+Negative drivers:
+
+- Important pages blocked or unavailable
+- Missing or undiscoverable sitemap
+- Heavy client-side rendering risk for core content
+- noindex/canonical issues on important pages
+- AI crawler directives block important access without intentional policy
+
+Priority guidance:
+
+- Critical when key public/commercial content is blocked, unavailable, or noindexed.
+- High when sitemap/raw HTML/rendering risk may limit discovery.
 
 ## 2. Entity Clarity - 20 pts
 
-Criteria:
+Positive drivers:
 
 - Clear business category
 - Clear ICP/audience
 - Clear services/products
 - Clear geography/market
 - Clear About/company information
-- Clear `sameAs` or external entity links
+- Consistent name, category, and sameAs/entity links
+
+Negative drivers:
+
+- Vague positioning
+- Missing category or target customer
+- Missing geography for local/regional services
+- Conflicting names or categories across pages
+- Unsupported or generic claims
+
+Priority guidance:
+
+- High when homepage or service pages do not clearly explain what the business is and who it serves.
 
 ## 3. Structured Data - 15 pts
 
-Criteria:
+Positive drivers:
 
-- Organization schema
-- WebSite schema
+- Organization/WebSite schema on homepage
 - Service/Product schema where relevant
-- FAQ schema where relevant
-- `sameAs` links
-- JSON-LD reviewed or validated against Schema.org requirements. If no validator was run, validation must be labeled `Not run` and the recommendation should be marked as best-effort.
+- Article/FAQ/Breadcrumb schema where relevant
+- sameAs links to authoritative profiles
+- JSON-LD syntax reviewed or validated
+
+Negative drivers:
+
+- Missing Organization or service schema
+- Malformed JSON-LD
+- Schema contradicts visible content
+- Validation not run or failed
+
+Validation status must be one of:
+
+- Validated
+- Reviewed only
+- Not run
+
+Do not claim schema is valid unless validation actually ran.
 
 ## 4. AI Citability - 20 pts
 
-Criteria:
+Positive drivers:
 
-- Answer-ready content
+- Answer-first sections
 - Clear definitions
-- Concrete claims
-- Proof points
-- Case studies/testimonials
-- Original insights/data
-- Structured FAQs
-- Content that can be quoted/cited without ambiguity
+- Self-contained paragraphs
+- Specific claims with evidence
+- Case studies, testimonials, credentials, or proof
+- FAQs and prompt-style headings
+- Tables, lists, and extractable structure
+
+Negative drivers:
+
+- Vague claims
+- Unsupported superlatives
+- Outdated or unattributed stats
+- Missing direct answers
+- Long context-dependent sections
+- Weak proof/trust signals
+
+Priority guidance:
+
+- High when core buyer questions are not answered directly or claims lack proof.
 
 ## 5. External Authority Signals - 15 pts
 
-Criteria:
+Positive drivers:
 
-- Brand appears in search results for relevant queries
-- Third-party mentions exist
-- LinkedIn/company presence exists
-- Relevant directory/listing presence exists
-- Reddit/YouTube/Wikipedia presence where applicable
-- External signals align with the brand/category
+- Brand appears in relevant search results
+- Consistent third-party mentions
+- LinkedIn/company profile exists
+- Relevant directories/listings exist
+- Reviews, videos, discussions, associations, media, or niche source presence
+- Wikipedia only when applicable and eligible
 
-Do not penalize legitimate businesses for lacking Wikipedia presence when Wikipedia is not applicable, relevant, or likely eligible. Treat Wikipedia as a strong signal only when applicable.
+Negative drivers:
+
+- Brand absent from exact brand search evidence
+- Conflicting third-party profile data
+- Competitors dominate relevant source/search surfaces
+- No third-party corroboration for important claims
+
+Rules:
+
+- Search evidence can contribute to this component.
+- Search evidence must not be treated as measured LLM visibility.
+- Do not penalize legitimate businesses for lacking Wikipedia when Wikipedia is not applicable.
 
 ## 6. Measurement Readiness - 15 pts
 
-Criteria:
+Positive drivers:
 
-- Monitoring prompt library generated
-- LLM provider configured
-- Results separated from prompt plan
-- Baseline stored
+- Prompt library generated
 - Prompt groups documented
+- Provider setup exists
+- Results are separated from prompt plan
+- Baseline structure exists
 - Refresh cadence defined
+- Run trace records provider/prompt metadata
 
-Measurement Readiness is not the same as measured LLM visibility performance. It scores whether the business has the prompt library, provider setup, baseline structure, result separation, and refresh cadence needed to measure visibility over time.
+Negative drivers:
+
+- No LLM provider configured
+- No baseline structure
+- Prompts and results mixed together
+- No run trace
+- Provider naming ambiguity, especially OpenAI API vs ChatGPT UI
+
+Rules:
+
+- Measurement Readiness is not measured LLM visibility performance.
+- If no LLM provider is configured, the prompt library and baseline structure can earn readiness credit, but measured-results criteria are `Not run`.
 
 ## LLM Visibility Measurement Status
 
-Report LLM visibility measurement separately from the GEO Readiness Score.
+Report separately from the GEO Readiness Score.
 
 Allowed statuses:
 
@@ -104,22 +205,40 @@ Allowed statuses:
 - Status: Not run — no LLM provider configured
 - Status: Manual run required — prompt library generated only
 
-Do not combine readiness checks and measured LLM provider results into one unsupported visibility claim. Tier 0 and Tier 1 evidence can support readiness, authority, and source-discovery analysis, but Tier 2 provider/manual prompt execution is required for measured LLM visibility.
+Provider labels must be accurate:
+
+- OpenAI API is not ChatGPT UI.
+- Serper is not an LLM provider.
+- Bing Copilot is Manual / Not run unless documented.
 
 ## Score Interpretation
 
-- 0-39 = Poor GEO readiness
-- 40-59 = Basic readiness, significant gaps
-- 60-74 = Moderate readiness, needs focused improvements
-- 75-89 = Strong readiness, needs optimization
-- 90-100 = Excellent readiness, monitor and refine
+- 0-39: Poor GEO readiness
+- 40-59: Basic readiness, significant gaps
+- 60-74: Moderate readiness, needs focused improvements
+- 75-89: Strong readiness, needs optimization
+- 90-100: Excellent readiness, monitor and refine
 
-## Scoring Rules
+## Prioritization Rules
 
-- Do not award Measured LLM visibility credit unless prompts were actually run through a configured LLM provider.
-- If no LLM provider is configured, Measurement Readiness can still receive credit for prompt library, baseline structure, and cadence, but measured-results criteria must be `Not run`.
-- Search Evidence may contribute to External Authority Signals. It must not contribute to Measured LLM visibility unless prompts were actually run through a configured LLM provider.
-- The GEO Readiness Score must stay separate from LLM Visibility Measurement Status.
-- Every Search Evidence or Measured component must include an evidence date or run timestamp. If no date is available, lower confidence.
-- Missing evidence should lower confidence, not be treated as proof of absence unless the source was checked and returned no usable result.
-- Every recommendation tied to a low score must include evidence, confidence, priority, impact, effort, and next action.
+The agent must not only list issues. It must decide what matters most.
+
+Prioritize higher when an issue:
+
+1. Blocks crawlability or access to important public content.
+2. Prevents the brand/entity/category from being understood.
+3. Prevents direct answers or citations from being extracted.
+4. Makes measured visibility impossible or untrustworthy.
+5. Causes contradictions across outputs or claims.
+
+Setup tasks, such as adding an LLM provider, should be separated from site/content fixes unless the selected objective is `monitor`.
+
+## Scoring Guardrails
+
+- Do not award measured visibility credit unless prompts were actually run.
+- Do not use Serper/search evidence as LLM visibility.
+- Do not label OpenAI API measurement as ChatGPT UI.
+- Do not turn generated prompts into results.
+- Missing evidence lowers confidence.
+- Checked-and-missing evidence can lower score.
+- Unknown evidence should not be treated as proof of absence.
