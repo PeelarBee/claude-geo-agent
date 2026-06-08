@@ -2,11 +2,11 @@
 
 This repo does not run by itself.
 
-Think of it like a toolkit. First you download the toolkit. Then you install it into the AI tool you want to use.
+Think of it like a toolkit. First you install the toolkit into the AI tool you want to use. After that, you start the agent with `@geo-agent`.
 
 ## The Simple Version
 
-You install **one main thing**:
+You install one main thing:
 
 `geo-agent`
 
@@ -26,15 +26,14 @@ The main GEO agent calls the internal modules automatically:
 
 Use this if you want to type:
 
-`@geo-agent`
+```txt
+@geo-agent
+```
 
-Install:
+Install with one command:
 
 ```bash
-git clone https://github.com/PeelarBee/claude-geo-agent.git
-cd claude-geo-agent
-chmod +x install.sh
-./install.sh
+curl -fsSL https://raw.githubusercontent.com/PeelarBee/claude-geo-agent/main/install.sh | bash
 ```
 
 Then restart Claude Code.
@@ -55,34 +54,45 @@ What the installer does:
 
 Use this if you want Codex to use the GEO workflow as a skill.
 
-Install:
+Install with one command:
 
 ```bash
-git clone https://github.com/PeelarBee/claude-geo-agent.git
-cd claude-geo-agent
-chmod +x install-codex.sh
-./install-codex.sh
+curl -fsSL https://raw.githubusercontent.com/PeelarBee/claude-geo-agent/main/install-codex.sh | bash
 ```
 
 Then restart Codex.
 
-Use natural language, for example:
+Use:
 
 ```txt
-Run a GEO audit for https://example.com
+@geo-agent
 ```
 
-or:
+You can also ask naturally:
 
 ```txt
-Use the geo-agent skill to run a full GEO audit.
+Use geo-agent to run a full GEO audit for https://example.com
 ```
 
 What the Codex installer does:
 
 - copies `skills/geo-agent/` into `~/.agents/skills/geo-agent/`
 - copies the internal GEO skills into `~/.agents/skills/`
-- copies scripts, prompts, templates, and docs into `~/.agents/skills/geo-agent/references/`
+- copies scripts, prompts, templates, agents, and docs into `~/.agents/skills/geo-agent/references/`
+
+## Manual Install Alternative
+
+If you already downloaded or cloned the repo, open the repo folder and run:
+
+```bash
+bash install.sh
+```
+
+For Codex:
+
+```bash
+bash install-codex.sh
+```
 
 ## What Gets Installed
 
@@ -106,6 +116,7 @@ Support files:
 - evidence rules
 - orchestration rules
 - scoring rules
+- quality gates
 - output contract
 - evals
 - scripts
@@ -142,13 +153,14 @@ APIs decide what the agent can measure.
 
 If no LLM provider is configured, the agent must say:
 
-`Status: Not run — no LLM provider configured`
+`Status: Not run -- no LLM provider configured`
 
 ## Quick Explanation For Non-Technical Users
 
 1. Install the main GEO agent.
-2. Open Claude Code or Codex.
-3. Ask it to run a GEO audit.
-4. The agent checks what it can do.
-5. It runs the internal modules automatically.
-6. It tells you what was checked, what was measured, what was not run, and what to fix first.
+2. Restart Claude Code or Codex.
+3. Type `@geo-agent`.
+4. The agent asks for the URL and objective.
+5. It checks what it can do.
+6. It runs the internal modules automatically.
+7. It tells you what was checked, what was measured, what was not run, and what to fix first.
