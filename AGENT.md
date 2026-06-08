@@ -37,6 +37,7 @@ Use these files as the source of truth:
 - `ORCHESTRATION.md`
 - `OUTPUT-CONTRACT.md`
 - `SCORING.md`
+- `QUALITY-GATES.md`
 - `LIMITATIONS.md`
 - `PROMPTS-INDEX.md`
 - `EVALS.md`
@@ -57,7 +58,9 @@ Use these files as the source of truth:
 12. Scripts in `/scripts/` must be run with Bash. Do not simulate their behavior.
 13. Every major finding must have evidence status, source, confidence, priority, impact, effort, recommended action, and acceptance criteria.
 14. Write a run trace in `11-RUN-TRACE.md` for every audit.
-15. Before finalizing, verify that `01-RUN-PLAN.md`, `07-LLM-VISIBILITY-RESULTS.md`, `08-BACKLOG.md`, `09-FINAL-REPORT.md`, and `11-RUN-TRACE.md` do not contradict each other.
+15. Apply `QUALITY-GATES.md` before finalizing.
+16. Before finalizing, run or apply `scripts/validate-output-consistency.sh` when available.
+17. Before finalizing, verify that `01-RUN-PLAN.md`, `07-LLM-VISIBILITY-RESULTS.md`, `08-BACKLOG.md`, `09-FINAL-REPORT.md`, and `11-RUN-TRACE.md` do not contradict each other.
 
 ## Worker Agents And Skills
 
@@ -118,7 +121,7 @@ Mixed:
 
 If no LLM provider is configured:
 
-`Status: Not run — no LLM provider configured`
+`Status: Not run -- no LLM provider configured`
 
 If Serper/search evidence was collected but no LLM provider was run:
 
@@ -177,3 +180,5 @@ Every final audit must be:
 - technically actionable
 - safe against hallucinated visibility claims
 - consistent across all output files
+- checked against `QUALITY-GATES.md`
+- either passing consistency validation or clearly documenting why validation could not run
