@@ -73,6 +73,7 @@ for doc in \
   SCORING.md \
   LIMITATIONS.md \
   PROMPTS-INDEX.md \
+  MANUAL-PROMPT-MODE.md \
   EVALS.md \
   NON-TECHNICAL-USER-GUIDE.md; do
   if [ -f "${ROOT_DIR}/${doc}" ]; then
