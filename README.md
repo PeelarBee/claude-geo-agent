@@ -2,13 +2,18 @@
 
 A GEO (Generative Engine Optimization) agent for auditing AI search readiness, answer-engine discoverability, and real LLM visibility measurement when providers are configured.
 
+Works with:
+
+- Claude Code as `@geo-agent`
+- Codex / OpenAI Skills as the `geo-agent` skill
+
 ## Start Here
 
-If you want to use it in Codex, read these first:
+If you just want to use it, read:
 
-- [CODEX.md](CODEX.md)
 - [QUICKSTART.md](QUICKSTART.md)
 - [INSTALLATION.md](INSTALLATION.md)
+- [CODEX.md](CODEX.md)
 - [NON-TECHNICAL-USER-GUIDE.md](NON-TECHNICAL-USER-GUIDE.md)
 
 ## Simple Explanation
@@ -22,6 +27,33 @@ You install one main entry point:
 `geo-agent`
 
 You do not manually call every subagent. The main GEO agent calls the internal modules automatically.
+
+## Install For Claude Code
+
+Use this if you want to type:
+
+`@geo-agent`
+
+```bash
+git clone https://github.com/PeelarBee/claude-geo-agent.git
+cd claude-geo-agent
+chmod +x install.sh
+./install.sh
+```
+
+Restart Claude Code.
+
+Then run:
+
+```txt
+@geo-agent
+```
+
+What this installs for Claude Code:
+
+- agents into `~/.claude/agents/`
+- skills into `~/.claude/skills/`
+- scripts, prompts, templates, and docs into `~/.claude/geo-agent/`
 
 ## Install For Codex / OpenAI Skills
 
@@ -50,30 +82,9 @@ Use the geo-agent skill to run a full GEO audit.
 
 What this installs for Codex:
 
-- main skill: `geo-agent`
-- internal GEO skills: crawlers, schema, llms.txt, citability, brand mentions, prompts, monitor
-- support scripts, prompts, templates, and docs
-
-## Install For Claude Code
-
-Use this if you want to type:
-
-`@geo-agent`
-
-```bash
-git clone https://github.com/PeelarBee/claude-geo-agent.git
-cd claude-geo-agent
-chmod +x install.sh
-./install.sh
-```
-
-Restart Claude Code.
-
-Then run:
-
-```txt
-@geo-agent
-```
+- main skill `geo-agent` into `~/.agents/skills/geo-agent/`
+- internal GEO skills into `~/.agents/skills/`
+- support scripts, prompts, templates, agents, and docs into `~/.agents/skills/geo-agent/references/`
 
 ## What The Main Agent Does
 
@@ -137,6 +148,7 @@ At least one LLM provider is required for automatic measured LLM visibility.
 
 ## Main Docs
 
+- [INSTALLATION.md](INSTALLATION.md) - installation paths for Claude Code and Codex
 - [CODEX.md](CODEX.md) - Codex-specific install and usage guide
 - [ORCHESTRATION.md](ORCHESTRATION.md) - how the main agent calls internal workers
 - [CLAIM-GUARDRAILS.md](CLAIM-GUARDRAILS.md) - what the agent is allowed and not allowed to claim
@@ -149,6 +161,6 @@ At least one LLM provider is required for automatic measured LLM visibility.
 
 ## Requirements
 
-- Codex/OpenAI Skills or Claude Code
+- Claude Code or Codex/OpenAI Skills
 - macOS or Linux for local installers
 - `curl`, `bash`, and `python3` for support scripts
