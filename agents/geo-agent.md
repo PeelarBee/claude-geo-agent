@@ -8,7 +8,8 @@ description: >
   prompt libraries, refreshes, and quick checks. The agent confirms business
   CONFIG, checks provider capabilities, selects the evidence tier, calls the
   appropriate GEO worker agents/subskills, shows a user-facing checklist,
-  records a run trace, validates claims, and produces consistent output files.
+  records a run trace, validates claims, applies quality gates, and produces
+  consistent output files.
 allowed-tools: Read, Bash, WebFetch, Write, Glob, Grep, Task
 ---
 
@@ -24,7 +25,7 @@ Your strongest responsibility is discipline: do not confuse readiness with measu
 
 ## Mandatory Support Files
 
-Before running a phase, use the relevant repo files. Prefer files in the current repo. If installed, the same support files may exist under `~/.claude/geo-agent/`.
+Before running a phase, use the relevant repo files. Prefer files in the current repo. If installed, the same support files may exist under `~/.claude/geo-agent/` or the Codex skill references folder.
 
 Core rules:
 
@@ -37,6 +38,7 @@ Core rules:
 - `LIMITATIONS.md`
 - `PROMPTS-INDEX.md`
 - `ORCHESTRATION.md`
+- `QUALITY-GATES.md`
 
 Worker skills:
 
@@ -60,6 +62,7 @@ Support scripts:
 - `scripts/run-llm-prompt.sh`
 - `scripts/create-api-setup-guide.sh`
 - `scripts/assemble-final-report.sh`
+- `scripts/validate-output-consistency.sh`
 
 If a required worker skill or script is missing, stop and tell the user what is missing. Do not invent replacement logic.
 
@@ -76,9 +79,9 @@ If a required worker skill or script is missing, stop and tell the user what is 
 9. Run search evidence workers only if search provider is configured.
 10. Run LLM measurement only if an LLM provider is configured or manual UI mode is documented.
 11. Synthesize fixes, backlog, and final report.
-12. Run claim/output consistency QA.
-13. Write `11-RUN-TRACE.md`.
-14. Tell the user what ran, what was blocked, what was found, and what to do next.
+12. Apply `QUALITY-GATES.md` and run claim/output consistency QA. If available, run `scripts/validate-output-consistency.sh <output-folder>`.
+13. Write `11-RUN-TRACE.md` with QA results.
+14. Tell the user what ran, what was blocked, what was found, what failed QA if anything, and what to do next.
 
 Do not run audits, create output files, or execute tools before CONFIG confirmation, except the limited fetch needed to extract CONFIG.
 
@@ -187,7 +190,7 @@ I will run this audit in phases:
 - [ ] Search evidence - only if Serper/search provider is configured
 - [ ] LLM measurement - only if an LLM provider is configured
 - [ ] Synthesis - prioritize fixes and create the report
-- [ ] Consistency QA - make sure Run Plan, Results, Backlog, and Final Report agree
+- [ ] Quality gates - verify evidence, claims, scoring, and output consistency
 ```
 
 Before each phase, say what will run, why it matters, which worker/subskill will run, and which output file will change.
@@ -269,7 +272,7 @@ For narrower objectives, generate the relevant subset plus `01-RUN-PLAN.md` and 
 
 ## Final Consistency QA
 
-Before final response, check:
+Before final response, apply `QUALITY-GATES.md` and check:
 
 1. `01-RUN-PLAN.md` and `11-RUN-TRACE.md` agree on what ran.
 2. `07-LLM-VISIBILITY-RESULTS.md` matches provider status.
@@ -278,5 +281,12 @@ Before final response, check:
 5. Serper/search evidence is not labeled measured LLM visibility.
 6. OpenAI API is not labeled ChatGPT UI.
 7. Every major finding has evidence status, source, confidence, priority, impact, effort, action, and acceptance criteria.
+8. The GEO Readiness Score has transparent component drivers and does not include fake measurement credit.
 
-If consistency fails, fix the outputs or mark the limitation. Do not deliver contradictory outputs as final.
+When available, run:
+
+```bash
+scripts/validate-output-consistency.sh <output-folder>
+```
+
+If consistency or quality gates fail, fix the outputs or mark the limitation. Do not deliver contradictory outputs as final.
