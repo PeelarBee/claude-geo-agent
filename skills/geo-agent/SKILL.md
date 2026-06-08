@@ -17,6 +17,7 @@ When installed with `install-codex.sh`, supporting docs, prompts, scripts, agent
 - The user asks for a GEO audit.
 - The skill confirms URL, objective, and business CONFIG.
 - The skill checks which providers are available.
+- The skill explains what can and cannot be measured with the current API setup.
 - The skill runs the right internal modules.
 - The skill applies quality gates.
 - The skill creates a clear report.
@@ -38,15 +39,17 @@ Do not mix them.
 3. Ask the user to confirm CONFIG.
 4. Do not run the audit until CONFIG is confirmed.
 5. Check providers and tools.
-6. Select evidence tier.
-7. Show checklist.
-8. Run readiness modules first.
-9. Run search evidence only if search provider exists.
-10. Run LLM measurement only if LLM provider or documented manual mode exists.
-11. Write outputs.
-12. Apply `QUALITY-GATES.md` before finalizing.
-13. Check that outputs do not contradict each other.
-14. If available, run or apply `references/scripts/validate-output-consistency.sh` to validate output consistency.
+6. If no LLM provider is configured and the objective may need LLM visibility measurement, explain the missing API requirement in the chat before continuing.
+7. Select evidence tier.
+8. Show checklist.
+9. Run readiness modules first.
+10. Run search evidence only if search provider exists.
+11. Generate `06-LLM-PROMPTS-TO-RUN.md` when relevant, but make clear it is a prompt plan until executed.
+12. Run LLM measurement only if an LLM provider or documented manual mode exists.
+13. Write outputs.
+14. Apply `QUALITY-GATES.md` before finalizing.
+15. Check that outputs do not contradict each other.
+16. If available, run or apply `references/scripts/validate-output-consistency.sh` to validate output consistency.
 
 ## Objectives
 
@@ -108,6 +111,32 @@ If no LLM provider is configured, write:
 
 `Status: Not run -- no LLM provider configured`
 
+## Missing API Guidance
+
+If the objective is `full-audit`, `monitor`, `llm-prompts`, or any request that implies visibility measurement, and no LLM provider is configured, the skill must explain this in the chat before running or finalizing measurement work.
+
+Use plain language:
+
+```txt
+I can generate the LLM prompt plan now, but I cannot measure real LLM visibility until an LLM provider is configured.
+
+To run measured visibility, add at least one of these:
+- OPENAI_API_KEY for OpenAI API results, not ChatGPT UI
+- GEMINI_API_KEY or GOOGLE_API_KEY for Gemini API results
+- ANTHROPIC_API_KEY for Anthropic API results
+- PERPLEXITY_API_KEY for Perplexity API results
+- GROQ_API_KEY for Groq model/API results
+
+SERPER_API_KEY helps with search evidence only. It does not run LLM prompts.
+
+Choices:
+1. Continue now with readiness + search evidence, and mark LLM measurement as Not run.
+2. Pause, configure an LLM provider, then rerun the measurement phase.
+3. Generate prompts for manual testing in ChatGPT/Claude/Gemini UI, then paste the responses back as documented manual runs.
+```
+
+Do not bury this only in `10-API-SETUP-GUIDE.md`. The user must see it during the run.
+
 ## OpenAI API vs ChatGPT
 
 Do not call OpenAI API results `ChatGPT`.
@@ -143,8 +172,10 @@ Show this after CONFIG is confirmed:
 I will run this audit in phases:
 
 - [ ] Capability check - confirm tools and APIs
+- [ ] API guidance - explain what can be measured now and what needs an LLM provider
 - [ ] Readiness audit - crawlability, llms.txt, schema, content readiness
 - [ ] Search evidence - only if Serper/search provider is configured
+- [ ] LLM prompt plan - prompts to run, not measured results until executed
 - [ ] LLM measurement - only if an LLM provider is configured
 - [ ] Synthesis - prioritize fixes and create the report
 - [ ] Quality gates - verify claims, evidence labels, scope, and scoring
@@ -159,6 +190,8 @@ Before finishing, verify:
 - Search evidence is not labeled LLM visibility.
 - OpenAI API is not labeled ChatGPT UI.
 - Unrun phases are marked Not run.
+- Missing LLM provider guidance was shown to the user when measurement could not run.
+- Generated prompts are labeled as a test plan, not measurement.
 - Recommendations are tied to evidence.
 - Scores explain which inputs raised or lowered them.
 - The run plan, results, backlog, final report, and run trace agree.
