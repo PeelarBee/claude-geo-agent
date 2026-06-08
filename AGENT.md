@@ -49,18 +49,44 @@ Use these files as the source of truth:
 3. Fetch homepage and up to 3 key pages only to extract CONFIG.
 4. Present CONFIG and wait for explicit confirmation before any audit execution.
 5. After confirmation, check provider availability without printing secrets.
-6. Select Data / Measurement Tier before the run plan.
-7. Generate `01-RUN-PLAN.md` before audit outputs.
-8. Show a user-facing checklist before running phases.
-9. Read the corresponding subskill file before calling any worker agent.
-10. If a required subskill or script is missing, stop and tell the user.
-11. Static files such as `robots.txt`, `sitemap.xml`, `llms.txt`, `security.txt`, and `humans.txt` must be checked with Bash/curl, not WebFetch.
-12. Scripts in `/scripts/` must be run with Bash. Do not simulate their behavior.
-13. Every major finding must have evidence status, source, confidence, priority, impact, effort, recommended action, and acceptance criteria.
-14. Write a run trace in `11-RUN-TRACE.md` for every audit.
-15. Apply `QUALITY-GATES.md` before finalizing.
-16. Before finalizing, run or apply `scripts/validate-output-consistency.sh` when available.
-17. Before finalizing, verify that `01-RUN-PLAN.md`, `07-LLM-VISIBILITY-RESULTS.md`, `08-BACKLOG.md`, `09-FINAL-REPORT.md`, and `11-RUN-TRACE.md` do not contradict each other.
+6. Immediately explain what can be measured with the current providers and what cannot.
+7. If no LLM provider is configured and the objective includes `full-audit`, `monitor`, `llm-prompts`, or real visibility measurement, show the Missing API Guidance in the chat before continuing.
+8. Select Data / Measurement Tier before the run plan.
+9. Generate `01-RUN-PLAN.md` before audit outputs.
+10. Show a user-facing checklist before running phases.
+11. In `full-audit`, always generate `06-LLM-PROMPTS-TO-RUN.md` even when LLM measurement cannot run.
+12. When prompts are generated but cannot run, show a short sample of representative prompts in the chat and explain which API is needed to execute them.
+13. Read the corresponding subskill file before calling any worker agent.
+14. If a required subskill or script is missing, stop and tell the user.
+15. Static files such as `robots.txt`, `sitemap.xml`, `llms.txt`, `security.txt`, and `humans.txt` must be checked with Bash/curl, not WebFetch.
+16. Scripts in `/scripts/` must be run with Bash. Do not simulate their behavior.
+17. Every major finding must have evidence status, source, confidence, priority, impact, effort, recommended action, and acceptance criteria.
+18. Write a run trace in `11-RUN-TRACE.md` for every audit.
+19. Apply `QUALITY-GATES.md` before finalizing.
+20. Before finalizing, run or apply `scripts/validate-output-consistency.sh` when available.
+21. Before finalizing, verify that `01-RUN-PLAN.md`, `06-LLM-PROMPTS-TO-RUN.md`, `07-LLM-VISIBILITY-RESULTS.md`, `08-BACKLOG.md`, `09-FINAL-REPORT.md`, and `11-RUN-TRACE.md` do not contradict each other.
+
+## Missing API Guidance
+
+If LLM measurement cannot run, tell the user in the chat, not only in a file:
+
+```txt
+I can generate the LLM prompt plan now, but I cannot measure real LLM visibility until an LLM provider is configured.
+
+To run measured visibility, add at least one of these:
+- OPENAI_API_KEY for OpenAI API results, not ChatGPT UI
+- GEMINI_API_KEY or GOOGLE_API_KEY for Gemini API results
+- ANTHROPIC_API_KEY for Anthropic API results
+- PERPLEXITY_API_KEY for Perplexity API results
+- GROQ_API_KEY for Groq model/API results
+
+SERPER_API_KEY helps with search evidence only. It does not run LLM prompts.
+
+Choices:
+1. Continue now with readiness + search evidence, and mark LLM measurement as Not run.
+2. Pause, configure an LLM provider, then rerun the measurement phase.
+3. Generate prompts for manual testing in ChatGPT/Claude/Gemini UI, then paste the responses back as documented manual runs.
+```
 
 ## Worker Agents And Skills
 
@@ -148,9 +174,11 @@ The 40-prompt library is phased. The agent must not run all prompts blindly.
 - `60-61`: learning, only with historical/prior evidence
 - `90`: structure validation
 
-`06-LLM-PROMPTS-TO-RUN.md` is a test plan.
+`06-LLM-PROMPTS-TO-RUN.md` is a required test plan for `full-audit` and `llm-prompts` objectives.
 
 `07-LLM-VISIBILITY-RESULTS.md` is the result file only when prompts were executed or explicitly marked not run.
+
+If no LLM provider is configured, the agent must still make the prompt plan useful: include representative prompts, provider labels, manual run instructions, and the exact API requirement needed to turn the prompt plan into measured visibility.
 
 ## Required Full-Audit Outputs
 
@@ -175,6 +203,8 @@ Every final audit must be:
 
 - evidence-based
 - explicit about limitations
+- explicit about missing APIs when measurement cannot run
+- clear about which prompts were generated and which prompts actually ran
 - prioritized by impact and effort
 - clear for a non-technical user
 - technically actionable
