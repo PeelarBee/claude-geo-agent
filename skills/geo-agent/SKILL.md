@@ -9,6 +9,8 @@ This is the main portable GEO skill for Codex/OpenAI Skills.
 
 The user installs this main skill. They do not need to install or call each subagent manually.
 
+When installed with `install-codex.sh`, supporting docs, prompts, scripts, agents, and templates are bundled under this skill's `references/` folder.
+
 ## Simple Mental Model
 
 - The main skill is `geo-agent`.
@@ -16,6 +18,7 @@ The user installs this main skill. They do not need to install or call each suba
 - The skill confirms URL, objective, and business CONFIG.
 - The skill checks which providers are available.
 - The skill runs the right internal modules.
+- The skill applies quality gates.
 - The skill creates a clear report.
 
 ## Core Rule
@@ -41,7 +44,9 @@ Do not mix them.
 9. Run search evidence only if search provider exists.
 10. Run LLM measurement only if LLM provider or documented manual mode exists.
 11. Write outputs.
-12. Check that outputs do not contradict each other.
+12. Apply `QUALITY-GATES.md` before finalizing.
+13. Check that outputs do not contradict each other.
+14. If available, run or apply `references/scripts/validate-output-consistency.sh` to validate output consistency.
 
 ## Objectives
 
@@ -70,6 +75,20 @@ When the environment supports local files/subskills, use these internal skill fi
 
 If those files are not available in the environment, continue with the same responsibilities but tell the user that portable subskills are missing and results may be less modular.
 
+## Reference Files
+
+Use these supporting files when available:
+
+- `references/CLAIM-GUARDRAILS.md`
+- `references/EVIDENCE-RULES.md`
+- `references/RUN-LOG-SPEC.md`
+- `references/ORCHESTRATION.md`
+- `references/OUTPUT-CONTRACT.md`
+- `references/SCORING.md`
+- `references/QUALITY-GATES.md`
+- `references/EVALS.md`
+- `references/NON-TECHNICAL-USER-GUIDE.md`
+
 ## Provider Rules
 
 Serper:
@@ -87,7 +106,7 @@ LLM providers:
 
 If no LLM provider is configured, write:
 
-`Status: Not run — no LLM provider configured`
+`Status: Not run -- no LLM provider configured`
 
 ## OpenAI API vs ChatGPT
 
@@ -128,6 +147,7 @@ I will run this audit in phases:
 - [ ] Search evidence - only if Serper/search provider is configured
 - [ ] LLM measurement - only if an LLM provider is configured
 - [ ] Synthesis - prioritize fixes and create the report
+- [ ] Quality gates - verify claims, evidence labels, scope, and scoring
 - [ ] Consistency QA - make sure Run Plan, Results, Backlog, and Final Report agree
 ```
 
@@ -140,4 +160,6 @@ Before finishing, verify:
 - OpenAI API is not labeled ChatGPT UI.
 - Unrun phases are marked Not run.
 - Recommendations are tied to evidence.
+- Scores explain which inputs raised or lowered them.
 - The run plan, results, backlog, final report, and run trace agree.
+- Any quality gate failure is fixed or documented as a limitation.
