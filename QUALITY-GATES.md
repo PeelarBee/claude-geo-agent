@@ -46,12 +46,28 @@ Fail if:
 - Generated prompts are treated as results.
 - Readiness checks are described as measured LLM visibility.
 
-## Gate 4 - Output Consistency
+## Gate 4 - Prompt And API Guidance
 
 Pass criteria:
 
-- `01-RUN-PLAN.md`, `07-LLM-VISIBILITY-RESULTS.md`, `08-BACKLOG.md`, `09-FINAL-REPORT.md`, and `11-RUN-TRACE.md` agree.
-- If `01` says no LLM provider, `07` says `Status: Not run — no LLM provider configured`.
+- For `full-audit` and `llm-prompts`, `06-LLM-PROMPTS-TO-RUN.md` exists.
+- If no LLM provider is configured, the user was told in the chat that generated prompts are not measurement.
+- If no LLM provider is configured, the user was told which API keys can enable automatic measurement.
+- If only Serper is configured, the user was told that Serper is search evidence only and cannot execute LLM prompts.
+- The audit offers manual UI testing as an alternative path when provider APIs are missing.
+
+Fail if:
+
+- A full audit completes without a prompt plan.
+- API setup guidance appears only in `10-API-SETUP-GUIDE.md` but was not surfaced to the user during the run.
+- The user has to infer how to convert prompts into measured visibility.
+
+## Gate 5 - Output Consistency
+
+Pass criteria:
+
+- `01-RUN-PLAN.md`, `06-LLM-PROMPTS-TO-RUN.md`, `07-LLM-VISIBILITY-RESULTS.md`, `08-BACKLOG.md`, `09-FINAL-REPORT.md`, and `11-RUN-TRACE.md` agree.
+- If `01` says no LLM provider, `07` says `Status: Not run -- no LLM provider configured`.
 - If `07` contains measured rows, `11` contains provider, prompt, model if known, and run timestamp.
 - `08` does not treat blocked/unrun phases as measured.
 
@@ -59,7 +75,7 @@ Fail if:
 
 - One output claims measurement while another says measurement was not run.
 
-## Gate 5 - Evidence Completeness
+## Gate 6 - Evidence Completeness
 
 Pass criteria:
 
@@ -81,7 +97,7 @@ Fail if:
 - Major findings are unsupported bullet points.
 - Priority appears without rationale.
 
-## Gate 6 - Prioritization Quality
+## Gate 7 - Prioritization Quality
 
 Pass criteria:
 
@@ -99,7 +115,7 @@ Fail if:
 - The backlog is a flat list without impact/effort/evidence.
 - API setup tasks are mixed with site/content fixes without context.
 
-## Gate 7 - Scoring Transparency
+## Gate 8 - Scoring Transparency
 
 Pass criteria:
 
@@ -118,7 +134,7 @@ Fail if:
 - The score is a single unexplained number.
 - The score includes fake measured visibility credit.
 
-## Gate 8 - GEO Scope Discipline
+## Gate 9 - GEO Scope Discipline
 
 Pass criteria:
 
@@ -129,6 +145,7 @@ The audit stays focused on:
 - structured context
 - answer readiness/citability
 - external authority/source evidence
+- prompt planning
 - measured LLM visibility when available
 - prioritized GEO actions
 
@@ -136,7 +153,7 @@ Fail if:
 
 - The report becomes a generic SEO checklist without GEO rationale.
 
-## Gate 9 - Final Report Readiness
+## Gate 10 - Final Report Readiness
 
 Pass criteria:
 
@@ -144,16 +161,17 @@ Pass criteria:
 
 1. Readiness
 2. Search Evidence
-3. Measured LLM Visibility
-4. What Was Not Run
-5. Recommendations
-6. Next Setup Steps
+3. Prompt Plan
+4. Measured LLM Visibility
+5. What Was Not Run
+6. Recommendations
+7. Next Setup Steps
 
 Fail if:
 
-- The final report blends readiness, search evidence, and measurement into one unsupported claim.
+- The final report blends readiness, search evidence, prompts, and measurement into one unsupported claim.
 
-## Gate 10 - Human Review
+## Gate 11 - Human Review
 
 Pass criteria:
 
