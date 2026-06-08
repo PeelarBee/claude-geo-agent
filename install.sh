@@ -47,11 +47,15 @@ copy_dir_contents "${ROOT_DIR}/prompts" "${SUPPORT_DIR}/prompts"
 for doc in \
   AGENT.md \
   README.md \
+  QUICKSTART.md \
+  INSTALLATION.md \
+  CODEX.md \
   DOCUMENTATION.md \
   EVIDENCE-RULES.md \
   CLAIM-GUARDRAILS.md \
   RUN-LOG-SPEC.md \
   ORCHESTRATION.md \
+  QUALITY-GATES.md \
   OUTPUT-CONTRACT.md \
   SCORING.md \
   LIMITATIONS.md \
