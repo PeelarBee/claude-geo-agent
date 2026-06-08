@@ -7,43 +7,27 @@ Works with:
 - Claude Code as `@geo-agent`
 - Codex / OpenAI Skills as the `geo-agent` skill
 
-## Start Here
+## The Simple Version
 
-If you just want to use it, read:
+Install once. Restart your AI tool. Type `@geo-agent`.
 
-- [QUICKSTART.md](QUICKSTART.md)
-- [INSTALLATION.md](INSTALLATION.md)
-- [CODEX.md](CODEX.md)
-- [NON-TECHNICAL-USER-GUIDE.md](NON-TECHNICAL-USER-GUIDE.md)
-
-## Simple Explanation
-
-This repo is the toolkit.
-
-Installing it copies the toolkit into the AI tool you want to use.
-
-You install one main entry point:
-
-`geo-agent`
-
-You do not manually call every subagent. The main GEO agent calls the internal modules automatically.
+The user does not call every subagent manually. The main GEO agent calls the internal modules automatically.
 
 ## Install For Claude Code
 
-Use this if you want to type:
+Use this if you want Claude Code to start the agent with:
 
-`@geo-agent`
-
-```bash
-git clone https://github.com/PeelarBee/claude-geo-agent.git
-cd claude-geo-agent
-chmod +x install.sh
-./install.sh
+```txt
+@geo-agent
 ```
 
-Restart Claude Code.
+Install with one command:
 
-Then run:
+```bash
+curl -fsSL https://raw.githubusercontent.com/PeelarBee/claude-geo-agent/main/install.sh | bash
+```
+
+Restart Claude Code, then type:
 
 ```txt
 @geo-agent
@@ -57,27 +41,24 @@ What this installs for Claude Code:
 
 ## Install For Codex / OpenAI Skills
 
-Use this if you want Codex to use the GEO workflow as a skill.
+Use this if you want Codex to start the GEO workflow as a skill.
+
+Install with one command:
 
 ```bash
-git clone https://github.com/PeelarBee/claude-geo-agent.git
-cd claude-geo-agent
-chmod +x install-codex.sh
-./install-codex.sh
+curl -fsSL https://raw.githubusercontent.com/PeelarBee/claude-geo-agent/main/install-codex.sh | bash
 ```
 
-Restart Codex.
-
-Then ask:
+Restart Codex, then type:
 
 ```txt
-Run a GEO audit for https://example.com
+@geo-agent
 ```
 
-or:
+You can also ask naturally:
 
 ```txt
-Use the geo-agent skill to run a full GEO audit.
+Use geo-agent to run a GEO audit for https://example.com
 ```
 
 What this installs for Codex:
@@ -85,6 +66,20 @@ What this installs for Codex:
 - main skill `geo-agent` into `~/.agents/skills/geo-agent/`
 - internal GEO skills into `~/.agents/skills/`
 - support scripts, prompts, templates, agents, and docs into `~/.agents/skills/geo-agent/references/`
+
+## Manual Install Alternative
+
+If you already downloaded or cloned the repo, run the installer from inside the repo folder:
+
+```bash
+bash install.sh
+```
+
+For Codex:
+
+```bash
+bash install-codex.sh
+```
 
 ## What The Main Agent Does
 
@@ -129,7 +124,7 @@ Rules:
 - Serper is search evidence only, not LLM measurement.
 - Generated prompts are a test plan, not measured results.
 - OpenAI API results are not ChatGPT UI results unless ChatGPT UI was separately measured and logged.
-- If no LLM provider is configured, `07-LLM-VISIBILITY-RESULTS.md` must say: `Status: Not run — no LLM provider configured`.
+- If no LLM provider is configured, `07-LLM-VISIBILITY-RESULTS.md` must say: `Status: Not run -- no LLM provider configured`.
 
 ## Optional APIs
 
@@ -148,6 +143,7 @@ At least one LLM provider is required for automatic measured LLM visibility.
 
 ## Main Docs
 
+- [QUICKSTART.md](QUICKSTART.md) - fastest way to install and run
 - [INSTALLATION.md](INSTALLATION.md) - installation paths for Claude Code and Codex
 - [CODEX.md](CODEX.md) - Codex-specific install and usage guide
 - [ORCHESTRATION.md](ORCHESTRATION.md) - how the main agent calls internal workers
@@ -155,6 +151,7 @@ At least one LLM provider is required for automatic measured LLM visibility.
 - [RUN-LOG-SPEC.md](RUN-LOG-SPEC.md) - traceability for every audit run
 - [OUTPUT-CONTRACT.md](OUTPUT-CONTRACT.md) - required report structure
 - [SCORING.md](SCORING.md) - transparent GEO Readiness Score rules
+- [QUALITY-GATES.md](QUALITY-GATES.md) - final checks before an audit is complete
 - [EVALS.md](EVALS.md) - behavior tests for the agent
 - [LIMITATIONS.md](LIMITATIONS.md) - client-safe limitations
 - [PROMPTS-INDEX.md](PROMPTS-INDEX.md) - the 40-prompt library structure
@@ -163,4 +160,5 @@ At least one LLM provider is required for automatic measured LLM visibility.
 
 - Claude Code or Codex/OpenAI Skills
 - macOS or Linux for local installers
-- `curl`, `bash`, and `python3` for support scripts
+- `curl`, `bash`, and `git` for one-line installation
+- `python3` for some support scripts
