@@ -1,9 +1,31 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+REPO_URL="${CLAUDE_GEO_AGENT_REPO:-https://github.com/PeelarBee/claude-geo-agent.git}"
+REPO_REF="${CLAUDE_GEO_AGENT_REF:-main}"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd || pwd)"
+
+if [ ! -f "${ROOT_DIR}/agents/geo-agent.md" ]; then
+  if [ "${CLAUDE_GEO_AGENT_BOOTSTRAPPED:-}" = "1" ]; then
+    echo "Missing agents/geo-agent.md after download." >&2
+    exit 1
+  fi
+
+  if ! command -v git >/dev/null 2>&1; then
+    echo "git is required for one-line installation from GitHub." >&2
+    echo "Alternative: download the repo ZIP, open the folder, then run: bash install.sh" >&2
+    exit 1
+  fi
+
+  tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/claude-geo-agent.XXXXXX")"
+  echo "Downloading claude-geo-agent from ${REPO_URL} (${REPO_REF})..."
+  git clone --depth 1 --branch "${REPO_REF}" "${REPO_URL}" "${tmp_dir}"
+  CLAUDE_GEO_AGENT_BOOTSTRAPPED=1 bash "${tmp_dir}/install.sh"
+  exit $?
+fi
+
 echo "Installing claude-geo-agent..."
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="${HOME}/.claude"
 SUPPORT_DIR="${CLAUDE_DIR}/geo-agent"
 
