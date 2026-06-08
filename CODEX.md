@@ -10,14 +10,33 @@ You do not call the internal modules manually. The main skill calls them when ne
 
 ## Install For Codex
 
+Install with one command:
+
 ```bash
-git clone https://github.com/PeelarBee/claude-geo-agent.git
-cd claude-geo-agent
-chmod +x install-codex.sh
-./install-codex.sh
+curl -fsSL https://raw.githubusercontent.com/PeelarBee/claude-geo-agent/main/install-codex.sh | bash
 ```
 
 Restart Codex after installation.
+
+Then type:
+
+```txt
+@geo-agent
+```
+
+You can also ask naturally:
+
+```txt
+Use geo-agent to run a full GEO audit for https://example.com
+```
+
+## Manual Install Alternative
+
+If you already downloaded or cloned the repo, open the repo folder and run:
+
+```bash
+bash install-codex.sh
+```
 
 ## What The Installer Copies
 
@@ -29,17 +48,13 @@ Restart Codex after installation.
 
 ## How To Use In Codex
 
-Ask naturally:
+The clean first-run flow is:
 
 ```txt
-Run a GEO audit for https://example.com
+@geo-agent
 ```
 
-or:
-
-```txt
-Use the geo-agent skill to run a full GEO audit.
-```
+The agent should then ask for the website URL and objective.
 
 Codex should use the `geo-agent` skill when the request is about:
 
@@ -67,7 +82,8 @@ The main `geo-agent` skill:
 7. runs the right internal modules
 8. separates readiness from real measurement
 9. writes outputs
-10. checks that outputs do not contradict each other
+10. applies quality gates
+11. checks that outputs do not contradict each other
 
 ## Internal Modules
 
@@ -89,7 +105,7 @@ But Codex cannot claim measured LLM visibility unless prompts were actually exec
 
 If no LLM provider is configured, results must say:
 
-`Status: Not run — no LLM provider configured`
+`Status: Not run -- no LLM provider configured`
 
 ## Provider Labels
 
@@ -102,15 +118,17 @@ If no LLM provider is configured, results must say:
 
 ## Recommended First Codex Test
 
-After installing, run a small test:
+After installing and restarting Codex, run:
 
 ```txt
-Use geo-agent to run a quick-check for https://example.com
+@geo-agent
 ```
 
 Then verify:
 
+- it asks for URL and objective
 - it asks for CONFIG confirmation
 - it shows the checklist
 - it separates readiness from measurement
 - it marks LLM visibility as Not run if no provider is configured
+- it applies quality gates before finalizing
