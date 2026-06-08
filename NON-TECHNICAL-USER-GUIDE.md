@@ -10,6 +10,14 @@ You do not need to install or call the subagents one by one.
 
 The main agent calls the internal modules automatically.
 
+After installation, the clean first run is:
+
+```txt
+@geo-agent
+```
+
+The agent should then ask for the website URL and objective.
+
 ## What The Agent Checks
 
 The agent checks two different things:
@@ -49,7 +57,7 @@ This requires an LLM provider API or a documented manual UI run.
 
 If no LLM provider is connected, the agent must say:
 
-`Status: Not run — no LLM provider configured`
+`Status: Not run -- no LLM provider configured`
 
 ## Serper In Plain English
 
@@ -91,6 +99,7 @@ I will run this audit in phases:
 - [ ] Search evidence - only if Serper/search provider is configured
 - [ ] LLM measurement - only if an LLM provider is configured
 - [ ] Synthesis - prioritize fixes and create the report
+- [ ] Quality gates - verify claims, evidence labels, scope, and scoring
 - [ ] Consistency QA - make sure Run Plan, Results, Backlog, and Final Report agree
 ```
 
