@@ -2,44 +2,48 @@
 
 All audit outputs must be client-readable, evidence-based, and explicit about what was and was not measured.
 
-## Required Sections For Every Audit Output
+The contract has one central purpose: prevent contradictions between the run plan, measured results, backlog, final report, and run trace.
 
-Every audit output must include the required metadata block below:
+## Required Metadata For Every Output
+
+Every output must include:
 
 - Objective
 - Date/time of run
 - Domain
+- Brand
+- Agent version
+- Rules version
+- Prompt library version when prompts are involved
 - Data / Measurement Tier: Tier 0 / Tier 1 / Tier 2 / Mixed
 - APIs/tools available
 - APIs/tools not configured
 - What was run
 - What was not run
+- Evidence boundary
 - Assumptions
 - Limitations
 
-Full report-style outputs must include the full report sections below:
+Artifact-style outputs, such as llms.txt drafts, schema drafts, or prompt libraries, may mark report sections `Not applicable`, but they must still include metadata and evidence boundary.
 
-- Executive Summary
-- Key Findings
-- Evidence Table
-- Priority Fixes
-- Backlog
-- Next Actions
+## Evidence Status Values
 
-Artifact-style outputs, such as llms.txt drafts, schema drafts, or prompt libraries, may include a full report section and mark it `Not applicable` with a short reason when the section does not apply. Do not omit required metadata. If a required report section is not applicable to the objective or artifact type, include the section and mark it `Not applicable` with a short reason.
+Use exactly these values:
 
-Every output must identify whether it is based on Tier 0, Tier 1, Tier 2, or mixed evidence. Do not combine readiness checks and measured LLM provider results into one unsupported visibility claim.
+Observed / Measured / Search Evidence / Inferred / Not run / Not available / Unknown
+
+Do not use alternate capitalization in final outputs.
 
 ## Finding Format
 
-Every finding must use this structure:
+Every major finding must use this structure:
 
 ```md
 ## Finding: [clear issue name]
 
 - Evidence Status: Observed / Measured / Search Evidence / Inferred / Not run / Not available / Unknown
-- Evidence Source Type: Crawl / Rendered HTML / Search API / LLM API / Manual check / Local file / Generated artifact / Not available
-- Evidence Source: [URL, file, API, local check, or "not available"]
+- Evidence Source Type: Crawl / Rendered HTML / Search API / LLM API / Manual UI / Local file / Generated artifact / Not available
+- Evidence Source: [URL, file, API, local check, provider, or "not available"]
 - Evidence Date / Run Date:
 - Confidence: High / Medium / Low
 - Priority: Critical / High / Medium / Low
@@ -50,93 +54,96 @@ Every finding must use this structure:
 - Acceptance Criteria:
 ```
 
-## Evidence Table Format
+## Required Full-Audit Output Set
 
-```md
-| Finding | Evidence Status | Evidence Source | Evidence Source Type | Evidence Date / Run Date | Confidence | Priority | Impact | Effort | Next Action | Acceptance Criteria |
-|---|---|---|---|---|---|---|---|---|---|---|
-| [finding] | Observed / Measured / Search Evidence / Inferred / Not run / Not available / Unknown | [source] | Crawl / Rendered HTML / Search API / LLM API / Manual check / Local file / Generated artifact / Not available | [date/time or Not available] | High / Medium / Low | Critical / High / Medium / Low | High / Medium / Low | High / Medium / Low | [action] | [criteria] |
-```
+A `full-audit` must generate:
+
+| File | Purpose |
+|---|---|
+| `00-START-HERE.md` | Plain-English summary and first decisions |
+| `01-RUN-PLAN.md` | What will run, what is blocked, providers, tier, checklist |
+| `02-TECHNICAL-GEO-AUDIT.md` | Readiness audit and GEO Readiness Score |
+| `03-FIX-GUIDE.md` | Prioritized fix instructions |
+| `04-LLMS-TXT.md` | llms.txt check/draft |
+| `05-SCHEMA.md` | Schema audit/proposed JSON-LD |
+| `06-LLM-PROMPTS-TO-RUN.md` | Prompt library/test plan only |
+| `07-LLM-VISIBILITY-RESULTS.md` | Measured results only when provider/manual runs exist; otherwise Not run |
+| `08-BACKLOG.md` | Prioritized tasks tied to evidence |
+| `09-FINAL-REPORT.md` | Synthesis separating readiness, measurement, and recommendations |
+| `10-API-SETUP-GUIDE.md` | Plain-English setup guide for missing APIs/providers |
+| `11-RUN-TRACE.md` | Run receipt: inputs, providers, decisions, phases, outputs, consistency QA |
+
+For narrower objectives, generate the relevant subset plus `01-RUN-PLAN.md` and `11-RUN-TRACE.md`.
 
 ## `01-RUN-PLAN.md`
 
-`01-RUN-PLAN.md` must be generated after CONFIG confirmation, provider/tool checks, and tier selection, and before audit outputs are generated.
+Must be generated after CONFIG confirmation, provider/tool checks, and tier selection, before audit outputs.
 
-The run plan must report provider availability without printing secret values. Use only `Configured` or `Missing`.
+It must include:
 
 ```md
+## CONFIG Confirmation
+
+- CONFIG extracted from:
+- CONFIG confirmed by user: Yes / No
+- Confirmation timestamp:
+
 ## Selected Objective
 
 - Objective:
-- Audit mode: full-audit / technical-only / llms.txt / schema / monitoring / fix-guide / custom
+- Audit mode:
 - Outputs to generate:
 - Outputs intentionally skipped:
 - Reason for skipped outputs:
 
+## Orchestration Checklist
+
+| Phase | Worker/subskill | Planned | Run condition | Output |
+|---|---|---|---|---|
+| Capability check | scripts/check-providers.sh | Yes / No | Always after CONFIG | 01, 11 |
+| Crawlers | geo-crawlers | Yes / No | readiness objectives | 02, 03, 08, 11 |
+| llms.txt | geo-llms-txt | Yes / No | readiness objectives | 04, 02, 03, 08, 11 |
+| Schema | geo-schema | Yes / No | readiness objectives | 05, 02, 03, 08, 11 |
+| Citability | geo-citability | Yes / No | full-audit/citability | 02, 03, 08, 11 |
+| Brand mentions | geo-brand-mentions | Yes / No | Serper/search configured | 02, 03, 08, 11 |
+| Prompt library | geo-llm-prompts | Yes / No | full-audit/llm-prompts/monitor | 06, 11 |
+| LLM measurement | geo-monitor | Yes / No | LLM provider/manual mode | 07, 11 |
+| Synthesis | orchestrator | Yes / No | after evidence collection | 08, 09 |
+| API guidance | scripts/create-api-setup-guide.sh | Yes / No | missing useful APIs/providers | 10 |
+
+## API Status
+
+| API | Status | Used for |
+|---|---|---|
+| `SERPER_API_KEY` | Configured / Missing | Search Evidence only |
+| `GEMINI_API_KEY` / `GOOGLE_API_KEY` | Configured / Missing | Gemini API measurement |
+| `GROQ_API_KEY` | Configured / Missing | Groq measurement |
+| `OPENAI_API_KEY` | Configured / Missing | OpenAI API measurement, not ChatGPT UI |
+| `ANTHROPIC_API_KEY` | Configured / Missing | Anthropic API measurement |
+| `PERPLEXITY_API_KEY` | Configured / Missing | Perplexity API measurement |
+
 ## Data / Measurement Tier
 
-- Tier selected: Tier 0 / Tier 1 / Tier 2 / Mixed
+- Tier selected:
 - Reason:
 - Available evidence:
 - Blocked evidence:
 - Measurement-dependent phases:
 - LLM visibility measurement status:
 
-Use `Mixed` only when an output combines evidence from more than one tier. Mixed evidence must still be labeled at the finding level and must not convert readiness or search evidence into measured LLM visibility.
-
-## API Status
-
-| API | Status | Used for |
-|---|---|---|
-| `SERPER_API_KEY` | Configured / Missing | Search evidence and competitor research only |
-| `GEMINI_API_KEY` / `GOOGLE_API_KEY` | Configured / Missing | Gemini prompt execution |
-| `GROQ_API_KEY` | Configured / Missing | Groq model prompt execution |
-| `OPENAI_API_KEY` | Configured / Missing | OpenAI prompt execution |
-| `ANTHROPIC_API_KEY` | Configured / Missing | Claude prompt execution |
-| `PERPLEXITY_API_KEY` | Configured / Missing | Perplexity prompt execution |
-
-## Measurement Status
-
-- Search evidence: Available / Not available
-- Live LLM visibility measurement: Available / Not available
-- Providers to be measured: [list configured LLM providers]
-- Providers not configured: [list missing LLM providers]
-- Blocked phases: [list]
-
 ## Scenario Status
 
-[Choose exactly one matching status. Do not combine statuses.]
+Choose exactly one:
+
 - Partial full-audit: technical GEO completed, live LLM visibility not measured.
 - Partial full-audit: technical GEO + search evidence completed, live LLM visibility not measured.
 - Status: Live LLM results collected
 - Status: Manual run required — prompt library generated only
 ```
 
-Scenario status rules:
-
-- If no LLM provider is configured and Serper is missing, use: `Partial full-audit: technical GEO completed, live LLM visibility not measured.`
-- If Serper is configured but no LLM provider is configured, use: `Partial full-audit: technical GEO + search evidence completed, live LLM visibility not measured.`
-- If at least one LLM provider was run, use: `Status: Live LLM results collected`
-- If prompts were generated for a prompt-only or manual-run mode but no provider was run, use: `Status: Manual run required — prompt library generated only`
-
-For `full-audit`, use the first two no-provider statuses when LLM providers are missing. Use the manual-run status only when the selected objective or user-confirmed mode is prompt-only/manual execution.
-
-Serper must be labeled as search evidence only. It must never be listed as an LLM provider.
-
 ## `06-LLM-PROMPTS-TO-RUN.md`
 
-This file is a prompt library / test plan, not a measurement result.
-
-It must include:
-
-- Objective
-- Date/time of run
-- Domain
-- Prompt groups
-- Intended provider or provider type
-- Expected signal
-- Interpretation notes
-- A clear statement that prompts must be executed before any measured visibility claim is made
+This is a prompt library / test plan, not measurement.
 
 It must not:
 
@@ -144,114 +151,103 @@ It must not:
 - Report visibility scores based only on generated prompts
 - Mix prompt text with fake answer results
 
-## `05-SCHEMA.md`
-
-Schema outputs may include proposed JSON-LD, but must not claim schema is valid unless validation was actually run through a parser, validator, or local JSON-LD syntax check. If validation was not run, mark validation status as `Not run`.
-
-Schema outputs must separate:
-
-- Existing observed schema
-- Proposed JSON-LD
-- Validation status: Validated / Reviewed only / Not run
-- Evidence Status: Observed / Measured / Search Evidence / Inferred / Not run / Not available / Unknown
-- Evidence Source Type: Crawl / Rendered HTML / Search API / LLM API / Manual check / Local file / Generated artifact / Not available
-- Evidence Source
-- Evidence Date / Run Date
+It must include a clear warning that prompts must be executed before any measured visibility claim is made.
 
 ## `07-LLM-VISIBILITY-RESULTS.md`
 
-The file must always include:
+Must always include one of these statuses:
+
+- `Status: Live LLM results collected`
+- `Status: Not run — no LLM provider configured`
+- `Status: Manual run required — prompt library generated only`
+
+If no LLM provider is configured, it must say exactly:
+
+`Status: Not run — no LLM provider configured`
+
+If no LLM provider is configured, every prompt group must be marked `Not run`.
+
+Measured rows must include:
+
+| Provider | Interface | Model | Prompt ID | Prompt Group | Prompt Text | Brand Mentioned | Competitors Mentioned | Citations/Sources | Sentiment/Framing | Verdict | Run Date/Time | Fresh Context | Response Summary | Extraction Result | Evidence Status | Evidence Source | Evidence Source Type |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| [provider] | API / Manual UI | [model] | [ID] | [group] | [prompt] | Yes / No / Unknown | [names] | [sources] | [sentiment] | Win / Gap / Risk / Not run | [timestamp] | Yes / No | [summary] | [json/summary] | Measured | [provider run] | LLM API / Manual UI |
+
+Provider naming rules:
+
+- OpenAI API results must not be labeled ChatGPT UI.
+- Anthropic API results must not imply Claude UI unless manual UI was run.
+- Serper must not appear as an LLM result provider.
+- Bing Copilot is Manual / Not run unless documented.
+
+## `08-BACKLOG.md`
+
+Every backlog item must be tied to evidence.
 
 ```md
-# LLM Visibility Results: [Brand]
-
-Status: Live LLM results collected / Not run — no LLM provider configured / Manual run required — prompt library generated only
-
-## Provider Coverage
-
-| Provider | Status | Notes |
-|---|---|---|
-| Serper | Configured / Missing | Search only; not an LLM result provider |
-| Gemini | Run / Not configured / Not run | |
-| OpenAI | Run / Not configured / Not run | |
-| Claude / Anthropic | Run / Not configured / Not run | |
-| Perplexity | Run / Not configured / Not run | |
-| Groq | Run / Not configured / Not run | |
-| Bing Copilot | Manual / Not run | No automatic provider configured unless explicitly supported |
-
-## Measurement Boundary
-
-Search results, competitor research, and external authority checks are not the same as LLM answer visibility. This file only reports measured LLM visibility when prompts were executed through configured LLM providers.
-```
-
-If no LLM provider is configured, the file must say exactly:
-
-```md
-Status: Not run — no LLM provider configured
-```
-
-If no LLM provider is configured, all prompt groups must be marked:
-
-```md
-| Group | Prompts run | Verdict |
-|---|---:|---|
-| Branded | 0 | Not run |
-| Category | 0 | Not run |
-| Problem-aware | 0 | Not run |
-| Comparison | 0 | Not run |
-| Transactional | 0 | Not run |
-| Local / geo | 0 | Not run |
-| Educational | 0 | Not run |
-| Alternative language | 0 | Not run |
-```
-
-It must:
-
-- List which providers were configured and which were not
-- Separate measured answer results from interpretation
-- Include provider, model if known, prompt group, prompt text, brand mentioned, competitors mentioned, citations/sources, sentiment/framing, verdict, run date/time, response summary, extraction result, evidence status, evidence source, and evidence source type
-- Mark every unrun group as `Not run`
-- Preserve raw answer samples only when actual provider responses exist
-- Include the warning `Serper search evidence was collected, but this is not LLM visibility measurement.` when Serper was used and no LLM provider was run
-
-Measured result rows must use this structure:
-
-```md
-| Provider | Model | Prompt Group | Prompt Text | Brand Mentioned | Competitors Mentioned | Citations/Sources | Sentiment/Framing | Verdict | Run Date/Time | Response Summary | Extraction Result | Evidence Status | Evidence Source | Evidence Source Type |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| [provider] | [model if known] | [group] | [prompt] | Yes / No | [names] | [sources or none] | Positive / Neutral / Negative / Mixed | Win / Gap / Risk / Not run | [timestamp] | [summary] | [structured extraction] | Observed / Measured / Search Evidence / Inferred / Not run / Not available / Unknown | [provider/API run] | LLM API |
-```
-
-It must not:
-
-- Contain fake answer results
-- Treat Serper, Google results, or third-party search results as LLM answer visibility
-- Treat generated prompts as measured visibility
-- Claim ChatGPT/Claude/Gemini/Perplexity/Groq/Bing Copilot visibility unless the corresponding provider/API/run mode was executed
-- Claim ChatGPT UI results if only the OpenAI API was used; say `OpenAI API` or `OpenAI model`
-
-## Priority Fixes
-
-Every priority fix must include:
-
-- Evidence Status: Observed / Measured / Search Evidence / Inferred / Not run / Not available / Unknown
-- Evidence Source Type: Crawl / Rendered HTML / Search API / LLM API / Manual check / Local file / Generated artifact / Not available
-- Evidence Source
-- Evidence Date / Run Date
-- Confidence
-- Priority
-- Impact
-- Effort
-- Recommended action
-- Next action
-- Acceptance Criteria
-
-## Backlog
-
-Backlog items must be prioritized by impact and effort. Use this structure:
-
-```md
-| Priority | Task | Type | Evidence Status | Evidence Source | Evidence Source Type | Evidence Date / Run Date | Impact | Effort | Acceptance Criteria | Owner | Status |
+| Priority | Task | Type | Evidence Status | Evidence Source | Evidence Source Type | Evidence Date / Run Date | Impact | Effort | Owner | Status | Acceptance Criteria |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Critical / High / Medium / Low | [task] | technical/content/schema/messaging/measurement/llms.txt | Observed / Measured / Search Evidence / Inferred / Not run / Not available / Unknown | [source] | Crawl / Rendered HTML / Search API / LLM API / Manual check / Local file / Generated artifact / Not available | [date/time or Not available] | High / Medium / Low | High / Medium / Low | [criteria] | [owner] | Open |
 ```
+
+Backlog rules:
+
+- Do not create measurement-backed tasks if measurement did not run.
+- If a task comes from readiness, label it Observed or Inferred.
+- If a task comes from search evidence, label it Search Evidence or Inferred.
+- If a task comes from measured LLM gaps, label it Measured and point to the provider run.
+
+## `09-FINAL-REPORT.md`
+
+Must separate:
+
+1. Readiness findings
+2. Search evidence findings
+3. Measured LLM visibility results
+4. Inferred interpretation
+5. Recommended actions
+6. What was not run
+7. Next setup steps
+
+It must not blend these into one unsupported visibility narrative.
+
+## `10-API-SETUP-GUIDE.md`
+
+Must explain in plain English:
+
+- What runs without APIs
+- What Serper adds
+- What an LLM provider adds
+- OpenAI API vs ChatGPT UI
+- Manual prompt-running option
+- What to connect next for real measurement
+
+## `11-RUN-TRACE.md`
+
+Must follow `RUN-LOG-SPEC.md` and include:
+
+- Run identity
+- Inputs
+- Confirmed CONFIG
+- Providers/tools available
+- Tier decision
+- Orchestration checklist
+- Prompt execution log
+- Agent decisions
+- Blocked/skipped work
+- Output consistency check
+- Residual risk
+
+## Consistency QA
+
+Before final delivery, the agent must verify:
+
+| Check | Required outcome |
+|---|---|
+| `01` and `11` agree on phases run | Pass |
+| `07` matches provider availability | Pass |
+| `08` does not treat unrun phases as measured | Pass |
+| `09` separates readiness, measurement, and recommendations | Pass |
+| OpenAI API is not labeled ChatGPT UI | Pass |
+| Serper/search evidence is not labeled LLM visibility | Pass |
+
+If any check fails, fix the output or mark the issue as a limitation before finalizing.
