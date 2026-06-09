@@ -67,6 +67,7 @@ Codex should use the `geo-agent` skill when the request is about:
 - content citability
 - brand mentions
 - LLM prompt library
+- Manual Prompt Mode
 - measured LLM visibility
 
 ## What The Codex Skill Does
@@ -77,13 +78,42 @@ The main `geo-agent` skill:
 2. extracts business CONFIG
 3. asks the user to confirm CONFIG
 4. checks available APIs/tools
-5. selects evidence tier
-6. shows a checklist
-7. runs the right internal modules
-8. separates readiness from real measurement
-9. writes outputs
-10. applies quality gates
-11. checks that outputs do not contradict each other
+5. explains API, Manual Prompt Mode, or readiness-only paths
+6. selects evidence tier and measurement mode
+7. shows a checklist
+8. runs the right internal modules
+9. separates readiness, prompts, search evidence, and real measurement
+10. writes outputs
+11. applies quality gates
+12. checks that outputs do not contradict each other
+
+## Measurement Paths
+
+### API Measurement
+
+Use this when an LLM provider API is configured.
+
+The agent runs prompts automatically and logs measured results as API evidence.
+
+### Manual Prompt Mode
+
+Use this when no LLM API is available or when the user wants to test chatbot UIs directly.
+
+The agent creates grouped prompts in `06-LLM-PROMPTS-TO-RUN.md` for:
+
+- ChatGPT UI
+- Claude UI
+- Gemini UI
+- Perplexity UI
+- Copilot UI
+
+The user copies prompts into fresh chats, then pastes full responses back into Codex. The agent analyzes those pasted responses as documented `Manual UI` runs.
+
+### Readiness-only
+
+Use this when the user does not want API or manual testing yet.
+
+The agent finishes readiness and marks LLM measurement as Not run.
 
 ## Internal Modules
 
@@ -103,9 +133,13 @@ Codex can run the readiness workflow without LLM provider APIs.
 
 But Codex cannot claim measured LLM visibility unless prompts were actually executed through configured LLM providers or documented manual UI runs.
 
-If no LLM provider is configured, results must say:
+If no LLM provider is configured and no manual responses were pasted back, results must say:
 
 `Status: Not run -- no LLM provider configured`
+
+or:
+
+`Status: Manual run required -- prompt library generated only`
 
 ## Provider Labels
 
@@ -115,6 +149,7 @@ If no LLM provider is configured, results must say:
 - Gemini API = Gemini API results
 - Groq = Groq model/API results
 - Perplexity API = Perplexity API results
+- ChatGPT / Claude / Gemini / Perplexity / Copilot UI = Manual UI only when the user ran prompts manually and pasted responses back
 
 ## Recommended First Codex Test
 
@@ -128,7 +163,9 @@ Then verify:
 
 - it asks for URL and objective
 - it asks for CONFIG confirmation
+- it shows API / Manual Prompt Mode / readiness-only options if no LLM API is configured
 - it shows the checklist
+- it generates `06-LLM-PROMPTS-TO-RUN.md` by prompt group for full audits
 - it separates readiness from measurement
-- it marks LLM visibility as Not run if no provider is configured
+- it marks LLM visibility as Not run or manual required if no provider/manual responses exist
 - it applies quality gates before finalizing
