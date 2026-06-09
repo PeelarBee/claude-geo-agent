@@ -2,7 +2,7 @@
 
 All audit outputs must be client-readable, evidence-based, and explicit about what was and was not measured.
 
-The contract has one central purpose: prevent contradictions between the run plan, measured results, backlog, final report, and run trace.
+The contract has one central purpose: prevent contradictions between the run plan, prompt plan, measured results, backlog, final report, and run trace.
 
 ## Required Metadata For Every Output
 
@@ -16,6 +16,7 @@ Every output must include:
 - Rules version
 - Prompt library version when prompts are involved
 - Data / Measurement Tier: Tier 0 / Tier 1 / Tier 2 / Mixed
+- Measurement mode: API / Manual Prompt Mode / Readiness-only / Not selected
 - APIs/tools available
 - APIs/tools not configured
 - What was run
@@ -61,16 +62,16 @@ A `full-audit` must generate:
 | File | Purpose |
 |---|---|
 | `00-START-HERE.md` | Plain-English summary and first decisions |
-| `01-RUN-PLAN.md` | What will run, what is blocked, providers, tier, checklist |
+| `01-RUN-PLAN.md` | What will run, what is blocked, providers, tier, checklist, measurement mode |
 | `02-TECHNICAL-GEO-AUDIT.md` | Readiness audit and GEO Readiness Score |
 | `03-FIX-GUIDE.md` | Prioritized fix instructions |
 | `04-LLMS-TXT.md` | llms.txt check/draft |
 | `05-SCHEMA.md` | Schema audit/proposed JSON-LD |
-| `06-LLM-PROMPTS-TO-RUN.md` | Prompt library/test plan only |
-| `07-LLM-VISIBILITY-RESULTS.md` | Measured results only when provider/manual runs exist; otherwise Not run |
+| `06-LLM-PROMPTS-TO-RUN.md` | Prompt library/test plan, grouped copy/paste pack for API or Manual Prompt Mode |
+| `07-LLM-VISIBILITY-RESULTS.md` | Measured results only when provider/manual runs exist; otherwise Not run/manual required |
 | `08-BACKLOG.md` | Prioritized tasks tied to evidence |
-| `09-FINAL-REPORT.md` | Synthesis separating readiness, measurement, and recommendations |
-| `10-API-SETUP-GUIDE.md` | Plain-English setup guide for missing APIs/providers |
+| `09-FINAL-REPORT.md` | Synthesis separating readiness, prompts, measurement, and recommendations |
+| `10-API-SETUP-GUIDE.md` | Plain-English setup guide for missing APIs/providers and manual prompt mode |
 | `11-RUN-TRACE.md` | Run receipt: inputs, providers, decisions, phases, outputs, consistency QA |
 
 For narrower objectives, generate the relevant subset plus `01-RUN-PLAN.md` and `11-RUN-TRACE.md`.
@@ -92,6 +93,7 @@ It must include:
 
 - Objective:
 - Audit mode:
+- Measurement mode: API / Manual Prompt Mode / Readiness-only / Not selected
 - Outputs to generate:
 - Outputs intentionally skipped:
 - Reason for skipped outputs:
@@ -101,15 +103,16 @@ It must include:
 | Phase | Worker/subskill | Planned | Run condition | Output |
 |---|---|---|---|---|
 | Capability check | scripts/check-providers.sh | Yes / No | Always after CONFIG | 01, 11 |
+| API guidance | orchestrator + 10 | Yes / No | missing useful APIs/providers | 01, 10, 11 |
+| Measurement mode choice | orchestrator | Yes / No | full-audit/monitor/llm-prompts | 01, 11 |
 | Crawlers | geo-crawlers | Yes / No | readiness objectives | 02, 03, 08, 11 |
 | llms.txt | geo-llms-txt | Yes / No | readiness objectives | 04, 02, 03, 08, 11 |
 | Schema | geo-schema | Yes / No | readiness objectives | 05, 02, 03, 08, 11 |
 | Citability | geo-citability | Yes / No | full-audit/citability | 02, 03, 08, 11 |
 | Brand mentions | geo-brand-mentions | Yes / No | Serper/search configured | 02, 03, 08, 11 |
 | Prompt library | geo-llm-prompts | Yes / No | full-audit/llm-prompts/monitor | 06, 11 |
-| LLM measurement | geo-monitor | Yes / No | LLM provider/manual mode | 07, 11 |
+| LLM measurement | geo-monitor | Yes / No | LLM provider/manual responses available | 07, 11 |
 | Synthesis | orchestrator | Yes / No | after evidence collection | 08, 09 |
-| API guidance | scripts/create-api-setup-guide.sh | Yes / No | missing useful APIs/providers | 10 |
 
 ## API Status
 
@@ -138,7 +141,7 @@ Choose exactly one:
 - Partial full-audit: technical GEO completed, live LLM visibility not measured.
 - Partial full-audit: technical GEO + search evidence completed, live LLM visibility not measured.
 - Status: Live LLM results collected
-- Status: Manual run required — prompt library generated only
+- Status: Manual run required -- prompt library generated only
 ```
 
 ## `06-LLM-PROMPTS-TO-RUN.md`
@@ -153,19 +156,66 @@ It must not:
 
 It must include a clear warning that prompts must be executed before any measured visibility claim is made.
 
+For Manual Prompt Mode, it must include copy/paste instructions in plain language:
+
+```txt
+Copy each prompt into a fresh chat in ChatGPT, Claude, Gemini, Perplexity, or Copilot.
+After each run, paste the full response back into this conversation so I can analyze it as a documented Manual UI run.
+```
+
+It must be organized by prompt group, not as one loose list:
+
+1. How to run these prompts
+2. What to paste back
+3. Starter Baseline
+4. Brand Visibility
+5. Category Visibility
+6. Problem / Use-Case Visibility
+7. Competitor / Comparison Visibility
+8. Local / Market Visibility
+9. Alternative Language Visibility
+10. Citation and Source Capture
+11. Paste-back templates
+
+Each prompt group must use this structure:
+
+```md
+## Group: [Group Name]
+
+Purpose:
+Recommended providers: ChatGPT UI, Claude UI, Gemini UI, Perplexity UI, Copilot UI
+Run priority: Starter / Full baseline / Deep dive
+Measurement status: Not run until responses are pasted back or API execution completes
+
+### Prompt [ID] -- [Name]
+
+Copy this prompt into a fresh chat:
+
+```txt
+[prompt text]
+```
+
+After running it, paste the response back with:
+
+- Prompt ID:
+- Chatbot used:
+- Model if visible:
+- Date/time:
+- Fresh chat? Yes / No
+- Full response:
+- Sources/citations shown:
+- Notes:
+```
+
 ## `07-LLM-VISIBILITY-RESULTS.md`
 
 Must always include one of these statuses:
 
 - `Status: Live LLM results collected`
-- `Status: Not run — no LLM provider configured`
-- `Status: Manual run required — prompt library generated only`
+- `Status: Not run -- no LLM provider configured`
+- `Status: Manual run required -- prompt library generated only`
 
-If no LLM provider is configured, it must say exactly:
-
-`Status: Not run — no LLM provider configured`
-
-If no LLM provider is configured, every prompt group must be marked `Not run`.
+If no LLM provider is configured and no manual responses were pasted back, every prompt group must be marked `Not run` or `Manual run required`.
 
 Measured rows must include:
 
@@ -179,6 +229,7 @@ Provider naming rules:
 - Anthropic API results must not imply Claude UI unless manual UI was run.
 - Serper must not appear as an LLM result provider.
 - Bing Copilot is Manual / Not run unless documented.
+- Manual chatbot responses must be labeled `Manual UI`, not API.
 
 ## `08-BACKLOG.md`
 
@@ -194,7 +245,7 @@ Backlog rules:
 - Do not create measurement-backed tasks if measurement did not run.
 - If a task comes from readiness, label it Observed or Inferred.
 - If a task comes from search evidence, label it Search Evidence or Inferred.
-- If a task comes from measured LLM gaps, label it Measured and point to the provider run.
+- If a task comes from measured LLM gaps, label it Measured and point to the provider run or manual UI run.
 
 ## `09-FINAL-REPORT.md`
 
@@ -202,11 +253,12 @@ Must separate:
 
 1. Readiness findings
 2. Search evidence findings
-3. Measured LLM visibility results
-4. Inferred interpretation
-5. Recommended actions
-6. What was not run
-7. Next setup steps
+3. Prompt plan / Manual Prompt Mode status
+4. Measured LLM visibility results
+5. Inferred interpretation
+6. Recommended actions
+7. What was not run
+8. Next setup steps
 
 It must not blend these into one unsupported visibility narrative.
 
@@ -218,8 +270,9 @@ Must explain in plain English:
 - What Serper adds
 - What an LLM provider adds
 - OpenAI API vs ChatGPT UI
-- Manual prompt-running option
-- What to connect next for real measurement
+- Manual Prompt Mode
+- How to copy prompts into chatbots and paste responses back
+- What to connect next for automatic measurement
 
 ## `11-RUN-TRACE.md`
 
@@ -230,8 +283,9 @@ Must follow `RUN-LOG-SPEC.md` and include:
 - Confirmed CONFIG
 - Providers/tools available
 - Tier decision
+- Measurement mode choice
 - Orchestration checklist
-- Prompt execution log
+- Prompt execution or manual prompt log
 - Agent decisions
 - Blocked/skipped work
 - Output consistency check
@@ -244,10 +298,12 @@ Before final delivery, the agent must verify:
 | Check | Required outcome |
 |---|---|
 | `01` and `11` agree on phases run | Pass |
-| `07` matches provider availability | Pass |
+| `06` exists for full-audit and has grouped copy/paste prompt instructions | Pass |
+| `07` matches provider/manual response availability | Pass |
 | `08` does not treat unrun phases as measured | Pass |
-| `09` separates readiness, measurement, and recommendations | Pass |
+| `09` separates readiness, prompts, measurement, and recommendations | Pass |
 | OpenAI API is not labeled ChatGPT UI | Pass |
 | Serper/search evidence is not labeled LLM visibility | Pass |
+| Manual chatbot responses are labeled Manual UI | Pass |
 
 If any check fails, fix the output or mark the issue as a limitation before finalizing.
