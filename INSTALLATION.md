@@ -20,6 +20,7 @@ The main GEO agent calls the internal modules automatically:
 - citability
 - brand mentions
 - prompt library
+- Manual Prompt Mode
 - LLM measurement
 
 ## Option 1: Claude Code
@@ -118,6 +119,7 @@ Support files:
 - scoring rules
 - quality gates
 - output contract
+- Manual Prompt Mode guide
 - evals
 - scripts
 - templates
@@ -126,6 +128,8 @@ Support files:
 ## Do I Need APIs?
 
 No, not for a readiness audit.
+
+No, not for Manual Prompt Mode.
 
 Without APIs, the agent can check:
 
@@ -136,12 +140,21 @@ Without APIs, the agent can check:
 - schema
 - content readiness
 - prompt library
+- grouped copy/paste prompts for chatbot testing
 - fix guide
 - backlog
 
-For real LLM visibility measurement, connect at least one LLM provider API.
+For automatic LLM visibility measurement, connect at least one LLM provider API.
 
 Serper is useful for search evidence, but Serper is not LLM measurement.
+
+## Measurement Choices
+
+After checking APIs, the agent should offer:
+
+1. API measurement: connect an LLM API and run prompts automatically.
+2. Manual Prompt Mode: copy prompts into ChatGPT, Claude, Gemini, Perplexity, or Copilot, then paste responses back for analysis.
+3. Readiness-only: finish the technical audit and mark LLM measurement as Not run.
 
 ## Important
 
@@ -149,11 +162,17 @@ Installing the repo is not the same as connecting APIs.
 
 Installation makes the agent available.
 
-APIs decide what the agent can measure.
+APIs decide what the agent can measure automatically.
 
-If no LLM provider is configured, the agent must say:
+Manual Prompt Mode lets a non-technical user collect manual chatbot evidence without APIs.
+
+If no LLM provider is configured and no manual responses were pasted back, the agent must say:
 
 `Status: Not run -- no LLM provider configured`
+
+or:
+
+`Status: Manual run required -- prompt library generated only`
 
 ## Quick Explanation For Non-Technical Users
 
@@ -162,5 +181,6 @@ If no LLM provider is configured, the agent must say:
 3. Type `@geo-agent`.
 4. The agent asks for the URL and objective.
 5. It checks what it can do.
-6. It runs the internal modules automatically.
-7. It tells you what was checked, what was measured, what was not run, and what to fix first.
+6. If no LLM API exists, it offers Manual Prompt Mode.
+7. It runs the internal modules automatically.
+8. It tells you what was checked, what was measured, what was not run, and what to fix first.
