@@ -1,6 +1,6 @@
 # claude-geo-agent
 
-A GEO (Generative Engine Optimization) agent for auditing AI search readiness, answer-engine discoverability, and real LLM visibility measurement when providers are configured.
+A GEO (Generative Engine Optimization) agent for auditing AI search readiness, answer-engine discoverability, manual prompt testing, and real LLM visibility measurement when providers are configured.
 
 Works with:
 
@@ -12,6 +12,8 @@ Works with:
 Install once. Restart your AI tool. Type `@geo-agent`.
 
 The user does not call every subagent manually. The main GEO agent calls the internal modules automatically.
+
+If no LLM API is configured, the agent should offer Manual Prompt Mode: grouped copy/paste prompts for ChatGPT, Claude, Gemini, Perplexity, and Copilot.
 
 ## Install For Claude Code
 
@@ -92,8 +94,20 @@ The main `geo-agent` orchestrates these internal modules:
 | `geo-schema` | Audit and recommend schema/JSON-LD |
 | `geo-citability` | Check content answer-readiness and citability |
 | `geo-brand-mentions` | Collect search/external authority evidence |
-| `geo-llm-prompts` | Generate LLM prompt library/test plan |
-| `geo-monitor` | Run real LLM measurement when providers are configured |
+| `geo-llm-prompts` | Generate API-ready or manual copy/paste LLM prompt packs |
+| `geo-monitor` | Run real LLM measurement when providers or documented manual runs exist |
+
+## Measurement Paths
+
+The agent supports three paths:
+
+| Path | What happens |
+|---|---|
+| API measurement | The agent runs prompts through configured LLM provider APIs and logs measured results. |
+| Manual Prompt Mode | The agent gives grouped prompts to copy into ChatGPT, Claude, Gemini, Perplexity, or Copilot. The user pastes responses back for analysis as Manual UI runs. |
+| Readiness-only | The agent completes technical GEO readiness and marks LLM measurement as Not run. |
+
+Manual Prompt Mode is useful when no LLM API is available. It still does not invent measurement: generated prompts become measured only after the user runs them and pastes responses back.
 
 ## What A Full Audit Produces
 
@@ -116,15 +130,17 @@ The agent separates:
 
 1. **Readiness** - whether the site is prepared to be crawled, understood, and cited.
 2. **Search Evidence** - what search/third-party surfaces show.
-3. **Measured LLM Visibility** - what actually happened after running prompts through providers or documented manual UI runs.
-4. **Recommendations** - what to fix first.
+3. **Prompt Plan** - prompts generated for API or manual execution.
+4. **Measured LLM Visibility** - what actually happened after running prompts through providers or documented manual UI runs.
+5. **Recommendations** - what to fix first.
 
 Rules:
 
 - Serper is search evidence only, not LLM measurement.
 - Generated prompts are a test plan, not measured results.
+- Manual chatbot responses must be labeled Manual UI.
 - OpenAI API results are not ChatGPT UI results unless ChatGPT UI was separately measured and logged.
-- If no LLM provider is configured, `07-LLM-VISIBILITY-RESULTS.md` must say: `Status: Not run -- no LLM provider configured`.
+- If no LLM provider is configured and no manual responses were pasted back, `07-LLM-VISIBILITY-RESULTS.md` must say: `Status: Not run -- no LLM provider configured` or `Status: Manual run required -- prompt library generated only`.
 
 ## Optional APIs
 
@@ -137,7 +153,7 @@ Rules:
 | `GROQ_API_KEY` | Groq model/API measurement |
 | `PERPLEXITY_API_KEY` | Perplexity API measurement |
 
-No API is required for a readiness audit.
+No API is required for a readiness audit or Manual Prompt Mode.
 
 At least one LLM provider is required for automatic measured LLM visibility.
 
@@ -146,6 +162,7 @@ At least one LLM provider is required for automatic measured LLM visibility.
 - [QUICKSTART.md](QUICKSTART.md) - fastest way to install and run
 - [INSTALLATION.md](INSTALLATION.md) - installation paths for Claude Code and Codex
 - [CODEX.md](CODEX.md) - Codex-specific install and usage guide
+- [MANUAL-PROMPT-MODE.md](MANUAL-PROMPT-MODE.md) - copy/paste prompt workflow when APIs are unavailable
 - [ORCHESTRATION.md](ORCHESTRATION.md) - how the main agent calls internal workers
 - [CLAIM-GUARDRAILS.md](CLAIM-GUARDRAILS.md) - what the agent is allowed and not allowed to claim
 - [RUN-LOG-SPEC.md](RUN-LOG-SPEC.md) - traceability for every audit run
