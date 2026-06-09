@@ -51,7 +51,18 @@ The final report may summarize this file, but must not replace it.
 | Anthropic API | Configured / Missing | Measured only if run as Anthropic API | |
 | Groq API | Configured / Missing | Measured only if run | |
 | Perplexity API | Configured / Missing | Measured only if run | |
+| Manual Prompt Mode | Offered / Selected / Not selected | Manual UI only | Requires pasted responses |
 | Bing Copilot | Manual / Not run | Manual UI only | |
+
+## Measurement Mode Decision
+
+- Measurement mode offered: API / Manual Prompt Mode / Readiness-only
+- Measurement mode selected: API / Manual Prompt Mode / Readiness-only / Not selected
+- Reason:
+- User-facing guidance shown: Yes / No
+- If Manual Prompt Mode selected, copy/paste instructions shown: Yes / No
+- If API selected, configured provider:
+- If readiness-only selected, measurement limitation:
 
 ## Tier Decision
 
@@ -59,6 +70,7 @@ The final report may summarize this file, but must not replace it.
 - Reason:
 - Readiness phases allowed:
 - Search evidence phases allowed:
+- Prompt plan phases allowed:
 - Measurement phases allowed:
 - Measurement phases blocked:
 
@@ -67,6 +79,7 @@ The final report may summarize this file, but must not replace it.
 | Phase | Worker/subskill | Planned | Ran | Status | Why / decision | Output updated |
 |---|---|---|---|---|---|---|
 | Capability check | provider scripts | Yes / No | Yes / No | Run / Not run / Blocked | | `01-RUN-PLAN.md` |
+| API / Manual guidance | orchestrator | Yes / No | Yes / No | Run / Not run / Blocked | | `01`, `10`, `11` |
 | Crawlers | geo-crawlers | Yes / No | Yes / No | Run / Not run / Blocked | | `02-TECHNICAL-GEO-AUDIT.md` |
 | llms.txt | geo-llms-txt | Yes / No | Yes / No | Run / Not run / Blocked | | `04-LLMS-TXT.md` |
 | Schema | geo-schema | Yes / No | Yes / No | Run / Not run / Blocked | | `05-SCHEMA.md` |
@@ -77,11 +90,19 @@ The final report may summarize this file, but must not replace it.
 | Claim QA | orchestrator | Yes / No | Yes / No | Run / Not run / Blocked | | `09-FINAL-REPORT.md` |
 | API guidance | setup guide script | Yes / No | Yes / No | Run / Not run / Blocked | | `10-API-SETUP-GUIDE.md` |
 
-## Prompt Execution Log
+## Prompt Execution Or Manual Prompt Log
 
 | Prompt ID | Prompt group | Provider | Interface | Model | Run date/time | Cold context? | Status | Output location |
 |---|---|---|---|---|---|---|---|---|
-| [ID] | [group] | [provider] | API / Manual UI | [model] | [timestamp] | Yes / No | Run / Not run / Blocked | [file] |
+| [ID] | [group] | [provider] | API / Manual UI / Manual Prompt Pack | [model] | [timestamp] | Yes / No | Run / Not run / Manual required / Blocked | [file] |
+
+## Manual Response Intake Log
+
+Use this section only when the user pasted manual chatbot responses back.
+
+| Prompt ID | Chatbot | Model if visible | Date/time | Fresh chat? | Full response captured? | Sources captured? | Analysis status |
+|---|---|---|---|---|---|---|---|
+| [ID] | ChatGPT / Claude / Gemini / Perplexity / Copilot | [model] | [timestamp] | Yes / No | Yes / No | Yes / No | Parsed / Not parsed |
 
 ## Decisions Made By The Agent
 
@@ -93,18 +114,20 @@ The final report may summarize this file, but must not replace it.
 
 | Phase | Reason blocked/skipped | Required to run later | User guidance |
 |---|---|---|---|
-| [phase] | [reason] | [API/tool/input] | [plain English next step] |
+| [phase] | [reason] | [API/tool/input/manual responses] | [plain English next step] |
 
 ## Output Consistency Check
 
 | Check | Pass / Fail | Notes |
 |---|---|---|
 | `01-RUN-PLAN.md` agrees with `07-LLM-VISIBILITY-RESULTS.md` | Pass / Fail | |
+| `06-LLM-PROMPTS-TO-RUN.md` exists and has grouped copy/paste instructions when required | Pass / Fail | |
 | `07-LLM-VISIBILITY-RESULTS.md` does not contain fake measurement | Pass / Fail | |
 | `08-BACKLOG.md` does not treat unrun phases as measured | Pass / Fail | |
-| `09-FINAL-REPORT.md` separates readiness, measurement, and recommendations | Pass / Fail | |
+| `09-FINAL-REPORT.md` separates readiness, prompts, measurement, and recommendations | Pass / Fail | |
 | OpenAI API is not labeled ChatGPT UI | Pass / Fail | |
 | Serper/search evidence is not labeled LLM visibility | Pass / Fail | |
+| Manual UI runs are labeled Manual UI | Pass / Fail | |
 
 ## Residual Risk
 
@@ -128,6 +151,7 @@ If a prompt, guardrail, output contract, or eval changes, the next run trace mus
 `11-RUN-TRACE.md` must agree with:
 
 - `01-RUN-PLAN.md`
+- `06-LLM-PROMPTS-TO-RUN.md`
 - `07-LLM-VISIBILITY-RESULTS.md`
 - `08-BACKLOG.md`
 - `09-FINAL-REPORT.md`
